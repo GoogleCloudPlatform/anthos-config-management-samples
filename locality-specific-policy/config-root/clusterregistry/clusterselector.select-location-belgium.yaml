@@ -1,0 +1,9 @@
+# selects clusters with belgium location label
+kind: ClusterSelector
+apiVersion: configmanagement.gke.io/v1
+metadata:
+  name: select-location-belgium
+spec:
+  selector:
+    matchLabels:
+      location: belgium

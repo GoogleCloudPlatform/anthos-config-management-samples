@@ -1,0 +1,5 @@
+# creates namespace named "hello"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hello

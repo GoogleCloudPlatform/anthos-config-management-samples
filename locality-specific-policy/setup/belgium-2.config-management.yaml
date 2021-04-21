@@ -1,0 +1,12 @@
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+  namespace: config-management-system
+spec:
+  clusterName: belgium-2
+  git:
+    syncRepo: git@github.com:<GITHUB-USERNAME>/anthos-config-management-samples.git
+    syncBranch: 1.0.0
+    secretType: ssh
+    policyDir: "locality-specific-policy/config-root"
