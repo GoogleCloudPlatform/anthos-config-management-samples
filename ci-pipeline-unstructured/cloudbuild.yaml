@@ -1,0 +1,18 @@
+steps:
+  # Grant read/write permissions to the workspace.
+  - name: "bash"
+    args: ["chmod", "777", "/workspace"]
+  # Recursively read a directory of kubernetes YAML configs from the workspace and output them as one list into config-source.yaml.
+  - name: "gcr.io/config-management-release/read-yaml"
+    args:
+      [
+        "--input",
+        "/dev/null",
+        "-d",
+        "source_dir=/workspace/ci-pipeline-unstructured/config-root",
+        "--output",
+        "/workspace/config-source.yaml",
+      ]
+  # Validate input configs against any OPA ConstraintTemplates and Constraints it finds in its input.
+  - name: "gcr.io/config-management-release/policy-controller-validate"
+    args: ["--input", "/workspace/config-source.yaml"]

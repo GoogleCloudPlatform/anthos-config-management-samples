@@ -1,0 +1,10 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: backend-quota
+spec:
+  hard:
+    pods: "3"
+    cpu: "1"
+    memory: 1Gi
+

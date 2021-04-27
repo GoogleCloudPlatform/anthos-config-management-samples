@@ -1,0 +1,11 @@
+# will only be applied to clusters with belgium location label
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: auditor
+  annotations:
+    configmanagement.gke.io/cluster-selector: select-location-belgium
+rules:
+- apiGroups: [""] # core API group
+  resources: ["namespaces"]
+  verbs: ["get", "watch", "list"]
