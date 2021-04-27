@@ -1,0 +1,12 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: viewers
+subjects:
+- kind: Group
+  name: system:serviceaccounts:audit
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io

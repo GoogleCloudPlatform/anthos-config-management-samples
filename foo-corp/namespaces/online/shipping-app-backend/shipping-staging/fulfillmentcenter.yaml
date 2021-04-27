@@ -1,0 +1,6 @@
+kind: FulfillmentCenter
+apiVersion: foo-corp.com/v1
+metadata:
+  name: staging
+spec:
+  address: "100 Main St."
