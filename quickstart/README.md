@@ -70,7 +70,7 @@ kubectl apply -f root-sync.yaml
 
 ### Root configs
 
-To verify resources in the "multirepo/root" directory has been synced to the cluster:
+You can verify resources in the "multirepo/root" directory has been synced to the cluster using `kubectl` and [`nomos`](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command) commands:
 
 ```console
 # Wait until source commit matches sync commit
@@ -151,7 +151,7 @@ kubectl apply -f config-management.yaml
 
 ### Root configs
 
-To verify resources in the "monorepo/root" directory has been synced to the cluster:
+You can verify resources in the "monorepo/root" directory has been synced to the cluster using `kubectl` and [`nomos`](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command) commands:
 
 ```console
 # Check Config Sync status
