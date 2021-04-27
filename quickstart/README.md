@@ -82,6 +82,12 @@ kubectl get resourcegroups -n config-management-system
 kubectl get <resources specified in the "multirepo/root" directory>
 ```
 
+You may see transient `connection refused` error from admission webhook before it's ready. This error should disappear after a while.
+
+```
+KNV2009: Internal error occurred: failed calling webhook "v1.admission-webhook.configsync.gke.io": Post "https://admission-webhook.config-management-system.svc:8676/admission-webhook?timeout=3s": dial tcp 10.92.2.14:8676: connect: connection refused
+```
+
 ### Namespace configs
 
 The configs in the "multirepo/root" directory contains a `gamestore` namespace and a [`RepoSync` resource](multirepo/root/reposync-gamestore.yaml) in the `gamestore` namespace, referencing the "gamestore" directory in this git repository.
