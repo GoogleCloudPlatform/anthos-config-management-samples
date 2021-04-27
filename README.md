@@ -5,6 +5,12 @@ This repository contains samples for [Anthos Config Management][1].
 
 ## Examples
 
+### [Quickstart](quickstart/)
+
+A single clsuter example showing how to sync configurations from git using
+Config Sync. This includes examples for both [multi-repo mode](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/multi-repo)
+and the legacy mode.
+
 ### [Foo-Corp](foo-corp/)
 
 A single cluster example showing several features of Anthos Config Management

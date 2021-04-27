@@ -1,0 +1,9 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: webstore-admin
+rules:
+- apiGroups: ["marketplace.com"]
+  resources: ["webstores"]
+  verbs:
+  - "*"

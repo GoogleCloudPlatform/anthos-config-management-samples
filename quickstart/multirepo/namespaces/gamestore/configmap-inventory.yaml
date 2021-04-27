@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: store-inventory
+  namespace: gamestore
+  annotations:
+    marketplace.com/comments: "What about chess?"
+data:
+  single_player: "20"
+  cooperative: "60"
+  competitive: "300"
