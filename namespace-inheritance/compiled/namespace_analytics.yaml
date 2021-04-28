@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/eng/analytics/namespace.yaml
+    configsync.gke.io/declared-fields: '{"f:metadata":{"f:labels":{"f:app":{}}}}'
+    hnc.x-k8s.io/managed-by: configmanagement.gke.io
+  labels:
+    analytics.tree.hnc.x-k8s.io/depth: "0"
+    app: analytics
+    configsync.gke.io/declared-version: v1
+    eng.tree.hnc.x-k8s.io/depth: "1"
+  name: analytics

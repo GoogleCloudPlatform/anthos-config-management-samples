@@ -1,0 +1,20 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/eng/eng-roleinding.yaml
+    configsync.gke.io/declared-fields: '{"f:roleRef":{"f:apiGroup":{},"f:kind":{},"f:name":{}},"f:subjects":{}}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: eng-admin
+  namespace: gamestore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: eng-viewer
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: eng@example.com

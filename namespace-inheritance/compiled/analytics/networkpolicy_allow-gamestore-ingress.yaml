@@ -1,0 +1,18 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/eng/network-policy-allow-gamestore-ingress.yaml
+    configsync.gke.io/declared-fields: '{"f:spec":{"f:ingress":{},"f:podSelector":{"f:matchLabels":{"f:app":{}}}}}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: allow-gamestore-ingress
+  namespace: analytics
+spec:
+  ingress:
+  - {}
+  podSelector:
+    matchLabels:
+      app: gamestore

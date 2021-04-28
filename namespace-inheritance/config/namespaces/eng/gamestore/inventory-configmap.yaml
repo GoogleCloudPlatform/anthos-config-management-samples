@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: store-inventory
+  annotations:
+    marketplace.com/comments: "Too much sci-fi"
+data:
+  action: "30"
+  documentary: "5"
+  sci_fi: "1000"

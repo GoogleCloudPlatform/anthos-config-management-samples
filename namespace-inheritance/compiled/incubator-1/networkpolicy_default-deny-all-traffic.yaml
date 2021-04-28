@@ -1,0 +1,14 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/network-policy-default-deny-all.yaml
+    configsync.gke.io/declared-fields: '{}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: default-deny-all-traffic
+  namespace: incubator-1
+spec:
+  podSelector: {}

@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+data:
+  action: "30"
+  documentary: "5"
+  sci_fi: "1000"
+kind: ConfigMap
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/eng/gamestore/inventory-configmap.yaml
+    configsync.gke.io/declared-fields: '{"f:data":{"f:action":{},"f:documentary":{},"f:sci_fi":{}},"f:metadata":{"f:annotations":{"f:marketplace.com/comments":{}}}}'
+    marketplace.com/comments: Too much sci-fi
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: store-inventory
+  namespace: gamestore

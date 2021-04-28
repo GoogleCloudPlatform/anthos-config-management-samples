@@ -1,0 +1,17 @@
+kind: NamespaceSelector
+apiVersion: configmanagement.gke.io/v1
+metadata:
+  name: analytics-selector
+spec:
+  selector:
+    matchLabels:
+      app: analytics
+---
+kind: NamespaceSelector
+apiVersion: configmanagement.gke.io/v1
+metadata:
+  name: gamestore-selector
+spec:
+  selector:
+    matchLabels:
+      app: gamestore

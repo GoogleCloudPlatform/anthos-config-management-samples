@@ -1,0 +1,19 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/cluster/namespace-reader-clusterrolebinding.yaml
+    configsync.gke.io/declared-fields: '{"f:roleRef":{"f:apiGroup":{},"f:kind":{},"f:name":{}},"f:subjects":{}}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: namespace-readers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: namespace-reader
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: cheryl@example.com
