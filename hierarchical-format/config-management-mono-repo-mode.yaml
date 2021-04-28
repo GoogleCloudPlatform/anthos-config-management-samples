@@ -7,6 +7,6 @@ spec:
   git:
     syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
     syncBranch: init
-    policyDir: hierarchical-format
+    policyDir: hierarchical-format/config
     secretType: none
   sourceFormat: hierarchy

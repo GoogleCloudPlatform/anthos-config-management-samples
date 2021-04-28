@@ -11,7 +11,7 @@ spec:
   git:
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
     branch: init
-    dir: hierarchical-format
+    dir: hierarchical-format/config
     # We recommend securing your source repository.
     # Other supported auth: `ssh`, `cookiefile`, `token`, `gcenode`.
     auth: none
