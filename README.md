@@ -36,6 +36,22 @@ Create a CloudBuild CI pipeline on an unstructured directory.
 
 Validate your application against company policies.
 
+### [Multi-Cluster Anthos Config Management Setup](multi-cluster-acm-setup/)
+
+Deploy multiple GKE clusters and install Anthos Config Management on them.
+
+### [Multi-Cluster Fan-out](multi-cluster-fan-out/)
+
+Manage identical Namespaces, RoleBindings, and ResourcQuotas across multiple GKE clusters using Anthos Config Management and GitOps.
+
+### [Multi-Cluster Access and Quota](multi-cluster-access-and-quota/)
+
+Manage cluster-specific and namespace-specific Namespaces, RoleBindings, and ResourcQuotas across multiple clusters using Anthos Config Management, GitOps, and Kustomize.
+
+### [Multi-Cluster Ingress](multi-cluster-ingress/)
+
+Manage an application with Multi-Cluster Ingress using Anthos Config Management, GitOps, and Kustomize.
+
 ## CRDs
 
 ### [ConfigManagement](crds/)

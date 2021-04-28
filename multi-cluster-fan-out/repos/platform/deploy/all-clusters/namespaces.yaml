@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    owner: platform-team
+  name: tenant-a
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    owner: platform-team
+  name: tenant-b
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    owner: platform-team
+  name: tenant-c

@@ -1,0 +1,25 @@
+apiVersion: networking.gke.io/v1
+kind: MultiClusterIngress
+metadata:
+  name: zone-ingress
+spec:
+  template:
+    spec:
+      backend:
+        serviceName: zone-mcs
+        servicePort: 8080
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: zone-mcs
+spec:
+  template:
+    spec:
+      selector:
+        app: zoneprinter
+      ports:
+      - name: web
+        protocol: TCP
+        port: 8080
+        targetPort: 8080
