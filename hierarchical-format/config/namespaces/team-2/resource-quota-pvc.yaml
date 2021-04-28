@@ -1,0 +1,8 @@
+# ResourceQuota Reference: https://kubernetes.io/docs/concepts/policy/resource-quotas/
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: pvc
+spec:
+  hard:
+    persistentvolumeclaims: "6"

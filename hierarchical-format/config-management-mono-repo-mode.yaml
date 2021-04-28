@@ -1,0 +1,12 @@
+# config-management.yaml
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+spec:
+  git:
+    syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
+    syncBranch: init
+    policyDir: hierarchical-format
+    secretType: none
+  sourceFormat: hierarchy
