@@ -117,11 +117,11 @@ cluster-scoped resources in a single commit.
 Follow the instructions to gracefully uninstall the component and remove the namespace in separate commits.
 - Remove the cert-manager component.
   ```shell script
-  git rm -rf manifests/cert-manager && git commit -m "uninstall cert-manager" && git push origin main
+  git rm -rf manifests/cert-manager && git commit -m "uninstall cert-manager" && git push origin init
   ````
 - Delete the cert-manager namespace.
   ```shell script
-  git rm manifests/namespace-cert-manager.yaml && git commit -m "remove the cert-manager namespace" && git push origin main
+  git rm manifests/namespace-cert-manager.yaml && git commit -m "remove the cert-manager namespace" && git push origin init
   ````
 - Verify the namespace does not exist.
   ```shell script
