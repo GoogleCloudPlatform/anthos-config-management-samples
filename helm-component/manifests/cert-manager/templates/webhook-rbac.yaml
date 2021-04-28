@@ -1,0 +1,86 @@
+---
+# Source: cert-manager/templates/webhook-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: my-cert-manager-webhook:subjectaccessreviews
+  labels:
+    app: webhook
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/instance: my-cert-manager
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "webhook"
+    helm.sh/chart: cert-manager-v1.3.0
+rules:
+- apiGroups: ["authorization.k8s.io"]
+  resources: ["subjectaccessreviews"]
+  verbs: ["create"]
+---
+# Source: cert-manager/templates/webhook-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: my-cert-manager-webhook:subjectaccessreviews
+  labels:
+    app: webhook
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/instance: my-cert-manager
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "webhook"
+    helm.sh/chart: cert-manager-v1.3.0
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: my-cert-manager-webhook:subjectaccessreviews
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: my-cert-manager-webhook
+  namespace: cert-manager
+---
+# Source: cert-manager/templates/webhook-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: my-cert-manager-webhook:dynamic-serving
+  namespace: "cert-manager"
+  labels:
+    app: webhook
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/instance: my-cert-manager
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "webhook"
+    helm.sh/chart: cert-manager-v1.3.0
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames:
+  - 'my-cert-manager-webhook-ca'
+  verbs: ["get", "list", "watch", "update"]
+# It's not possible to grant CREATE permission on a single resourceName.
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create"]
+---
+# Source: cert-manager/templates/webhook-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-cert-manager-webhook:dynamic-serving
+  namespace: "cert-manager"
+  labels:
+    app: webhook
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/instance: my-cert-manager
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "webhook"
+    helm.sh/chart: cert-manager-v1.3.0
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: my-cert-manager-webhook:dynamic-serving
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: my-cert-manager-webhook
+  namespace: cert-manager
