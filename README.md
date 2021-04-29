@@ -20,11 +20,15 @@ working together.
 
 A simple example to generalize how to define and enforce configuration.
 
+### [Using Hierarchical Repos with Config Sync](hierarchical-format/)
+
+Demonstrates how to set up a hierarchical repository for Config Sync.
+
 ### [Locality-Specific Policy](locality-specific-policy/)
 
 Configure policy to apply only to resources in specific regions.
 
-### [Namespace Inheritance](namspace-inheritance/) 
+### [Namespace Inheritance](namespace-inheritance/) 
 
 Shows how to use namespace inheritance with a Config Sync hierarchical repo. 
 
