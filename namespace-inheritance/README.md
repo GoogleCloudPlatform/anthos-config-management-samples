@@ -151,7 +151,6 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   ```console
   NAMESPACE     NAME               ROLE                    AGE
   analytics     eng-admin          Role/eng-viewer         10m
-  analytics     mike-rolebinding   ClusterRole/foo-admin   18h
   analytics     viewers            ClusterRole/view        18h
   gamestore     bob-rolebinding    ClusterRole/foo-admin   18h
   gamestore     eng-admin          Role/eng-viewer         10m
@@ -166,8 +165,6 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   - The `eng-admin` rolebinding is created in namespaces under the `eng`
     [abstract namespace directory](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/namespace-scoped-objects#abstract-namespace-config)
     because it is inherited from `config/namespaces/eng/eng-rolebinding.yaml`.
-  - `mike-rolebinding` is created in the `analytics` namespace
-    because of the config `config/namespaces/eng/analytics/mike-rolebinding.yaml`.
   - `bob-rolebinding` is created in the `gamestore` namespace
     because of the config `config/namespaces/eng/gamestore/bob-rolebinding.yaml`.
 
