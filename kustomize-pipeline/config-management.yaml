@@ -1,0 +1,15 @@
+# config-management.yaml
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+spec:
+  git:
+    # Change this to point to your repo
+    syncRepo: https://github.com/YOUR_USERNAME/YOUR_REPO
+    # We recommend securing your source repository.
+    # Other supported secretType: `ssh`, `cookiefile`, `token`, `gcenode`.
+    secretType: none
+    policyDir: deploy-config/
+    syncBranch: main
+  sourceFormat: unstructured

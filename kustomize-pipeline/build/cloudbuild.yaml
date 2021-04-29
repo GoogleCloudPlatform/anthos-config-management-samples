@@ -1,0 +1,38 @@
+steps:
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
+  id: kustomize-render
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    kustomize build source-config --output deploy-config/
+  secretEnv: ['GITHUB_TOKEN']
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
+  id: commit-output
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    REPO_URL=`git config --get remote.origin.url`
+    REPO_NAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\2#p'`
+    GITHUB_USERNAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\1#p'`
+
+    git config user.name "Cloud Build"
+    git config user.email "robot@noreply.kustomize.io"
+    git remote set-url origin https://$${GITHUB_USERNAME}:$$GITHUB_TOKEN@github.com/$${GITHUB_USERNAME}/$${REPO_NAME}.git
+
+    sed -i "s/Last sync: \`.......\`/Last sync: \`${SHORT_SHA}\`/g" deploy-config/README.md
+    git add deploy-config/
+
+    git commit -m "Rendered: ${SHORT_SHA}
+    Built from commit ${COMMIT_SHA} of source-config/"
+    git push origin HEAD:main
+  secretEnv: ['GITHUB_TOKEN']
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_ID}/secrets/github-token/versions/1 
+    env: 'GITHUB_TOKEN'
