@@ -199,13 +199,13 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   
   Example Output:
   ```console
-  NAMESPACE   NAME        AGE     REQUEST                    LIMIT
-  analytics   pod-quota   7h19m   pods: 0/1, secrets: 1/5    
-  gamestore   pod-quota   7h19m   pods: 0/5, secrets: 1/10  
+  NAMESPACE   NAME    AGE     REQUEST                                   LIMIT
+  analytics   quota   7h19m   cpu: 0/100m, memory: 0/100Mi, pods: 0/1   
+  gamestore   quota   7h19m   cpu: 0/200m, memory: 0/200Mi, pods: 0/1  
   ```
 
   Explanation:
-  - The `pod-quota` resourcequota is created in the `analytics` namespace because the `analytics-selector` limits which
+  - The `quota` resourcequota is created in the `analytics` namespace because the `analytics-selector` limits which
     namespaces can inherit that config.
-  - The `pod-quota` resourcequota is created in the `gamestore` namespace because the `gamestore-selector` limits which
+  - The `quota` resourcequota is created in the `gamestore` namespace because the `gamestore-selector` limits which
     namespaces can inherit that config.

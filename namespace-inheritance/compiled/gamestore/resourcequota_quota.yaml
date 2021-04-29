@@ -6,12 +6,13 @@ metadata:
     configmanagement.gke.io/cluster-name: defaultcluster
     configmanagement.gke.io/namespace-selector: gamestore-selector
     configmanagement.gke.io/source-path: config/namespaces/eng/quota.yaml
-    configsync.gke.io/declared-fields: '{"f:metadata":{"f:annotations":{"f:configmanagement.gke.io/namespace-selector":{}}},"f:spec":{"f:hard":{"f:pods":{},"f:secrets":{}}}}'
+    configsync.gke.io/declared-fields: '{"f:metadata":{"f:annotations":{"f:configmanagement.gke.io/namespace-selector":{}}},"f:spec":{"f:hard":{"f:cpu":{},"f:memory":{},"f:pods":{}}}}'
   labels:
     configsync.gke.io/declared-version: v1
-  name: pod-quota
+  name: quota
   namespace: gamestore
 spec:
   hard:
-    pods: "5"
-    secrets: "10"
+    cpu: 200m
+    memory: 200Mi
+    pods: "1"
