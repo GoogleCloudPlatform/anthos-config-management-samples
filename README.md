@@ -68,6 +68,11 @@ Manage an application with Multi-Cluster Ingress using Anthos Config Management,
 
 Manage an application spanning multiple GCP projects, across dev and prod environments, with Config Sync, Kustomize, and Cloud Build. 
 
+### [Namespace-specific policy](namespace-specific-policy/)
+
+Configure namespace specific policies such as Role, RoleBinding and
+NetworkPolicy.
+
 ## CRDs
 
 ### [ConfigManagement](crds/)

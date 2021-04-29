@@ -1,0 +1,6 @@
+resources:
+- namespace.yaml
+- rolebinding.yaml
+- role.yaml
+- networkpolicy.yaml
+
