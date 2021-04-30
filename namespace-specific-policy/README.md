@@ -68,7 +68,8 @@ An overlay is a kustomization that depends on another customization. In this exa
 
 After the update, you should rebuild the kustomize output for each namespace by revoking the `render.sh` script.
 ```
-$ cd acm-samples/namespace-specific-policy
+$ cd acm-samples && git checkout init
+$ cd namespace-specific-policy
 $ ./scripts/render.sh
 ```
 
@@ -77,7 +78,7 @@ Then you can commit and push the update.
 ```
 $ git add .
 $ git commit -m 'update configuration'
-$ git push origin main
+$ git push
 ```
 
 Note that in this example, the kustomize output is written into a different
