@@ -50,16 +50,16 @@ Namespace: tenant-a
 
 - RoleBinding. For each tenant, the RoleBinding is for a different Group. For example, in `config/tenant-a`, the RoleBinding is for the group `tenant-a-admin@mydomain.com`. This is achieved by applying the patch file `config/tenant-a/rolebinding.yaml`. So the RoleBinding from the `base` is overwritten.
 
-Fork the example repository into your organization and clone the forked repo locally.
+
+### [optional] Update the namespace specific policies
+If you need to update some configuration, you need to fork this example repository into your organization
+and clone the forked repo locally.
 
 ```
 $ git clone https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples acm-samples
 ```
 
-After this, the example configuration is under your local directory `acm-samples/namespace-specific-policy`.
-
-### [optional] Update the namespace specific policies
-If you need to update some configuration, you can follow the instructions in this session. It is optional and shouldn’t affect the steps below.
+Then you can follow the instructions in this session. It is optional and shouldn’t affect the steps below.
 #### Update the base
 When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/config/base`, the change will be propagated to configuration for all of `tenant-a`, `tenant-b` and `tenant-c`.
 #### Update an overlay
@@ -87,6 +87,9 @@ the kustomize output into a different Git repository if desired.
 ## Sync namespace specific policies
 
 Now you can configure ConfigSync to sync these policies to the cluster.
+You can do this either using the GCP console or `kubectl apply`.
+
+### Using GCP console
 
 Following the console instructions for
 [configuring Config Sync](https://cloud.google.com/anthos-config-management/docs/how-to/installing-config-sync),
@@ -94,12 +97,35 @@ you need to
 
 - Select **None** in the **Git Repository Authentication for ACM** section
 - Select **Enable Config Sync** in the **ACM settings for your clusters** section
-   - the **URL** should be the Git repository url for your fork: `https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git`.
-   - the **Branch** should be `main`.
+   - If you're using your forked repo, the **URL** should be the Git repository url for your fork: `https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git`; otherwise the **URL** should be `https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git`
+   - the **Branch** should be `init`.
    - the **Tag/Commit** should be `HEAD`.
    - the **Source format** field should **unstructured**.
-   - the **Policy directory** field should be `namespace-specific-configuration/deploy`.
+   - the **Policy directory** field should be `namespace-specific-policy/deploy`.
 
+### Using kubectl
+
+You can also use `kubectl apply` to configure ConfigSync.
+
+```
+cat << EOF > config-management.yaml
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+spec:
+  git:
+    policyDir: namespace-specific-policy/deploy
+    secretType: none
+    syncBranch: init
+    # If you're using your forked repo,
+    # syncRepo field should be https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git
+    syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git
+  sourceFormat: unstructured
+EOF
+
+kubectl apply -f config-management.yaml
+```
 
 ## Verify namespace specific policies are synced
 Now you can verify that the namespace specific policies are synced to the cluster.
@@ -134,4 +160,9 @@ $ git push
 
 When the last commit from the root repository is synced, the three namespace `tenant-a`, `tenant-b` and `tenant-c` are deleted from the cluster.
 
+To stop the syncing using ConfigSync, you can delete the ConfigManagement
+resource.
 
+```
+kubectl delete -f config-management.yaml
+```
