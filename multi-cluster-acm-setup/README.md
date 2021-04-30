@@ -2,7 +2,7 @@
 
 This tutorial demonstrates how to deploy multiple GKE clusters and install Anthos Config Management on them.
 
-When finished with this tutorial, two GKE clusters will be running in a shared project on a shared network in two different regions and ACM will be ready to configure.
+When finished with this tutorial, two GKE clusters will be running in a shared project on a shared network in two different regions with ACM installed and ready to be configured.
 
 The goal of this tutorial is to simplify setup for subsequent tutorials.
 
@@ -27,7 +27,7 @@ gcloud projects create "${PLATFORM_PROJECT_ID}" \
 
 [Learn how to confirm that billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
-To link a project to a Cloud Billing account, you need `resourcemanager.projects.createBillingAssignment` on the project (included in `owner`, which you get if you created the project) AND `billing.resourceAssociations.create` on the Cloud Billing account.
+To link a project to a Cloud Billing account, you need the following permissions: `resourcemanager.projects.createBillingAssignment` on the project (included in `owner`, which you get if you created the project) AND `billing.resourceAssociations.create` on the Cloud Billing account.
 
 ```
 BILLING_ACCOUNT_ID="AAAAAA-BBBBBB-CCCCCC"
@@ -66,7 +66,7 @@ gcloud compute networks create ${NETWORK}
 
 **Configure firewalls to allow unrestricted internal network traffic:**
 
-If you have the `compute.skipDefaultNetworkCreation` [organization policy constraint](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) enabled, you may need to configure this firewall. Otherwise, an equivelent set of firewalls should already be configured on the default network.
+If you have the `compute.skipDefaultNetworkCreation` [organization policy constraint](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) enabled, you may need to configure this firewall. Otherwise, an equivalent set of firewalls should already be configured on the default network.
 
 ```
 gcloud compute firewall-rules create allow-all-internal \
@@ -77,7 +77,7 @@ gcloud compute firewall-rules create allow-all-internal \
 
 **Deploy Cloud NAT to allow egress from private GKE nodes:**
 
-Because this tutorial provisions clusters with private nodes in multiple regions, the subnets the nodes use need Cloud NAT configured to allow egress to the internet.
+Because this tutorial provisions clusters with private nodes, those nodes need Cloud NAT configured to allow egress to the internet. To route egress from two subnets in different regions, you need to configure a router for each region.
 
 ```
 # Create a us-west1 Cloud Router
@@ -109,9 +109,9 @@ gcloud compute routers nats create nat-us-east1 \
 
 **Deploy the GKE clusters:**
 
-The clusters are VPC-native with private nodes, public control planes, Workload Identity, and cluster autoscaling.
+The clusters are VPC-native with private nodes, public control planes, Workload Identity enabled, and cluster autoscaling enabled.
 
-For simplicity, this tutorial uses a public control plane. For added security, you may configure private control planes instead, with a more targetted CIDR for authorized networks, but that will require additional VPN or interconnect configuration for you to be able to access the control plane.
+For simplicity, this tutorial uses a public control plane. For added security, you may configure private control planes instead, with a more targeted CIDR for authorized networks, but that will require additional VPN or interconnect configuration for you to be able to access the control plane.
 
 ```
 gcloud container clusters create cluster-west \
@@ -134,7 +134,7 @@ gcloud container clusters create cluster-east \
     --enable-ip-alias \
     --enable-private-nodes \
     --master-ipv4-cidr 10.64.0.16/28 \
-    --enable-master-authorized-networks \ 
+    --enable-master-authorized-networks \
     --master-authorized-networks 0.0.0.0/0 \
     --enable-stackdriver-kubernetes \
     --workload-pool "${PLATFORM_PROJECT_ID}.svc.id.goog" \
@@ -159,32 +159,44 @@ gcloud container clusters get-credentials cluster-east --region us-east1
 CLUSTER_EAST_CONTEXT=$(kubectl config current-context)
 ```
 
-**Register the clusters with Hub:**
+## Register the GKE clusters with Hub**
 
-This method for registering with Hub uses Workload Identity, which is prefered from a security standpoint. If you do not have Workload Identity configured on the clusters, you will need to manage the service accounts, security keys, and IAM policy yourself.
+[Hub](https://www.google.com/url?q=https://cloud.google.com/sdk/gcloud/reference/container/hub) is a cluster registry for discovery and feature management. In order to use features like Anthos Config Management and Multi-Cluster Ingress, we first need to register the cluster with Hub.
+
+Registering with Hub will install the Connect Agent on the cluster. To make permission management for the agent easier and more secure, use workload identity mode. If you do not have Workload Identity configured on the clusters, you will need to manage the service accounts, security keys, and IAM policy yourself. For more details, see [Registering a cluster](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster).
+
+**Register a GKE cluster using Workload Identity (recommended):**
 
 ```
-gcloud container hub memberships register cluster-west \
+gcloud container hub memberships register "cluster-west" \
     --gke-cluster us-west1/cluster-west \
     --enable-workload-identity
 
-gcloud container hub memberships register cluster-east \
+gcloud container hub memberships register "cluster-east" \
     --gke-cluster us-east1/cluster-east \
     --enable-workload-identity
 ```
 
-**Deploy Anthos Config Management:**
+## Deploy Anthos Config Management**
 
-**TODO**: replace manual deploy with `gcloud container hub config-management apply`, once it supports multi-repo.
+[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is an operator that manages the lifecycle of other operators, including Config Sync, Policy Controller, Binary Authorization, Hierarchy Controller, and Config Connector.
+
+Installing ACM now will enable you to later configure those other components using a `ConfigManagement` resource.
+
+**Deploy ACM using kubectl (recommended):**
 
 ```
 gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
 
-kubectl config use-context ${CLUSTER_WEST_CONTEXT}
-kubectl apply -f config-management-operator.yaml
+kubectl apply -f config-management-operator.yaml --context ${CLUSTER_WEST_CONTEXT}
 
-kubectl config use-context ${CLUSTER_EAST_CONTEXT}
-kubectl apply -f config-management-operator.yaml
+kubectl apply -f config-management-operator.yaml --context ${CLUSTER_EAST_CONTEXT}
+```
+
+**Deploy ACM using Hub:**
+
+```
+gcloud alpha container hub config-management enable
 ```
 
 ## Validating success
@@ -192,10 +204,11 @@ kubectl apply -f config-management-operator.yaml
 **Verify expected namespaces exist:**
 
 ```
-kubectl get ns
+kubectl get ns --context ${CLUSTER_WEST_CONTEXT}
+kubectl get ns --context ${CLUSTER_EAST_CONTEXT}
 ```
 
-Should include:
+Each cluster should have the following namespaces:
 - config-management-monitoring
 - config-management-system
 - default
@@ -203,9 +216,17 @@ Should include:
 - kube-node-lease
 - kube-public
 - kube-system
-- resource-group-system
+
+## Next steps
+
+The clusters you deployed in this tutorial can be used in the following tutorials:
+- [Multi-Cluster Fan-out](../multi-cluster-fan-out/)
+- [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/)
+- [Multi-Cluster Ingress](../multi-cluster-ingress/)
 
 ## Cleaning up
+
+When you've finished with the multi-cluster tutorials, follow these steps to clean up the resources to avoid incurring ongoing charges.
 
 **Delete the GKE clusters:**
 
@@ -225,11 +246,3 @@ gcloud compute networks delete ${NETWORK}
 ```
 gcloud projects delete "${PLATFORM_PROJECT_ID}"
 ```
-
-## Next steps
-
-Follow one of these tutorials:
-- [Multi-Cluster Fan-out](../multi-cluster-fan-out/)
-- [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/)
-- [Multi-Cluster Ingress](../multi-cluster-ingress/)
-- [Multi-Cluster Custom Metric Autoscaling](../multi-cluster-custom-metric-autoscaling/)
