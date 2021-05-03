@@ -121,6 +121,7 @@ gcloud container clusters create cluster-west \
     --enable-ip-alias \
     --enable-private-nodes \
     --master-ipv4-cidr 10.64.0.0/28 \
+    --enable-master-authorized-networks \
     --master-authorized-networks 0.0.0.0/0 \
     --enable-stackdriver-kubernetes \
     --workload-pool "${PLATFORM_PROJECT_ID}.svc.id.goog" \
@@ -133,6 +134,7 @@ gcloud container clusters create cluster-east \
     --enable-ip-alias \
     --enable-private-nodes \
     --master-ipv4-cidr 10.64.0.16/28 \
+    --enable-master-authorized-networks \ 
     --master-authorized-networks 0.0.0.0/0 \
     --enable-stackdriver-kubernetes \
     --workload-pool "${PLATFORM_PROJECT_ID}.svc.id.goog" \
