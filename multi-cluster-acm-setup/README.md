@@ -173,7 +173,7 @@ gcloud container clusters get-credentials cluster-east --region us-east1
 CLUSTER_EAST_CONTEXT=$(kubectl config current-context)
 ```
 
-## Register the GKE clusters with Hub**
+## Register the GKE clusters with Hub
 
 [Hub](https://www.google.com/url?q=https://cloud.google.com/sdk/gcloud/reference/container/hub) is a cluster registry for discovery and feature management. In order to use features like Anthos Config Management and Multi-Cluster Ingress, we first need to register the cluster with Hub.
 
@@ -191,13 +191,17 @@ gcloud container hub memberships register "cluster-east" \
     --enable-workload-identity
 ```
 
-## Deploy Anthos Config Management**
+## Deploy Anthos Config Management
 
 [Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is an operator that manages the lifecycle of other operators, including Config Sync, Policy Controller, Binary Authorization, Hierarchy Controller, and Config Connector.
 
 Installing ACM now will enable you to later configure those other components using a `ConfigManagement` resource.
 
+Choose whether to manage ACM with kubectl or Hub. This choice will impact how you configure ACM and its components later.
+
 **Deploy ACM using kubectl (recommended):**
+
+Using kubectl to manage ACM is currently recommended because it gives you more control over upgrades and configuration. 
 
 ```
 gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
@@ -208,6 +212,8 @@ kubectl apply -f config-management-operator.yaml --context ${CLUSTER_EAST_CONTEX
 ```
 
 **Deploy ACM using Hub:**
+
+Using Hub to manage ACM is optional and may be easier in some cases because it does not require you to have direct network access to the cluster nor local credentials configured for kubectl.
 
 ```
 gcloud alpha container hub config-management enable
