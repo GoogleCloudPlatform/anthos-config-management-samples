@@ -15,9 +15,14 @@ The goal of this tutorial is to simplify setup for subsequent tutorials.
 
 **Create or select a project:**
 
+- Replace `PROJECT_ID` with the ID of the Project (ex: `example-platform-1234`)
+- Replace `ORG_ID` with the ID of the Organization (ex: `123456789012`)
+
+These values will be stored in environment variables for later use.
+
 ```
-PLATFORM_PROJECT_ID="example-platform-1234"
-ORGANIZATION_ID="123456789012"
+PLATFORM_PROJECT_ID="PROJECT_ID"
+ORGANIZATION_ID="ORG_ID"
 
 gcloud projects create "${PLATFORM_PROJECT_ID}" \
     --organization ${ORGANIZATION_ID}
@@ -29,11 +34,11 @@ gcloud projects create "${PLATFORM_PROJECT_ID}" \
 
 To link a project to a Cloud Billing account, you need the following permissions: `resourcemanager.projects.createBillingAssignment` on the project (included in `owner`, which you get if you created the project) AND `billing.resourceAssociations.create` on the Cloud Billing account.
 
-```
-BILLING_ACCOUNT_ID="AAAAAA-BBBBBB-CCCCCC"
+- Replace `BILLING_ACCOUNT_ID` with the ID of the Cloud Billing account (ex: `AAAAAA-BBBBBB-CCCCCC`)
 
+```
 gcloud alpha billing projects link "${PLATFORM_PROJECT_ID}" \
-    --billing-account ${BILLING_ACCOUNT_ID}
+    --billing-account "BILLING_ACCOUNT_ID"
 ```
 
 ## Setting up your environment
@@ -59,8 +64,13 @@ gcloud services enable \
 
 If you have the `compute.skipDefaultNetworkCreation` [organization policy constraint](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) enabled, you may have to create a network. Otherwise, just set the `NETWORK` variable for later use.
 
+- Replace `NETWORK_NAME` with the name of the Network (ex: `default`)
+
+This value will be stored in an environment variable for later use.
+
 ```
-NETWORK="default"
+NETWORK="NETWORK_NAME"
+
 gcloud compute networks create ${NETWORK}
 ```
 
@@ -143,6 +153,8 @@ gcloud container clusters create cluster-east \
 
 **Authenticate with cluster-west:**
 
+The context name will be stored in an environment variable for later use.
+
 ```
 gcloud container clusters get-credentials cluster-west --region us-west1
 
@@ -151,6 +163,8 @@ CLUSTER_WEST_CONTEXT=$(kubectl config current-context)
 ```
 
 **Authenticate with cluster-east:**
+
+The context name will be stored in an environment variable for later use.
 
 ```
 gcloud container clusters get-credentials cluster-east --region us-east1
