@@ -15,17 +15,17 @@ The goal of this tutorial is to simplify setup for subsequent tutorials.
 
 **Create or select a project:**
 
-- Replace `PROJECT_ID` with the ID of the Project (ex: `example-platform-1234`)
-- Replace `ORG_ID` with the ID of the Organization (ex: `123456789012`)
+- Replace `<PROJECT_ID>` with the ID of the Project (ex: `example-platform-1234`)
+- Replace `<ORG_ID>` with the ID of the Organization (ex: `123456789012`)
 
 These values will be stored in environment variables for later use.
 
 ```
-PLATFORM_PROJECT_ID="PROJECT_ID"
-ORGANIZATION_ID="ORG_ID"
+PLATFORM_PROJECT_ID="<PROJECT_ID>"
+ORGANIZATION_ID="<ORG_ID>"
 
 gcloud projects create "${PLATFORM_PROJECT_ID}" \
-    --organization ${ORGANIZATION_ID}
+    --organization "${ORGANIZATION_ID}"
 ```
 
 **Enable billing for your project:**
@@ -34,11 +34,11 @@ gcloud projects create "${PLATFORM_PROJECT_ID}" \
 
 To link a project to a Cloud Billing account, you need the following permissions: `resourcemanager.projects.createBillingAssignment` on the project (included in `owner`, which you get if you created the project) AND `billing.resourceAssociations.create` on the Cloud Billing account.
 
-- Replace `BILLING_ACCOUNT_ID` with the ID of the Cloud Billing account (ex: `AAAAAA-BBBBBB-CCCCCC`)
+- Replace `<BILLING_ACCOUNT_ID>` with the ID of the Cloud Billing account (ex: `AAAAAA-BBBBBB-CCCCCC`)
 
 ```
 gcloud alpha billing projects link "${PLATFORM_PROJECT_ID}" \
-    --billing-account "BILLING_ACCOUNT_ID"
+    --billing-account "<BILLING_ACCOUNT_ID>"
 ```
 
 ## Setting up your environment
@@ -64,14 +64,14 @@ gcloud services enable \
 
 If you have the `compute.skipDefaultNetworkCreation` [organization policy constraint](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) enabled, you may have to create a network. Otherwise, just set the `NETWORK` variable for later use.
 
-- Replace `NETWORK_NAME` with the name of the Network (ex: `default`)
+- Replace `<NETWORK>` with the name of the Network (ex: `default`)
 
 This value will be stored in an environment variable for later use.
 
 ```
-NETWORK="NETWORK_NAME"
+NETWORK="<NETWORK>"
 
-gcloud compute networks create ${NETWORK}
+gcloud compute networks create "${NETWORK}"
 ```
 
 **Configure firewalls to allow unrestricted internal network traffic:**
