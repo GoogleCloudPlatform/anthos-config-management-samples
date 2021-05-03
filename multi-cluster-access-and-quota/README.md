@@ -275,8 +275,6 @@ gcloud alpha container hub config-management apply \
   --config config-management-east.yaml
 ```
 
-**TODO**: Validate `gcloud alpha container hub config-management apply` supports ConfigSync multi-repo.
-
 ## Validating success
 
 **Lookup latest commit SHA:**

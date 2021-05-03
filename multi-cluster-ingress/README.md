@@ -1,10 +1,10 @@
 # Multi-Cluster Ingress
 
-This example shows how to manage an application with Multi-Cluster Ingress using Anthos Config Management, GitOps, and Kustomize.
+This tutorial shows how to manage an application with Multi-Cluster Ingress using Anthos Config Management, GitOps, and Kustomize.
 
-This example is based on [Deploying Ingress across clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), except it uses ConfigSync and kustomize to deploy to multiple multi-tenant clusters.
+This tutorial is based on [Deploying Ingress across clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), except it uses ConfigSync and kustomize to deploy to multiple multi-tenant clusters.
 
-In addition, this example shows how to use the Kustomize configuration from [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/) to manage cluster resources seperately from namespace resources, which is useful if you have a platform team managing clusters for seperate application teams.
+In addition, this tutorial shows how to use the Kustomize configuration from [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/) to manage cluster resources seperately from namespace resources, which is useful if you have a platform team managing clusters for seperate application teams.
 
 # Goals
 
@@ -23,7 +23,7 @@ By using backends on multiple clusters, the application can reach very **high sc
 
 ## Tenant Workloads
 
-This example demonstrates one tenant with a workload that span multiple clusters:
+This tutorial demonstrates one tenant with a workload that span multiple clusters:
 
 - **zoneprinter** - an echo service behind Multi-Cluster Ingress
 
@@ -86,13 +86,13 @@ This example demonstrates one tenant with a workload that span multiple clusters
 
 # Config Cluster
 
-In this example, the `cluster-west` cluster will be used as the [config cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress-setup#specifying_a_config_cluster) for Multi-cluster Ingress. The [MultiClusterIngress](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress#multiclusteringress_spec) and [MultiClusterService](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress#multiclusterservice_spec) resources in the `mci.yaml` file are only being deployed to the `cluster-west` cluster.
+In this tutorial, the `cluster-west` cluster will be used as the [config cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress-setup#specifying_a_config_cluster) for Multi-cluster Ingress. The [MultiClusterIngress](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress#multiclusteringress_spec) and [MultiClusterService](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress#multiclusterservice_spec) resources in the `mci.yaml` file are only being deployed to the `cluster-west` cluster.
 
 In a production environment, it may be desirable to use a third cluster as the config cluster, to reduce the risk that the config cluster is unavailable to make multi-cluster changes, but in this case we're using one of the two workload clusters in order to reduce costs.
 
 ## Kustomize
 
-In this example, some resources differ between namespaces and clusters.
+In this tutorial, some resources differ between namespaces and clusters.
 
 Because of this, the resources specific to each cluster and the same on each cluster are managed in different places and merged together using Kustomize. Likewise, the resources specific to each namespace and the same in each namespace are managed in different places and merged together using Kustomize. This is not strictly required, but it may help reduce the risk of misconfiguration between clusters and make it easier to roll out changes consistently.
 
@@ -104,11 +104,11 @@ If you don't want to use Kustomize, just use the resources under the `deploy/` d
 
 ## ConfigSync
 
-This example installs ConfigSync on two clusters and configures them to pull config from different `deploy/clusters/${cluster-name}/` directories in the same Git repository.
+This tutorial installs ConfigSync on two clusters and configures them to pull config from different `deploy/clusters/${cluster-name}/` directories in the same Git repository.
 
 ## Progressive rollouts
 
-This example demonstrates the deployment of resources to multiple clusters at the same time. In a production environment, you may want to reduce the risk of rolling out changes by deploying to each cluster individually and/or by deploying to a staging environment first.
+This tutorial demonstrates the deployment of resources to multiple clusters at the same time. In a production environment, you may want to reduce the risk of rolling out changes by deploying to each cluster individually and/or by deploying to a staging environment first.
 
 One way to do that is to change `.spec.git.revision` in the RootSync for each cluster and RepoSync for each namespace to point to a specific commit SHA or tag. That way, ConfigSync will pull from a specific revision for each cluster and namespace, instead of pulling from `HEAD` of the `main` branch everywhere. This method may help protect against complete outage and allow for easy rollbacks, at the cost of a few more commits per rollout.
 
@@ -183,14 +183,22 @@ gcloud alpha container hub ingress enable \
     --config-membership projects/${PROJECT}/locations/global/memberships/cluster-west
 ```
 
-This configures cluster-west as the cluster to manage MultiClusterIngress and MultiClusterService resources for the Environ.
+This configures cluster-west as the cluster to manage `MultiClusterIngress` and `MultiClusterService` resources for the Environ.
 
 ## Configure Anthos Config Management for platform config
 
-```
-kubectl config use-context ${CLUSTER_WEST_CONTEXT}
+[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is used to install ConfigSync. ConfigSync can then be configured using the `RootSync` and `RepoSync` resources.
 
-kubectl apply -f - << EOF
+`RootSync` can be used to manage any cluster resource, including both cluster-scoped and namespace-scoped resources. Only on `RootSync` is allowed per cluster.
+
+`RepoSync` can be used to manage resources in a single namespace. ConfigSync supports one `RepoSync` per namespace.
+
+**Configure ACM using kubectl (recommended):**
+
+If you installed ACM using kubectl, you must also configure `ConfigManagement` using kubectl.
+
+```
+kubectl apply --context ${CLUSTER_WEST_CONTEXT} -f - << EOF
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
 metadata:
@@ -200,27 +208,7 @@ spec:
   enableMultiRepo: true
 EOF
 
-# Wait a few seconds for ConfigManagement to install the RootSync CRD
-
-kubectl apply -f - << EOF
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: ${PLATFORM_REPO}
-    revision: HEAD
-    branch: main
-    dir: "deploy/clusters/cluster-west"
-    auth: none
-EOF
-
-kubectl config use-context ${CLUSTER_EAST_CONTEXT}
-
-kubectl apply -f - << EOF
+kubectl apply --context ${CLUSTER_EAST_CONTEXT} -f - << EOF
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
 metadata:
@@ -229,10 +217,16 @@ spec:
   clusterName: cluster-east
   enableMultiRepo: true
 EOF
+```
 
-# Wait a few seconds for ConfigManagement to install the RootSync CRD
+**Wait a few seconds for ConfigManagement to install the RootSync CRD.**
 
-kubectl apply -f - << EOF
+**Configure RootSync using kubectl (recommended):**
+
+If you installed ACM using kubectl, you must also configure `RootSync` using kubectl.
+
+```
+kubectl apply --context ${CLUSTER_WEST_CONTEXT} -f - << EOF
 apiVersion: configsync.gke.io/v1beta1
 kind: RootSync
 metadata:
@@ -242,14 +236,80 @@ spec:
   sourceFormat: unstructured
   git:
     repo: ${PLATFORM_REPO}
-    revision: HEAD
     branch: main
+    revision: HEAD
+    dir: "deploy/clusters/cluster-west"
+    auth: none
+EOF
+
+kubectl apply --context ${CLUSTER_EAST_CONTEXT} -f - << EOF
+apiVersion: configsync.gke.io/v1beta1
+kind: RootSync
+metadata:
+  name: root-sync
+  namespace: config-management-system
+spec:
+  sourceFormat: unstructured
+  git:
+    repo: ${PLATFORM_REPO}
+    branch: main
+    revision: HEAD
     dir: "deploy/clusters/cluster-east"
     auth: none
 EOF
 ```
 
+**Configure ACM and RootSync using Hub:**
+
+If you installed ACM using Hub, you must also configure `ConfigManagement` using Hub.
+
+When using Hub to manage ACM configuration, the `RootSync` resource will automatically be generated using the legacy configuration syntax in the `ConfigManagement` resource.
+
+```
+cat > config-management-west.yaml << EOF
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+spec:
+  sourceFormat: unstructured
+  git:
+    syncRepo: ${PLATFORM_REPO}
+    syncBranch: main
+    syncRev: HEAD
+    policyDir: "deploy/clusters/cluster-west"
+    secretType: none
+EOF
+
+gcloud alpha container hub config-management apply \
+  --membership "cluster-west" \
+  --config config-management-west.yaml
+
+cat > config-management-east.yaml << EOF
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
+metadata:
+  name: config-management
+spec:
+  sourceFormat: unstructured
+  git:
+    syncRepo: ${PLATFORM_REPO}
+    syncBranch: main
+    syncRev: HEAD
+    policyDir: "deploy/clusters/cluster-east"
+    secretType: none
+EOF
+
+gcloud alpha container hub config-management apply \
+  --membership "cluster-east" \
+  --config config-management-east.yaml
+```
+
+**TODO**: Validate `gcloud alpha container hub config-management apply` supports ConfigSync multi-repo.
+
 ## Configure Anthos Config Management for zoneprinter config
+
+Unlike `RootSync` resources, which bootstrap GitOps for each cluster, `RepoSync` resources can themselves be managed by GitOps along with the rest of the cluster config.
 
 ```
 cd .github/platform/
@@ -266,8 +326,8 @@ spec:
   sourceFormat: unstructured
   git:
     repo: ${ZONEPRINTER_REPO}
-    revision: HEAD
     branch: main
+    revision: HEAD
     dir: "deploy/clusters/cluster-west/namespaces/zoneprinter"
     auth: none
 EOF
@@ -284,8 +344,8 @@ spec:
   sourceFormat: unstructured
   git:
     repo: ${ZONEPRINTER_REPO}
-    revision: HEAD
     branch: main
+    revision: HEAD
     dir: "deploy/clusters/cluster-east/namespaces/zoneprinter"
     auth: none
 EOF
