@@ -250,18 +250,36 @@ When you've finished with the multi-cluster tutorials, follow these steps to cle
 
 **Delete the GKE clusters:**
 
+Clusters cannot be undeleted with a project, so it's recommended to delete them manually before deleting the project. 
+Clusters also generate firewalls which may block network deletion.
+
 ```
 gcloud container clusters delete cluster-west --region us-west1
 gcloud container clusters delete cluster-east --region us-east1
 ```
 
+**Delete the firewalls:**
+
+If you are not planning to delete the project, but want to delete the network, you must first delete firewalls using the network.
+
+```
+gcloud compute firewall-rules list \
+    --filter "network=${NETWORK}" \
+    --format "table[no-heading](name)" \
+    | xargs -n 1 gcloud compute firewall-rules delete
+```
+
 **Delete the network:**
+
+If you are not planning to delete the project, but want to re-use it, you may want to delete the network.
 
 ```
 gcloud compute networks delete ${NETWORK}
 ```
 
 **Delete the project:**
+
+Deleting the project will delete any resources contained in the project.
 
 ```
 gcloud projects delete "${PLATFORM_PROJECT_ID}"
