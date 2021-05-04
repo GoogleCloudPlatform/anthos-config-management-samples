@@ -123,7 +123,7 @@ Project number is: ########
 Updated IAM policy for project [project-id].
 ```
 
-6. **View the Cloud Build pipeline.** This pipeline uses kustomize to render dev and prod manifests using the manifests in the `base/` directory.
+7. **View the Cloud Build pipeline.** This pipeline uses kustomize to render dev and prod manifests using the manifests in the `base/` directory.
 
 ```
 cat foo-config-source/cloudbuild.yaml 
@@ -198,10 +198,10 @@ commonLabels:
 **Note** - this demo shows a simple pipeline that renders both the `dev` and `prod` manifests at the same time. In a live production environment, you would want to shield the production environment from potential bad config, through automated testing, human reviews, the use of a Code Owners file, and PolicyController checks in CI. See the [Safe Rollouts with Anthos Config Management Guide](https://cloud.google.com/architecture/safe-rollouts-with-anthos-config-management) and the [Policy Controller + Continuous Integration](https://cloud.google.com/anthos-config-management/docs/tutorials/policy-agent-ci-pipeline) guide for more information. 
 
 
-7. **Open the Cloud Console in your prod project, and navigate to Cloud Build**. Click Triggers > Manage Repositories > Connect Repository. Check the `foo-config-source` repo, then click **Done.** 
+8. **Open the Cloud Console in your prod project, and navigate to Cloud Build**. Click Triggers > Manage Repositories > Connect Repository. Check the `foo-config-source` repo, then click **Done.** 
 
 
-8. **From the Cloud Build dashboard, create a Trigger** from the `foo-config-source` repo with the following fields: 
+9. **From the Cloud Build dashboard, create a Trigger** from the `foo-config-source` repo with the following fields: 
 
 - **Trigger name**: Foo-Config-Render
 - **Event**: push to a new branch
@@ -211,15 +211,15 @@ commonLabels:
 
 Click **Create**. 
 
-9. Because we already pushed `cloudbuild.yaml` to the foo-config-source repo before creating this trigger, **let's run it manually to trigger the rendering of the dev and prod repos**. In the triggers list, in the `Foo-Config-Render` row, click **Run** on the right side of the screen and use the default branch value, `main`. The build should run successfully, writing the output of `kustomize build` to the `foo-config-dev` and `foo-config-prod` repos, respectively. 
+10. Because we already pushed `cloudbuild.yaml` to the foo-config-source repo before creating this trigger, **let's run it manually to trigger the rendering of the dev and prod repos**. In the triggers list, in the `Foo-Config-Render` row, click **Run** on the right side of the screen and use the default branch value, `main`. The build should run successfully, writing the output of `kustomize build` to the `foo-config-dev` and `foo-config-prod` repos, respectively. 
 
 ![](screenshots/build-success.png)
 
-10. **Once the build completes, open one of the dev or prod repos.** You should see YAML files populating the repo, and a README update indicating the commit SHA of the `foo-config-source` repo that this repo was last built from. 
+11. **Once the build completes, open one of the dev or prod repos.** You should see YAML files populating the repo, and a README update indicating the commit SHA of the `foo-config-source` repo that this repo was last built from. 
 
 ![screenshot](screenshots/git-output.png)
 
-11. **Install Config Sync** on both clusters. This script updates the ConfigManagement CRD resources in the `install-config/` directory to point to your `foo-config-dev` and `foo-config-prod` repos (for the dev and prod clusters, respectively), then uses the `gcloud alpha container hub config-management apply` to install Config Sync on both clusters, using the `install-config/` resources as configuration.
+12. **Install Config Sync** on both clusters. This script updates the ConfigManagement CRD resources in the `install-config/` directory to point to your `foo-config-dev` and `foo-config-prod` repos (for the dev and prod clusters, respectively), then uses the `gcloud alpha container hub config-management apply` to install Config Sync on both clusters, using the `install-config/` resources as configuration.
 
 ```
 ./5-install-config-sync.sh
@@ -241,7 +241,7 @@ Switched to context "gke_megan-prod4_us-central1-b_prod".
 Waiting for Feature Config Management to be updated...done.
 ```
 
-1.  **Run `nomos status`.** You should see that both your dev and prod clusters are now `synced` to their respective repos. It may take a few minutes for the `SYNCED` status to appear. It's normal to see status errors like `rootsyncs.configsync.gke.io "root-sync" not found` or `KNV2009: Internal error occurred: failed calling webhook`, while Config Sync is setting up.
+13.  **Run `nomos status`.** You should see that both your dev and prod clusters are now `synced` to their respective repos. It may take a few minutes for the `SYNCED` status to appear. It's normal to see status errors like `rootsyncs.configsync.gke.io "root-sync" not found` or `KNV2009: Internal error occurred: failed calling webhook`, while Config Sync is setting up.
 
 ```
 gke_megan-dev4_us-east1-b_dev
@@ -255,7 +255,7 @@ gke_megan-dev4_us-east1-b_dev
   SYNCED   5e5cf84f
 ```
 
-13. **Switch to the `dev` cluster context.** Get namespaces to verify that the resources are synced - you should see the `foo-dev` namespace appear, synced from the `foo-config-dev` repo. 
+14. **Switch to the `dev` cluster context.** Get namespaces to verify that the resources are synced - you should see the `foo-dev` namespace appear, synced from the `foo-config-dev` repo. 
 
 
 ```
