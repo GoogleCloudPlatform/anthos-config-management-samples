@@ -11,9 +11,6 @@ patches:
     - op: replace
       path: /metadata/name
       value: foo-ksa-prod
-    - op: replace
-      path: /metadata/namespace
-      value: foo-prod
 # Pod creators - only give CD pod creation access
 - target:
     kind: RoleBinding
