@@ -119,3 +119,46 @@ Example Output:
   <root>   https://github.com/GoogleCloudPlatform/anthos-config-management-samples/namespace-inheritance/config@init
   SYNCED   <commit-id>
 ```
+
+## Examining your configs
+
+The `config` directory includes ClusterRoles, ClusterRoleBindings, CRDs, Namespaces, RoleBindings, ServiceAccounts,
+ResourceQuotas, NetworkPolicies, LimitRanges and CRs.
+These configs are applied as soon as the Config Sync is configured to read from the repo.
+
+All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label set to `configmanagement.gke.io`.
+
+- List namespaces managed by Config Sync
+  ```console
+  kubectl get ns -l app.kubernetes.io/managed-by=configmanagement.gke.io
+  ```
+
+  Example Output:
+  ```console
+  NAME        STATUS   AGE
+  team-1      Active   28m
+  team-2      Active   28m
+  ```
+
+- List CRDs managed by Config Sync
+  ```console
+  kubectl get crds -A -l app.kubernetes.io/managed-by=configmanagement.gke.io
+  ```
+
+  Example Output:
+  ```console
+  NAME                          CREATED AT
+  crontabs.stable.example.com   2021-05-04T14:58:14Z
+  ```
+
+- List rolebindings managed by Config Sync
+  ```console
+  kubectl get rolebindings -A -l app.kubernetes.io/managed-by=configmanagement.gke.io
+  ```
+
+  Example Output:
+  ```console
+  NAMESPACE   NAME                            ROLE                        AGE
+  team-1      secret-reader                   ClusterRole/secret-reader   29m
+  team-2      secret-admin                    ClusterRole/secret-admin    29m
+  ```
