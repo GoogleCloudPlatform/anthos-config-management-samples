@@ -11,9 +11,6 @@ patches:
     - op: replace
       path: /metadata/name
       value: foo-ksa-dev
-    - op: replace
-      path: /metadata/namespace
-      value: foo-dev
 # Pod creators - give all FooCorp developers access 
 - target:
     kind: RoleBinding
