@@ -122,7 +122,7 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   incubator-2   Active   7h10m
   ```
 
-- List rolebindings managed by Config Sync
+- List roles managed by Config Sync
   ```console
   kubectl get roles -A -l app.kubernetes.io/managed-by=configmanagement.gke.io
   ```
