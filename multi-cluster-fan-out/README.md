@@ -4,6 +4,8 @@ This tutorial shows how to manage Namespaces, RoleBindings, and ResourceQuotas a
 
 The resources in this tutorial are identical across both clusters. So ConfigSync is configured to pull config from the same directory. If you want your config to be different for every cluster, check out the [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/) tutorial instead.
 
+![Architecture Diagram](docs/architecture.png)
+
 ## Clusters
 
 - **cluster-east** - A multi-zone GKE cluster in the us-east1 region.
