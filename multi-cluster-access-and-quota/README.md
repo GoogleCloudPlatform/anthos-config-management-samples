@@ -4,6 +4,8 @@ This tutorial shows how to manage Namespaces, RoleBindings, and ResourceQuotas a
 
 The resources in this tutorial are different for each cluster. So ConfigSync is configured to pull config from different directories. If you want your config to be identical for every cluster, check out the [Multi-Cluster Fan-out](../multi-cluster-fan-out/) tutorial instead.
 
+![Architecture Diagram](docs/architecture.png)
+
 ## Namespace management
 
 In this tutorial, each cluster includes the same namespaces. This is not strictly required, but makes it easier to manage a set of clusters.
@@ -66,14 +68,13 @@ There is also one example of the default quota being overridden for a specific n
 │       │           └── kustomization.yaml
 │       └── cluster-west
 │           ├── kustomization.yaml
-│           ├── namespaces
-│           │   ├── tenant-a
-│           │   │   └── kustomization.yaml
-│           │   ├── tenant-b
-│           │   │   └── kustomization.yaml
-│           │   └── tenant-c
-│           │       └── kustomization.yaml
-│           └── resource-quota.yaml
+│           └── namespaces
+│               ├── tenant-a
+│               │   └── kustomization.yaml
+│               ├── tenant-b
+│               │   └── kustomization.yaml
+│               └── tenant-c
+│                   └── kustomization.yaml
 ├── deploy
 │   └── clusters
 │       ├── cluster-east
