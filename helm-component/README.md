@@ -40,8 +40,11 @@ You can download the helm chart locally and render the manifests upon your local
 Or you can directly render the remote chart.
 - Download and render from local:
   ```shell script
+  # Add the helm chart repository
+  helm repo add cert-manager https://charts.jetstack.io
+
   # Download the chart and unpack it in the local directory.
-  helm pull jetstack/cert-manager --version 1.3.0 --untar
+  helm pull cert-manager/cert-manager --version 1.3.0 --untar
 
   # Render the template and write the rendered manifests into an output directory.
   helm template my-cert-manager cert-manager --namespace cert-manager --output-dir manifests
@@ -49,7 +52,7 @@ Or you can directly render the remote chart.
 - Render from the remote chart:
   ```shell script
   # Render the template from a remote chart and write the rendered manifests into an output directory.
-  helm template my-cert-manager jetstack/cert-manager --version 1.3.0 --namespace cert-manager --output-dir manifests
+  helm template my-cert-manager cert-manager/cert-manager --version 1.3.0 --namespace cert-manager --output-dir manifests
   ```
   
 ### Commit the changes to the repository:
@@ -105,9 +108,14 @@ spec:
 ```
 
 ## Verifying the installation
-You can check the RootSync object status and the installed resources to check if the component is synced successfully.
+
+You can check if the root repository is successfully synced to the cluster by running
 ```shell script
-kubectl get rootsyncs -n config-management-system root-sync -o yaml
+nomos status
+```
+
+You can also check if the helm component is successfully installed by running
+```shell script
 kubectl get all -n cert-manager
 ```
 
