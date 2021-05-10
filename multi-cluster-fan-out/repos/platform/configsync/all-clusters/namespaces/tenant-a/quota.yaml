@@ -3,7 +3,7 @@ kind: ResourceQuota
 metadata:
   labels:
     owner: platform-team
-  name: default
+  name: hard-limit
   namespace: tenant-a
 spec:
   hard:

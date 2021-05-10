@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: default
+  name: hard-limit
 spec:
   hard:
     cpu: "1000"

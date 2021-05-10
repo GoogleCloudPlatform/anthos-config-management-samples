@@ -4,10 +4,10 @@ metadata:
   labels:
     cluster: cluster-east
     owner: platform-team
-  name: default
-  namespace: tenant-a
+  name: hard-limit
+  namespace: tenant-b
 spec:
   hard:
-    cpu: "1000"
-    memory: 100Gi
-    pods: "100"
+    cpu: "100"
+    memory: 10Gi
+    pods: "10"

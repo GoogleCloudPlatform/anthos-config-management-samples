@@ -267,7 +267,7 @@ kubectl get ResourceQuota,RoleBinding -n tenant-c
 ```
 
 Should include (non-exclusive):
-- resourcequota/default
+- resourcequota/hard-limit
 - rolebinding.rbac.authorization.k8s.io/namespace-viewer
 
 ## Cleaning up

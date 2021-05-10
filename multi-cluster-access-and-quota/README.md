@@ -44,13 +44,13 @@ There is also one example of the default quota being overridden for a specific n
 │       │   ├── namespaces
 │       │   │   ├── tenant-a
 │       │   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
-│       │   │   │   └── v1_resourcequota_default.yaml
+│       │   │   │   └── v1_resourcequota_hard-limit.yaml
 │       │   │   ├── tenant-b
 │       │   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
-│       │   │   │   └── v1_resourcequota_default.yaml
+│       │   │   │   └── v1_resourcequota_hard-limit.yaml
 │       │   │   └── tenant-c
 │       │   │       ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
-│       │   │       └── v1_resourcequota_default.yaml
+│       │   │       └── v1_resourcequota_hard-limit.yaml
 │       │   ├── v1_namespace_tenant-a.yaml
 │       │   ├── v1_namespace_tenant-b.yaml
 │       │   └── v1_namespace_tenant-c.yaml
@@ -58,13 +58,13 @@ There is also one example of the default quota being overridden for a specific n
 │           ├── namespaces
 │           │   ├── tenant-a
 │           │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
-│           │   │   └── v1_resourcequota_default.yaml
+│           │   │   └── v1_resourcequota_hard-limit.yaml
 │           │   ├── tenant-b
 │           │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
-│           │   │   └── v1_resourcequota_default.yaml
+│           │   │   └── v1_resourcequota_hard-limit.yaml
 │           │   └── tenant-c
 │           │       ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
-│           │       └── v1_resourcequota_default.yaml
+│           │       └── v1_resourcequota_hard-limit.yaml
 │           ├── v1_namespace_tenant-a.yaml
 │           ├── v1_namespace_tenant-b.yaml
 │           └── v1_namespace_tenant-c.yaml
@@ -364,7 +364,7 @@ kubectl get ResourceQuota,RoleBinding -n tenant-c
 ```
 
 Should include (non-exclusive):
-- resourcequota/default
+- resourcequota/hard-limit
 - rolebinding.rbac.authorization.k8s.io/namespace-viewer
 
 ## Cleaning up

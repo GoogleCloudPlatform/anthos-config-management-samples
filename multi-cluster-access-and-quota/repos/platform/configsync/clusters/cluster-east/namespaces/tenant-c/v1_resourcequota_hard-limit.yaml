@@ -4,7 +4,7 @@ metadata:
   labels:
     cluster: cluster-east
     owner: platform-team
-  name: default
+  name: hard-limit
   namespace: tenant-c
 spec:
   hard:

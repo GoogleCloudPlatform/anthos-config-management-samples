@@ -4,8 +4,8 @@ metadata:
   labels:
     cluster: cluster-west
     owner: platform-team
-  name: default
-  namespace: tenant-b
+  name: hard-limit
+  namespace: tenant-a
 spec:
   hard:
     cpu: "100"
