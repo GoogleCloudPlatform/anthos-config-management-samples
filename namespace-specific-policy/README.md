@@ -19,7 +19,24 @@ This section describes prerequisites you must meet before this tutorial.
 ### Get the example configuration
 This example contains three namespaces for different tenants. It contains the  following directories and files.
 ```
-├── config
+.
+├── configsync
+│   ├── tenant-a
+│   │   ├── ~g_v1_namespace_default.yaml
+│   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
+│   │   └── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
+│   ├── tenant-b
+│   │   ├── ~g_v1_namespace_default.yaml
+│   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
+│   │   └── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
+│   └── tenant-c
+│       ├── ~g_v1_namespace_default.yaml
+│       ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│       ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
+│       └── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
+├── configsync-src
 │   ├── base
 │   │   ├── kustomization.yaml
 │   │   ├── namespace.yaml
@@ -32,23 +49,16 @@ This example contains three namespaces for different tenants. It contains the  f
 │   │   └── kustomization.yaml
 │   └── tenant-c
 │       └── kustomization.yaml
-├── deploy
-│   ├── tenant-a
-│   │   └── manifest.yaml
-│   ├── tenant-b
-│   │   └── manifest.yaml
-│   └── tenant-c
-│       └── manifest.yaml
 ├── README.md
 └── scripts
     └── render.sh
 ```
 
-The directory `config` contains the configuration in kustomize format. They are for one base and  three overlays `tenant-a`, `tenant-b` and `tenant-c`. Each overlay is a customization of the shared `base`. The difference between different overlays is from two parts:
-- Namespace. The configuration inside the directory `config/<TENANT>` is all in the namespace `<TENANT>`. This is achieved by adding the namespace directive in `config/<TENANT>/kustomization.yaml`. For example, in `config/tenant-a/kustomization.yaml`:
+The directory `configsync-src` contains the configuration in kustomize format. They are for one base and  three overlays `tenant-a`, `tenant-b` and `tenant-c`. Each overlay is a customization of the shared `base`. The difference between different overlays is from two parts:
+- Namespace. The configuration inside the directory `configsync-src/<TENANT>` is all in the namespace `<TENANT>`. This is achieved by adding the namespace directive in `configsync-src/<TENANT>/kustomization.yaml`. For example, in `configsync-src/tenant-a/kustomization.yaml`:
 Namespace: tenant-a
 
-- RoleBinding. For each tenant, the RoleBinding is for a different Group. For example, in `config/tenant-a`, the RoleBinding is for the group `tenant-a-admin@mydomain.com`. This is achieved by applying the patch file `config/tenant-a/rolebinding.yaml`. So the RoleBinding from the `base` is overwritten.
+- RoleBinding. For each tenant, the RoleBinding is for a different Group. For example, in `configsync-src/tenant-a`, the RoleBinding is for the group `tenant-a-admin@mydomain.com`. This is achieved by applying the patch file `configsync-src/tenant-a/rolebinding.yaml`. So the RoleBinding from the `base` is overwritten.
 
 
 ### [optional] Update the namespace specific policies
@@ -61,9 +71,9 @@ $ git clone https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samp
 
 Then you can follow the instructions in this session. It is optional and shouldn’t affect the steps below.
 #### Update the base
-When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/config/base`, the change will be propagated to configuration for all of `tenant-a`, `tenant-b` and `tenant-c`.
+When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/configsync-src/base`, the change will be propagated to configuration for all of `tenant-a`, `tenant-b` and `tenant-c`.
 #### Update an overlay
-An overlay is a kustomization that depends on another customization. In this example, there are three overlays: `tenant-a`, `tenant-b` and `tenant-c`. If you only need to update some configuration in one overlay, for example, add another Role to  `tenant-a`. Then you only need to touch the directory `acm-samples/namespace-specific-policy/config/tenant-a`.
+An overlay is a kustomization that depends on another customization. In this example, there are three overlays: `tenant-a`, `tenant-b` and `tenant-c`. If you only need to update some configuration in one overlay, for example, add another Role to  `tenant-a`. Then you only need to touch the directory `acm-samples/namespace-specific-policy/configsync-src/tenant-a`.
 
 
 After the update, you should rebuild the kustomize output for each namespace by revoking the `render.sh` script.
@@ -102,7 +112,7 @@ you need to
    - the **Branch** should be `init`.
    - the **Tag/Commit** should be `HEAD`.
    - the **Source format** field should **unstructured**.
-   - the **Policy directory** field should be `namespace-specific-policy/deploy`.
+   - the **Policy directory** field should be `namespace-specific-policy/configsync`.
 
 ### Using kubectl
 
@@ -116,7 +126,7 @@ metadata:
   name: config-management
 spec:
   git:
-    policyDir: namespace-specific-policy/deploy
+    policyDir: namespace-specific-policy/configsync
     secretType: none
     syncBranch: init
     # If you're using your forked repo,
@@ -153,7 +163,7 @@ $ kubectl get NetworkPolicy/deny-all -n tenant-a
 To clean up the tenant namespaces and policies for them, we recommend removing the directories that contain their configuration from your Git repository.
 
 ```
-$ rm -r acm-samples/namespace-specific-policy/deploy/tenant-a acm-samples/namespace-specific-policy/deploy/tenant-b acm-samples/namespace-specific-policy/deploy/tenant-c
+$ rm -r acm-samples/namespace-specific-policy/configsync/tenant-*/*
 $ git add .
 $ git commit -m 'clean up'
 $ git push
