@@ -6,6 +6,8 @@ This tutorial is based on [Deploying Ingress across clusters](https://cloud.goog
 
 In addition, this tutorial shows how to use the Kustomize configuration from [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/) to manage cluster resources seperately from namespace resources, which is useful if you have a platform team managing clusters for seperate application teams.
 
+![Architecture Diagram](docs/architecture.png)
+
 # Goals
 
 This usage of Multi-Cluster Ingress serves multiple goals:
