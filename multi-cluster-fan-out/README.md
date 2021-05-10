@@ -16,7 +16,7 @@ The resources in this tutorial are identical across both clusters. So ConfigSync
 **Platform Repo (`repos/platform/`):**
 
 ```
-└── deploy
+└── configsync
     └── all-clusters
         ├── namespaces
         │   ├── tenant-a
@@ -49,7 +49,7 @@ To read more about progressive delivery patterns, see [Safe rollouts with Anthos
 
 ## ConfigSync
 
-This tutorial installs ConfigSync on two clusters and configures them both to pull config from the same `deploy/all-clusters/` directory in the same Git repository.
+This tutorial installs ConfigSync on two clusters and configures them both to pull config from the same `configsync/all-clusters/` directory in the same Git repository.
 
 ## Before you begin
 
@@ -170,7 +170,7 @@ spec:
     repo: ${PLATFORM_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/all-clusters"
+    dir: "configsync/all-clusters"
     auth: none
 EOF
 
@@ -186,7 +186,7 @@ spec:
     repo: ${PLATFORM_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/all-clusters"
+    dir: "configsync/all-clusters"
     auth: none
 EOF
 ```
@@ -209,7 +209,7 @@ spec:
     syncRepo: ${PLATFORM_REPO}
     syncBranch: main
     syncRev: HEAD
-    policyDir: "deploy/all-clusters"
+    policyDir: "configsync/all-clusters"
     secretType: none
 EOF
 

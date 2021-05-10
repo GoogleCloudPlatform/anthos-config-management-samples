@@ -1,0 +1,15 @@
+apiVersion: networking.gke.io/v1
+kind: MultiClusterIngress
+metadata:
+  labels:
+    app: zoneprinter
+    cluster: cluster-west
+    owner: zoneprinter-team
+  name: zone-ingress
+  namespace: zoneprinter
+spec:
+  template:
+    spec:
+      backend:
+        serviceName: zone-mcs
+        servicePort: 8080

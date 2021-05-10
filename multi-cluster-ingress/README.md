@@ -32,7 +32,13 @@ This tutorial demonstrates one tenant with a workload that span multiple cluster
 **Platform Repo (`repos/platform/`):**
 
 ```
-├── config
+├── configsync
+│   └── clusters
+│       ├── cluster-east
+│       │   └── v1_namespace_zoneprinter.yaml
+│       └── cluster-west
+│           └── v1_namespace_zoneprinter.yaml
+├── configsync-src
 │   ├── all-clusters
 │   │   ├── kustomization.yaml
 │   │   └── namespaces.yaml
@@ -41,12 +47,6 @@ This tutorial demonstrates one tenant with a workload that span multiple cluster
 │       │   └── kustomization.yaml
 │       └── cluster-west
 │           └── kustomization.yaml
-├── deploy
-│   └── clusters
-│       ├── cluster-east
-│       │   └── rendered.yaml
-│       └── cluster-west
-│           └── rendered.yaml
 └── scripts
     └── render.sh
 ```
@@ -54,7 +54,19 @@ This tutorial demonstrates one tenant with a workload that span multiple cluster
 **ZonePrinter Repo (`repos/zoneprinter/`):**
 
 ```
-├── config
+├── configsync
+│   └── clusters
+│       ├── cluster-east
+│       │   └── namespaces
+│       │       └── zoneprinter
+│       │           └── apps_v1_deployment_zoneprinter.yaml
+│       └── cluster-west
+│           └── namespaces
+│               └── zoneprinter
+│                   ├── apps_v1_deployment_zoneprinter.yaml
+│                   ├── networking.gke.io_v1_multiclusteringress_zone-ingress.yaml
+│                   └── networking.gke.io_v1_multiclusterservice_zone-mcs.yaml
+├── configsync-src
 │   ├── all-clusters
 │   │   └── namespaces
 │   │       └── zoneprinter
@@ -70,16 +82,6 @@ This tutorial demonstrates one tenant with a workload that span multiple cluster
 │               └── zoneprinter
 │                   ├── kustomization.yaml
 │                   └── mci.yaml
-├── deploy
-│   └── clusters
-│       ├── cluster-east
-│       │   └── namespaces
-│       │       └── zoneprinter
-│       │           └── rendered.yaml
-│       └── cluster-west
-│           └── namespaces
-│               └── zoneprinter
-│                   └── rendered.yaml
 └── scripts
     └── render.sh
 ```
@@ -98,13 +100,13 @@ Because of this, the resources specific to each cluster and the same on each clu
 
 Kustomize is also being used here to add additional labels, to aid observability.
 
-To invoke Kustomize, execute `scripts/render.sh` to render the resources under `config/` and write them to `deploy/`.
+To invoke Kustomize, execute `scripts/render.sh` to render the resources under `configsync-src/` and write them to `configsync/`.
 
-If you don't want to use Kustomize, just use the resources under the `deploy/` directory and delete the `config/` and `scripts/render.sh` script.
+If you don't want to use Kustomize, just use the resources under the `configsync/` directory and delete the `configsync-src/` and `scripts/render.sh` script.
 
 ## ConfigSync
 
-This tutorial installs ConfigSync on two clusters and configures them to pull config from different `deploy/clusters/${cluster-name}/` directories in the same Git repository.
+This tutorial installs ConfigSync on two clusters and configures them to pull config from different `configsync/clusters/${cluster-name}/` directories in the same Git repository.
 
 ## Progressive rollouts
 
@@ -278,7 +280,7 @@ spec:
     repo: ${PLATFORM_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/clusters/cluster-west"
+    dir: "configsync/clusters/cluster-west"
     auth: none
 EOF
 
@@ -294,7 +296,7 @@ spec:
     repo: ${PLATFORM_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/clusters/cluster-east"
+    dir: "configsync/clusters/cluster-east"
     auth: none
 EOF
 ```
@@ -317,7 +319,7 @@ spec:
     syncRepo: ${PLATFORM_REPO}
     syncBranch: main
     syncRev: HEAD
-    policyDir: "deploy/clusters/cluster-west"
+    policyDir: "configsync/clusters/cluster-west"
     secretType: none
 EOF
 
@@ -336,7 +338,7 @@ spec:
     syncRepo: ${PLATFORM_REPO}
     syncBranch: main
     syncRev: HEAD
-    policyDir: "deploy/clusters/cluster-east"
+    policyDir: "configsync/clusters/cluster-east"
     secretType: none
 EOF
 
@@ -354,9 +356,9 @@ Unlike `RootSync` resources, which bootstrap GitOps for each cluster, `RepoSync`
 ```
 cd "${WORKSPACE}/platform/"
 
-mkdir -p config/clusters/cluster-west/namespaces/zoneprinter/
+mkdir -p configsync-src/clusters/cluster-west/namespaces/zoneprinter/
 
-cat > config/clusters/cluster-west/namespaces/zoneprinter/repo-sync.yaml < EOF
+cat > configsync-src/clusters/cluster-west/namespaces/zoneprinter/repo-sync.yaml < EOF
 apiVersion: configsync.gke.io/v1beta1
 kind: RepoSync
 metadata:
@@ -368,13 +370,13 @@ spec:
     repo: ${ZONEPRINTER_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/clusters/cluster-west/namespaces/zoneprinter"
+    dir: "configsync/clusters/cluster-west/namespaces/zoneprinter"
     auth: none
 EOF
 
-mkdir -p config/clusters/cluster-east/namespaces/zoneprinter/
+mkdir -p configsync-src/clusters/cluster-east/namespaces/zoneprinter/
 
-cat > config/clusters/cluster-east/namespaces/zoneprinter/repo-sync.yaml < EOF
+cat > configsync-src/clusters/cluster-east/namespaces/zoneprinter/repo-sync.yaml < EOF
 apiVersion: configsync.gke.io/v1beta1
 kind: RepoSync
 metadata:
@@ -386,7 +388,7 @@ spec:
     repo: ${ZONEPRINTER_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/clusters/cluster-east/namespaces/zoneprinter"
+    dir: "configsync/clusters/cluster-east/namespaces/zoneprinter"
     auth: none
 EOF
 

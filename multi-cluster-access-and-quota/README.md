@@ -10,7 +10,7 @@ The resources in this tutorial are different for each cluster. So ConfigSync is 
 
 In this tutorial, each cluster includes the same namespaces. This is not strictly required, but makes it easier to manage a set of clusters.
 
-The namespaces are managed in `config/all-clusters/namespaces.yaml` and inherited using a `kustomization.yaml` file for each cluster.
+The namespaces are managed in `configsync-src/all-clusters/namespaces.yaml` and inherited using a `kustomization.yaml` file for each cluster.
 
 ## Access control
 
@@ -18,15 +18,15 @@ In this tutorial, each namespace includes a RoleBindings to grant view permissio
 
 Following the pattern of [namespace sameness](https://cloud.google.com/anthos/multicluster-management/environs#namespace_sameness), the users are configured to be different for each namespace, but the same across clusters.
 
-The RoleBindings are managed in `config/all-clusters/namespaces/${namespace}/rbac.yaml` and inherited using a `kustomization.yaml` file for each namespace in each cluster.
+The RoleBindings are managed in `configsync-src/all-clusters/namespaces/${namespace}/rbac.yaml` and inherited using a `kustomization.yaml` file for each namespace in each cluster.
 
 ## Quota management
 
 In this tutorial, each namespace includes a default ResourceQuota with a maximum set for CPU, memory, and pods.
 
-This default resource is managed in `config/all-clusters/all-namespaces/resource-quota.yaml` and inherited using a `kustomization.yaml` file for each namespace in each cluster.
+This default resource is managed in `configsync-src/all-clusters/all-namespaces/resource-quota.yaml` and inherited using a `kustomization.yaml` file for each namespace in each cluster.
 
-There is also one example of the default quota being overridden for a specific namespace on a specific cluster, in `config/clusters/cluster-east/namespaces/tenant-a/resource-quota.yaml`.
+There is also one example of the default quota being overridden for a specific namespace on a specific cluster, in `configsync-src/clusters/cluster-east/namespaces/tenant-a/resource-quota.yaml`.
 
 ## Clusters
 
@@ -38,7 +38,37 @@ There is also one example of the default quota being overridden for a specific n
 **Platform Repo (`repos/platform/`):**
 
 ```
-├── config
+├── configsync
+│   └── clusters
+│       ├── cluster-east
+│       │   ├── namespaces
+│       │   │   ├── tenant-a
+│       │   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
+│       │   │   │   └── v1_resourcequota_default.yaml
+│       │   │   ├── tenant-b
+│       │   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
+│       │   │   │   └── v1_resourcequota_default.yaml
+│       │   │   └── tenant-c
+│       │   │       ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
+│       │   │       └── v1_resourcequota_default.yaml
+│       │   ├── v1_namespace_tenant-a.yaml
+│       │   ├── v1_namespace_tenant-b.yaml
+│       │   └── v1_namespace_tenant-c.yaml
+│       └── cluster-west
+│           ├── namespaces
+│           │   ├── tenant-a
+│           │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
+│           │   │   └── v1_resourcequota_default.yaml
+│           │   ├── tenant-b
+│           │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
+│           │   │   └── v1_resourcequota_default.yaml
+│           │   └── tenant-c
+│           │       ├── rbac.authorization.k8s.io_v1_rolebinding_namespace-viewer.yaml
+│           │       └── v1_resourcequota_default.yaml
+│           ├── v1_namespace_tenant-a.yaml
+│           ├── v1_namespace_tenant-b.yaml
+│           └── v1_namespace_tenant-c.yaml
+├── configsync-src
 │   ├── all-clusters
 │   │   ├── all-namespaces
 │   │   │   ├── kustomization.yaml
@@ -75,26 +105,6 @@ There is also one example of the default quota being overridden for a specific n
 │               │   └── kustomization.yaml
 │               └── tenant-c
 │                   └── kustomization.yaml
-├── deploy
-│   └── clusters
-│       ├── cluster-east
-│       │   ├── manifest.yaml
-│       │   └── namespaces
-│       │       ├── tenant-a
-│       │       │   └── manifest.yaml
-│       │       ├── tenant-b
-│       │       │   └── manifest.yaml
-│       │       └── tenant-c
-│       │           └── manifest.yaml
-│       └── cluster-west
-│           ├── manifest.yaml
-│           └── namespaces
-│               ├── tenant-a
-│               │   └── manifest.yaml
-│               ├── tenant-b
-│               │   └── manifest.yaml
-│               └── tenant-c
-│                   └── manifest.yaml
 └── scripts
     └── render.sh
 ```
@@ -107,13 +117,13 @@ Because of this, the resources specific to each cluster and the same on each clu
 
 Kustomize is also being used here to add additional labels, to aid observability.
 
-To invoke Kustomize, execute `scripts/render.sh` to render the resources under `config/` and write them to `deploy/`.
+To invoke Kustomize, execute `scripts/render.sh` to render the resources under `configsync-src/` and write them to `configsync/`.
 
-If you don't want to use Kustomize, just use the resources under the `deploy/` directory and delete the `config/` and `scripts/render.sh` script.
+If you don't want to use Kustomize, just use the resources under the `configsync/` directory and delete the `configsync-src/` and `scripts/render.sh` script.
 
 ## ConfigSync
 
-This tutorial installs ConfigSync on two clusters and configures them to pull config from different `deploy/clusters/${cluster-name}/` directories in the same Git repository.
+This tutorial installs ConfigSync on two clusters and configures them to pull config from different `configsync/clusters/${cluster-name}/` directories in the same Git repository.
 
 ## Progressive rollouts
 
@@ -242,7 +252,7 @@ spec:
     repo: ${PLATFORM_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/clusters/cluster-west"
+    dir: "configsync/clusters/cluster-west"
     auth: none
 EOF
 
@@ -258,7 +268,7 @@ spec:
     repo: ${PLATFORM_REPO}
     branch: main
     revision: HEAD
-    dir: "deploy/clusters/cluster-east"
+    dir: "configsync/clusters/cluster-east"
     auth: none
 EOF
 ```
@@ -281,7 +291,7 @@ spec:
     syncRepo: ${PLATFORM_REPO}
     syncBranch: main
     syncRev: HEAD
-    policyDir: "deploy/clusters/cluster-west"
+    policyDir: "configsync/clusters/cluster-west"
     secretType: none
 EOF
 
@@ -300,7 +310,7 @@ spec:
     syncRepo: ${PLATFORM_REPO}
     syncBranch: main
     syncRev: HEAD
-    policyDir: "deploy/clusters/cluster-east"
+    policyDir: "configsync/clusters/cluster-east"
     secretType: none
 EOF
 

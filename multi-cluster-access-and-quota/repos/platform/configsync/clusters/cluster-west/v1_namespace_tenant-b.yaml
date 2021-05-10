@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    cluster: cluster-west
+    owner: platform-team
+  name: tenant-b
