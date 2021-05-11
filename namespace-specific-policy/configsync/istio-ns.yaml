@@ -6,11 +6,11 @@ metadata:
     foo: bar
  
 ---
-# apiVersion: v1
-# kind: Namespace
-# metadata:
-#   name: istio-system
-#   labels:
-#     istio: system
-#   annotations:
-#     foo: bar
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: istio-system
+  labels:
+    istio: system
+  annotations:
+    foo: bar
