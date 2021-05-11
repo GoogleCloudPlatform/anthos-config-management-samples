@@ -5,11 +5,11 @@ metadata:
     app: zoneprinter
     cluster: cluster-west
     owner: zoneprinter-team
-  name: zone-ingress
+  name: zoneprinter
   namespace: zoneprinter
 spec:
   template:
     spec:
       backend:
-        serviceName: zone-mcs
+        serviceName: zoneprinter
         servicePort: 8080

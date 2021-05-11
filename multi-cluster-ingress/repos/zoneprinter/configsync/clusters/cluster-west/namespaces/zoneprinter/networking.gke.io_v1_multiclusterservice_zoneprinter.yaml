@@ -5,7 +5,7 @@ metadata:
     app: zoneprinter
     cluster: cluster-west
     owner: zoneprinter-team
-  name: zone-mcs
+  name: zoneprinter
   namespace: zoneprinter
 spec:
   template:
