@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: foo
   annotations:
-    foo: bar
+    foo: barbar
  
 ---
 apiVersion: v1
@@ -13,4 +13,4 @@ metadata:
   labels:
     istio: system
   annotations:
-    foo: bar
+    foo: barbar
