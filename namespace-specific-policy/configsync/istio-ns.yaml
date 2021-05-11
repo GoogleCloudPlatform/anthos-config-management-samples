@@ -4,3 +4,5 @@ metadata:
   name: istio-system
   labels:
     istio: system
+  annotations:
+    foo: bar
