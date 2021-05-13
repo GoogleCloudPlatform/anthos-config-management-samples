@@ -107,8 +107,7 @@ resources:
 
 After the update, you should rebuild the kustomize output for each namespace by revoking the `render.sh` script.
 ```
-$ cd acm-samples && git checkout init
-$ cd namespace-specific-policy
+$ cd acm-samples/namespace-specific-policy
 $ ./scripts/render.sh
 ```
 
