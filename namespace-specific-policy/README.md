@@ -73,8 +73,37 @@ Then you can follow the instructions in this session. It is optional and shouldn
 #### Update the base
 When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/configsync-src/base`, the change will be propagated to configuration for all of `tenant-a`, `tenant-b` and `tenant-c`.
 #### Update an overlay
-An overlay is a kustomization that depends on another customization. In this example, there are three overlays: `tenant-a`, `tenant-b` and `tenant-c`. If you only need to update some configuration in one overlay, for example, add another Role to  `tenant-a`. Then you only need to touch the directory `acm-samples/namespace-specific-policy/configsync-src/tenant-a`.
+An overlay is a kustomization that depends on another customization.
+In this example, there are three overlays: `tenant-a`, `tenant-b`
+and `tenant-c`. If you only need to update some configuration in
+one overlay, you only need to touch the directory for that overlay.
 
+Here is an example of adding another Role in the overlay `tenant-a`.
+We can add a new file
+`acm-samples/namespace-specific-policy/configsync-src/tenant-a/another-role.yaml`
+with the following content:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+```
+Then include the new config in
+`acm-samples/namespace-specific-policy/configsync-src/tenant-a/kustomization.yaml`
+by adding the file name under `resources`.
+
+```yaml
+# kustomization.yaml
+resources:
+- ../base
+- another-role.yaml
+...
+```
 
 After the update, you should rebuild the kustomize output for each namespace by revoking the `render.sh` script.
 ```
