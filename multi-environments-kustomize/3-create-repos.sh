@@ -34,7 +34,7 @@ fi
 git clone "https://github.com/${GITHUB_USERNAME}/foo-config-source.git" 
 cp -r config-source/* foo-config-source 
 cd foo-config-source 
-git checkout main 
+git checkout -b main 
 git add .; git commit -m "Initialize"; git push origin main 
 cd .. 
 
@@ -48,7 +48,7 @@ fi
 
 git clone "https://github.com/${GITHUB_USERNAME}/foo-config-dev.git" 
 cd foo-config-dev
-git checkout main 
+git checkout -b main 
 echo "Foo Config Dev" >> README.md
 git add .; git commit -m "Initialize"; git push origin main 
 cd .. 
@@ -63,7 +63,7 @@ fi
 
 git clone "https://github.com/${GITHUB_USERNAME}/foo-config-prod.git" 
 cd foo-config-prod
-git checkout main 
+git checkout -b main 
 echo "Foo Config Prod" >> README.md
 git add .; git commit -m "Initialize"; git push origin main 
 cd ..  
