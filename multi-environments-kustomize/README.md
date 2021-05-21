@@ -82,6 +82,8 @@ Waiting for Feature Config Management to be created...done.
 
 6. **Create Github repos in your account.** This script creates three Github repos: `foo-config-source`, `foo-config-dev`, and `foo-config-prod`. Users will commit config to the `source` repo, and a CI pipeline (that we'll create in a few steps) will render config to the other two repos, using dev- and prod-specific values. From there, the `dev` cluster will sync from `foo-config-dev`, and the `prod` cluster will sync from `foo-config-prod`. 
 
+**Note** - if you are prompted for your Git credentials here, use your `GITHUB_TOKEN` value as your password, not your Github password. 
+
 ```
 ./3-create-repos.sh
 ```
