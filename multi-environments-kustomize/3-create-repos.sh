@@ -18,24 +18,52 @@ if [[ -z "$GITHUB_USERNAME" ]]; then
     exit 1
 fi
 
+## Returns 0 if arg $1 is a reachable git remote url 
+git-remote-url-reachable() {
+    git ls-remote "$1" CHECK_GIT_REMOTE_URL_REACHABILITY >/dev/null 2>&1
+}
+
 echo "😸 Creating foo-config-source repo..."
-curl -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} https://api.github.com/user/repos -d '{"name":"foo-config-source"}'
+url="https://github.com/$GITHUB_USERNAME/foo-config-source"
+if git-remote-url-reachable "$url"; then
+    echo "✅ foo-config-source repo already exists"
+else 
+    curl -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} https://api.github.com/user/repos -d '{"name":"foo-config-source"}'
+fi
+
 git clone "https://github.com/${GITHUB_USERNAME}/foo-config-source.git" 
 cp -r config-source/* foo-config-source 
 cd foo-config-source 
+git checkout main 
 git add .; git commit -m "Initialize"; git push origin main 
 cd .. 
 
 echo "😸 Creating foo-config-dev repo..."
-curl -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} https://api.github.com/user/repos -d '{"name":"foo-config-dev"}'
+url="https://github.com/$GITHUB_USERNAME/foo-config-dev"
+if git-remote-url-reachable "$url"; then
+    echo "✅ foo-config-dev repo already exists"
+else 
+    curl -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} https://api.github.com/user/repos -d '{"name":"foo-config-dev"'
+fi
+
 git clone "https://github.com/${GITHUB_USERNAME}/foo-config-dev.git" 
-cd foo-config-dev; touch README.md
+cd foo-config-dev
+git checkout main 
+echo "Foo Config Dev" >> README.md
 git add .; git commit -m "Initialize"; git push origin main 
 cd .. 
 
 echo "😸 Creating foo-config-prod repo..."
-curl -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} https://api.github.com/user/repos -d '{"name":"foo-config-prod"}'
+url="https://github.com/$GITHUB_USERNAME/foo-config-prod"
+if git-remote-url-reachable "$url"; then
+    echo "✅ foo-config-prod repo already exists"
+else 
+    curl -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} https://api.github.com/user/repos -d '{"name":"foo-config-prod"}'
+fi
+
 git clone "https://github.com/${GITHUB_USERNAME}/foo-config-prod.git" 
-cd foo-config-prod; touch README.md
+cd foo-config-prod
+git checkout main 
+echo "Foo Config Prod" >> README.md
 git add .; git commit -m "Initialize"; git push origin main 
 cd ..  
