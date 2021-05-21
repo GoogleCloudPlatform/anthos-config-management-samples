@@ -43,7 +43,16 @@ export GITHUB_TOKEN=""
 export GITHUB_EMAIL=""
 ```
 
-3. **Create 1 GKE cluster in each of the 2 projects.** This script also enables the GKE and Anthos APIs, and connects to your dev and prod clusters so that you can access their APIs with `kubectl`. 
+3. **Configure your local Git for your GitHub username and email.** 
+
+```
+git config --global user.name $GITHUB_USERNAME
+git config --global user.email $GITHUB_EMAIL
+git config --global credential.helper store
+git config --global credential.helper cache
+```
+
+4. **Create 1 GKE cluster in each of the 2 projects.** This script also enables the GKE and Anthos APIs, and connects to your dev and prod clusters so that you can access their APIs with `kubectl`. 
 
 ```
 ./1-create-clusters.sh
@@ -58,7 +67,7 @@ kubeconfig entry generated for prod.
 ⭐️ Done creating clusters.
 ```
 
-4. **Register clusters to separate Anthos environments.** This script creates a Google Cloud service account and key for Anthos cluster registration, then uses the `gcloud container hub memberships register` command to register the `dev` and `prod` clusters to Anthos in their own projects.
+5. **Register clusters to separate Anthos environments.** This script creates a Google Cloud service account and key for Anthos cluster registration, then uses the `gcloud container hub memberships register` command to register the `dev` and `prod` clusters to Anthos in their own projects.
 
 ```
 ./2-register-clusters.sh
@@ -71,7 +80,9 @@ Waiting for Feature Config Management to be created...done.
 ⭐️ Done registering clusters.
 ```
 
-5. **Create Github repos in your account.** This script creates three Github repos: `foo-config-source`, `foo-config-dev`, and `foo-config-prod`. Users will commit config to the `source` repo, and a CI pipeline (that we'll create in a few steps) will render config to the other two repos, using dev- and prod-specific values. From there, the `dev` cluster will sync from `foo-config-dev`, and the `prod` cluster will sync from `foo-config-prod`. 
+6. **Create Github repos in your account.** This script creates three Github repos: `foo-config-source`, `foo-config-dev`, and `foo-config-prod`. Users will commit config to the `source` repo, and a CI pipeline (that we'll create in a few steps) will render config to the other two repos, using dev- and prod-specific values. From there, the `dev` cluster will sync from `foo-config-dev`, and the `prod` cluster will sync from `foo-config-prod`. 
+
+**Note** - if you are prompted for your Git credentials here, use your `GITHUB_TOKEN` value as your password, not your Github password. 
 
 ```
 ./3-create-repos.sh
@@ -102,7 +113,7 @@ To https://github.com/askmeegs/foo-config-prod.git
 
 If you navigate to github.com/[your-github-username]/foo-config-source, you should see a repo populated with two directories, `base/` and `overlays/`. 
 
-6. **Run the secret manager script** to create Github secrets corresponding to your Github auth info. This will allow Cloud Build to push to Github on your behalf. (The Cloud Build pipeline  you'll set up next gets your Github auth info directly from Secret Manager.)
+7. **Run the secret manager script** to create Github secrets corresponding to your Github auth info. This will allow Cloud Build to push to Github on your behalf. (The Cloud Build pipeline  you'll set up next gets your Github auth info directly from Secret Manager.)
 
 ```
 ./4-secret-manager-git.sh
@@ -123,7 +134,7 @@ Project number is: ########
 Updated IAM policy for project [project-id].
 ```
 
-7. **View the Cloud Build pipeline.** This pipeline uses kustomize to render dev and prod manifests using the manifests in the `base/` directory.
+8. **View the Cloud Build pipeline.** This pipeline uses kustomize to render dev and prod manifests using the manifests in the `base/` directory.
 
 ```
 cat foo-config-source/cloudbuild.yaml 
@@ -198,10 +209,10 @@ commonLabels:
 **Note** - this demo shows a simple pipeline that renders both the `dev` and `prod` manifests at the same time. In a live production environment, you would want to shield the production environment from potential bad config, through automated testing, human reviews, the use of a Code Owners file, and PolicyController checks in CI. See the [Safe Rollouts with Anthos Config Management Guide](https://cloud.google.com/architecture/safe-rollouts-with-anthos-config-management) and the [Policy Controller + Continuous Integration](https://cloud.google.com/anthos-config-management/docs/tutorials/policy-agent-ci-pipeline) guide for more information. 
 
 
-8. **Open the Cloud Console in your prod project, and navigate to Cloud Build**. Click Triggers > Manage Repositories > Connect Repository. Check the `foo-config-source` repo, then click **Done.** 
+9. **Open the Cloud Console in your prod project, and navigate to Cloud Build**. Click Triggers > Manage Repositories > Connect Repository. Check the `foo-config-source` repo, then click **Done.** 
 
 
-9. **From the Cloud Build dashboard, create a Trigger** from the `foo-config-source` repo with the following fields: 
+10. **From the Cloud Build dashboard, create a Trigger** from the `foo-config-source` repo with the following fields: 
 
 - **Trigger name**: Foo-Config-Render
 - **Event**: push to a new branch
@@ -211,15 +222,15 @@ commonLabels:
 
 Click **Create**. 
 
-10. Because we already pushed `cloudbuild.yaml` to the foo-config-source repo before creating this trigger, **let's run it manually to trigger the rendering of the dev and prod repos**. In the triggers list, in the `Foo-Config-Render` row, click **Run** on the right side of the screen and use the default branch value, `main`. The build should run successfully, writing the output of `kustomize build` to the `foo-config-dev` and `foo-config-prod` repos, respectively. 
+11. Because we already pushed `cloudbuild.yaml` to the foo-config-source repo before creating this trigger, **let's run it manually to trigger the rendering of the dev and prod repos**. In the triggers list, in the `Foo-Config-Render` row, click **Run** on the right side of the screen and use the default branch value, `main`. The build should run successfully, writing the output of `kustomize build` to the `foo-config-dev` and `foo-config-prod` repos, respectively. 
 
 ![](screenshots/build-success.png)
 
-11. **Once the build completes, open one of the dev or prod repos.** You should see YAML files populating the repo, and a README update indicating the commit SHA of the `foo-config-source` repo that this repo was last built from. 
+12. **Once the build completes, open one of the dev or prod repos.** You should see YAML files populating the repo, and a README update indicating the commit SHA of the `foo-config-source` repo that this repo was last built from. 
 
 ![screenshot](screenshots/git-output.png)
 
-12. **Install Config Sync** on both clusters. This script updates the ConfigManagement CRD resources in the `install-config/` directory to point to your `foo-config-dev` and `foo-config-prod` repos (for the dev and prod clusters, respectively), then uses the `gcloud alpha container hub config-management apply` to install Config Sync on both clusters, using the `install-config/` resources as configuration.
+13. **Install Config Sync** on both clusters. This script updates the ConfigManagement CRD resources in the `install-config/` directory to point to your `foo-config-dev` and `foo-config-prod` repos (for the dev and prod clusters, respectively), then uses the `gcloud alpha container hub config-management apply` to install Config Sync on both clusters, using the `install-config/` resources as configuration.
 
 ```
 ./5-install-config-sync.sh
