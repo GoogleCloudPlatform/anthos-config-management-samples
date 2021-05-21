@@ -43,7 +43,7 @@ export GITHUB_TOKEN=""
 export GITHUB_EMAIL=""
 ```
 
-3. Configure your local Git for your GitHub username and email. 
+3. **Configure your local Git for your GitHub username and email.** 
 
 ```
 git config --global user.name $GITHUB_USERNAME
