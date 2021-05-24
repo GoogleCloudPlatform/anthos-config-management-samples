@@ -6,6 +6,7 @@ metadata:
   annotations:
     client.lifecycle.config.k8s.io/mutation: ignore
     foo: bar
+    foofoo: bar
 rules:
 - apiGroups:
   - apps
