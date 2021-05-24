@@ -3,6 +3,8 @@ kind: Role
 metadata:
   name: tenant-admin
   namespace: tenant-a
+  annotations:
+    client.lifecycle.config.k8s.io/mutation: ignore 
 rules:
 - apiGroups:
   - apps
