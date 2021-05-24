@@ -5,6 +5,7 @@ metadata:
   namespace: tenant-a
   annotations:
     client.lifecycle.config.k8s.io/mutation: ignore
+    foo: bar
 rules:
 - apiGroups:
   - apps
