@@ -126,7 +126,7 @@ the kustomize output into a different Git repository if desired.
 ## Sync namespace specific policies
 
 Now you can configure ConfigSync to sync these policies to the cluster.
-You can do this either using the GCP console or `kubectl apply`.
+You can do this either using the GCP console or `gcloud`.
 
 ### Using GCP console
 
@@ -142,29 +142,44 @@ you need to
    - the **Source format** field should **unstructured**.
    - the **Policy directory** field should be `namespace-specific-policy/configsync`.
 
-### Using kubectl
+### Using gcloud
 
-You can also use `kubectl apply` to configure ConfigSync.
+You can also configure the Git repository information in a
+`config-management.yaml` file and use a `gcloud` command to apply it.
 
-```
-cat << EOF > config-management.yaml
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  git:
-    policyDir: namespace-specific-policy/configsync
-    secretType: none
-    syncBranch: init
-    # If you're using your forked repo,
-    # syncRepo field should be https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git
-    syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git
-  sourceFormat: unstructured
-EOF
+1. Create the `config-management.yaml` file
 
-kubectl apply -f config-management.yaml
-```
+   ```
+   cat << EOF > config-management.yaml
+   apiVersion: configmanagement.gke.io/v1
+   kind: ConfigManagement
+   metadata:
+     name: config-management
+   spec:
+     git:
+       policyDir: namespace-specific-policy/configsync
+       secretType: none
+       syncBranch: init
+       # If you're using your forked repo,
+       # syncRepo field should be https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git
+       syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git
+     sourceFormat: unstructured
+   EOF
+   ```
+
+1. Apply the `config-management.yaml` file.
+
+   ```
+   gcloud alpha container hub config-management apply \
+   --membership=CLUSTER_NAME \
+   --config=config-management.yaml \
+   --project=PROJECT_ID
+   ```
+
+   Replace the following variables:
+   - `CLUSTER_NAME`: the name of the registered cluster that you want to apply
+     this configuration to.
+   - `PROJECT_ID`: your GCP project ID.
 
 ## Verify namespace specific policies are synced
 Now you can verify that the namespace specific policies are synced to the cluster.
