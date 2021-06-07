@@ -1,8 +1,0 @@
-# config-management.yaml
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  # Enable multi-repo mode to use new features
-  enableMultiRepo: true
