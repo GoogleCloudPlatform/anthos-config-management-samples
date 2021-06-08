@@ -6,6 +6,8 @@ This tutorial is based on [Deploying Ingress across clusters](https://cloud.goog
 
 In addition, this tutorial shows how to use the Kustomize configuration from [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/) to manage cluster resources seperately from namespace resources, which is useful if you have a platform team managing clusters for seperate application teams.
 
+![Architecture Diagram](docs/architecture.png)
+
 # Goals
 
 This usage of Multi-Cluster Ingress serves multiple goals:
@@ -64,8 +66,8 @@ This tutorial demonstrates one tenant with a workload that span multiple cluster
 │           └── namespaces
 │               └── zoneprinter
 │                   ├── apps_v1_deployment_zoneprinter.yaml
-│                   ├── networking.gke.io_v1_multiclusteringress_zone-ingress.yaml
-│                   └── networking.gke.io_v1_multiclusterservice_zone-mcs.yaml
+│                   ├── networking.gke.io_v1_multiclusteringress_zoneprinter.yaml
+│                   └── networking.gke.io_v1_multiclusterservice_zoneprinter.yaml
 ├── configsync-src
 │   ├── all-clusters
 │   │   └── namespaces
@@ -437,7 +439,9 @@ kubectl get Deployment -n zoneprinter --context ${CLUSTER_EAST_CONTEXT}
 ```
 
 Should include (non-exclusive):
-- TODO
+- deployment.apps/zoneprinter (both clusters)
+- multiclusteringress.networking.gke.io/zoneprinter (cluster-west only)
+- multiclusterservice.networking.gke.io/zoneprinter (cluster-west only)
 
 **Poll the ingress endpoint to see which cluster responds:**
 

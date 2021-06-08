@@ -1,9 +1,9 @@
 # Config Sync Namespace Inheritance Example
 
 This example demonstrates how to use 
-[namespace inheritance](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/concepts/namespace-inheritance)
-with the [hierarchical format](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/concepts/hierarchical-repo)
-in [Config Sync](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/overview).
+[namespace inheritance](https://cloud.google.com/anthos-config-management/docs/concepts/namespace-inheritance)
+with the [hierarchical format](https://cloud.google.com/anthos-config-management/docs/concepts/hierarchical-repo)
+in [Config Sync](https://cloud.google.com/anthos-config-management/docs/config-sync-overview).
 
 It contains three simple use cases:
 * Inherited default NetworkPolicies can be customized by adding a second object in an individual namespace.
@@ -13,9 +13,9 @@ It contains three simple use cases:
 ## Before you begin
 
 - You’ll need a cluster that has Config Sync installed.
-  Please follow the [instructions](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/installing)
+  Please follow the [instructions](https://cloud.google.com/anthos-config-management/docs/how-to/installing-config-sync)
   to install Config Sync if it is not set up yet.
-- [Install the `nomos` command](https://cloud.devsite.corp.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing)
+- [Install the `nomos` command](https://cloud.google.com/anthos-config-management/docs/how-to/nomos-command#installing)
 
 ## Viewing the compiled configs in the repo
 
@@ -25,71 +25,74 @@ actually does under the covers.
 
 ## Configuring syncing from the repository
 
-First, create a file with a `ConfigManagement` custom resource:
+You can configure syncing from the Git repository using GCP console or gcloud.
 
-```yaml
-# config-management.yaml
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  # Enable multi-repo mode to use new features
-  enableMultiRepo: true
-```
+### Using GCP Console
 
-Apply it to the cluster:
+Following the console instructions for
+[configuring Config Sync](https://cloud.google.com/anthos-config-management/docs/how-to/installing-config-sync#configuring-config-sync),
+you need to
 
+- Select **None** in the **Git Repository Authentication for ACM** section
+- Select **Enable Config Sync** in the **ACM settings for your clusters** section
+   - If you're using your forked repo, the **URL** should be the Git repository url for your fork: `https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git`; otherwise the **URL** should be `https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git`
+   - the **Branch** should be `init`.
+   - the **Tag/Commit** should be `HEAD`.
+   - the **Source format** field should **hierarchy**.
+   - the **Policy directory** field should be `namespace-inheritance/config`.
+
+### Using gcloud
+
+You can also configure the Git repository information in a config-management.yaml file and use a gcloud command to apply the file.
+
+1.  Create a file named config-management.yaml and copy the following YAML file into it:
+    ```yaml
+    # config-management.yaml
+    
+    apiVersion: configmanagement.gke.io/v1
+    kind: ConfigManagement
+    metadata:
+     name: config-management
+    spec:
+     sourceFormat: hierarchy
+     git:
+       syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
+       syncBranch: init
+       secretType: none
+       policyDir: namespace-inheritance/config
+    ```
+1.  Apply the config-management.yaml file:
+    ```console
+    gcloud alpha container hub config-management apply \
+        --membership=CLUSTER_NAME \
+        --config=CONFIG_YAML_PATH \
+        --project=PROJECT_ID
+    ```
+
+   Replace the following:
+   - CLUSTER_NAME: the name of the registered cluster that you want to apply this configuration to
+   - CONFIG_YAML_PATH: the path to your config-management.yaml file
+   - PROJECT_ID: your project ID
+
+## Verifying the installation
+
+### Using GCP Console
+1. In the Cloud Console, go to the [Anthos Config Management](https://console.cloud.google.com/anthos/config_management) page.
+1. View the **Status** column. A successful installation has a status of `Synced`.
+
+### Using gcloud
+Run the following command to get the status
 ```console
-kubectl apply -f config-management.yaml
+gcloud alpha container hub config-management status --project=PROJECT_ID
 ```
+Replace `PROJECT_ID` with your project's ID.
 
-Wait for the `RootSync` and `RepoSync` CRDs to be available:
+A successful installation has a status of `SYNCED`.
 
+### Using nomos
+Run the following command to get the status
 ```console
-until kubectl get customresourcedefinitions rootsyncs.configsync.gke.io reposyncs.configsync.gke.io; \
-do date; sleep 1; echo ""; done
-```
-
-Then create a file with a `RootSync` custom resource:
-
-```yaml
-# root-sync.yaml
-# If you are using a Config Sync version earlier than 1.7,
-# use: apiVersion: configsync.gke.io/v1alpha1
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: hierarchy
-  git:
-    # If you fork this repo, change the url to point to your fork
-    repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
-    # If you move the configs to a different branch, update the branch here
-    branch: init
-    dir: namespace-inheritance/config
-    # We recommend securing your source repository.
-    # Other supported auth: `ssh`, `cookiefile`, `token`, `gcenode`.
-    auth: none
-    # Refer to a Secret you create to hold the private key, cookiefile, or token.
-    # secretRef:
-    #   name: SECRET_NAME
-```
-
-Then, apply it to the cluster:
-
-```console
-kubectl apply -f root-sync.yaml
-```
-
-## Checking the sync status
-
-You can check if Config Sync successfully syncs all configs to your cluster using the `nomos status` command.
-
-```console
- nomos status
+nomos status
 ```
 
 Example Output:
@@ -137,7 +140,7 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   
   Explanation:
   - The `eng-viewer` roleb is created in namespaces under the `eng`
-    [abstract namespace directory](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/namespace-scoped-objects#abstract-namespace-config)
+    [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/how-to/namespace-scoped-objects#abstract-namespace-config)
     because it is inherited from `config/namespaces/eng/eng-role.yaml`.
   - The `incubator-1-admin` role is created in the `incubator-1` namespace
     because of the config `config/namespaces/rnd/incubator-1/incubator-1-admin-role.yaml`.
@@ -163,7 +166,7 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   - The `viewers` rolebinding is created in all managed namespaces because it is inherited from
     `config/namespaces/viewers-rolebinding.yaml`.
   - The `eng-admin` rolebinding is created in namespaces under the `eng`
-    [abstract namespace directory](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/namespace-scoped-objects#abstract-namespace-config)
+    [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/how-to/namespace-scoped-objects#abstract-namespace-config)
     because it is inherited from `config/namespaces/eng/eng-rolebinding.yaml`.
   - `bob-rolebinding` is created in the `gamestore` namespace
     because of the config `config/namespaces/eng/gamestore/bob-rolebinding.yaml`.
@@ -188,7 +191,7 @@ All objects managed by Config Sync have the `app.kubernetes.io/managed-by` label
   - The `default-deny-all-traffic` networkpolicy is created in all managed namespaces because it is inherited from
     `config/namespaces/network-policy-default-deny-all.yaml`.
   - The `allow-gamestore-ingress` networkpolicy is created in namespaces under the `eng`
-    [abstract namespace directory](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/namespace-scoped-objects#abstract-namespace-config)
+    [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/how-to/namespace-scoped-objects#abstract-namespace-config)
     because it is inherited from `config/namespaces/eng/network-policy-allow-gamestore-ingress.yaml`.
     Ingress traffic will be allowed only to Pods in the `gamestore` namespace with the `app:gamestore` label.
   

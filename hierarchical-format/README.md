@@ -15,109 +15,84 @@ the configs under the `config/` directory to the exact form that would be sent t
 - [Install the `nomos` command](https://cloud.devsite.corp.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing)
 
 
-## Sync the root repository
+## Configuring syncing from the repository
 
-This root repository can be synced using Config Sync either in the mono-repo mode or in the multi-repo mode.
+You can configure syncing from the Git repository using GCP console or gcloud.
 
-### Sync the root repository using Config Sync in the mono-repo mode
+### Using GCP Console
 
-To sync the root repository using Config Sync in the mono-repo mode, the cluster admin should follow the follow steps:
+Following the console instructions for
+[configuring Config Sync](https://cloud.google.com/anthos-config-management/docs/how-to/installing-config-sync#configuring-config-sync),
+you need to
 
-Step 1: create a file named `config-management.yaml` with a `ConfigManagement` custom resource:
+- Select **None** in the **Git Repository Authentication for ACM** section
+- Select **Enable Config Sync** in the **ACM settings for your clusters** section
+   - If you're using your forked repo, the **URL** should be the Git repository url for your fork: `https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git`; otherwise the **URL** should be `https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git`
+   - the **Branch** should be `init`.
+   - the **Tag/Commit** should be `HEAD`.
+   - the **Source format** field should **hierarchy**.
+   - the **Policy directory** field should be `hierarchical-format/config`.
 
-```yaml
-# config-management.yaml
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  git:
-    syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
-    syncBranch: init
-    policyDir: hierarchical-format/config
-    secretType: none
-  sourceFormat: hierarchy
-```
+### Using gcloud
 
-Step 2: apply the `ConfigManagement` CR:
-```
-kubectl apply -f config-management.yaml
-```
+You can also configure the Git repository information in a YAML file and use `gcloud` to apply the file.
 
-### Sync the root repository using Config Sync in the multi-repo mode
+1.  Create a file named `config-management.yaml` and copy the following YAML file into it:
+    ```yaml
+    # config-management.yaml
+    
+    apiVersion: configmanagement.gke.io/v1
+    kind: ConfigManagement
+    metadata:
+     name: config-management
+    spec:
+     sourceFormat: hierarchy
+     git:
+       syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
+       syncBranch: init
+       secretType: none
+       policyDir: hierarchical-format/config
+    ```
+1.  Apply the config-management.yaml file:
+    ```console
+    gcloud alpha container hub config-management apply \
+        --membership=CLUSTER_NAME \
+        --config=CONFIG_YAML_PATH \
+        --project=PROJECT_ID
+    ```
 
-To sync the root repository using Config Sync in the multi-repo mode (CSMR), the cluster admin should follow these steps:
+   Replace the following:
+   - `CLUSTER_NAME`: the name of the registered cluster that you want to apply this configuration to
+   - `CONFIG_YAML_PATH`: the path to `config-management.yaml`
+   - `PROJECT_ID`: your project ID
 
-Step 1: create a file named `config-management.yaml` with a `ConfigManagement` custom resource (CR):
+## Verifying the installation
 
-```yaml
-# config-management.yaml
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  # Enable multi-repo mode to use new features
-  enableMultiRepo: true
-```
+### Using GCP Console
+1. In the Cloud Console, go to the [Anthos Config Management](https://console.cloud.google.com/anthos/config_management) page.
+1. View the **Status** column. A successful installation has a status of `Synced`.
 
-Step 2: apply the `ConfigManagement` CR:
-```
-kubectl apply -f config-management.yaml
-```
-
-Step 3: wait for the `RootSync` and `RepoSync` CRDs to be available:
-
+### Using gcloud
+Run the following command to get the status
 ```console
-until kubectl get customresourcedefinitions rootsyncs.configsync.gke.io reposyncs.configsync.gke.io; \
-do date; sleep 1; echo ""; done
+gcloud alpha container hub config-management status --project=PROJECT_ID
 ```
+Replace `PROJECT_ID` with your project's ID.
 
-Step 4: create a file named `rootsync.yaml` with a `RootSync` CR:
-```
-# root-sync.yaml
-# If you are using a Config Sync version earlier than 1.7,
-# use: apiVersion: configsync.gke.io/v1alpha1
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: hierarchy
-  git:
-    repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
-    branch: init
-    dir: hierarchical-format/config
-    # We recommend securing your source repository.
-    # Other supported auth: `ssh`, `cookiefile`, `token`, `gcenode`.
-    auth: none
-    # Refer to a Secret you create to hold the private key, cookiefile, or token.
-    # secretRef:
-    #   name: SECRET_NAME
-```
+A successful installation has a status of `SYNCED`.
 
-Step 5: apply the `RootSync` CR:
-```
-kubectl apply -f rootsync.yaml
-```
-
-
-## Checking the sync status
-
-You can check if Config Sync successfully syncs all configs to your cluster using the `nomos status` command.
-
+### Using nomos
+Run the following command to get the status
 ```console
- nomos status
+nomos status
 ```
 
 Example Output:
 ```console
 *your-cluster
   --------------------
-  <root>   https://github.com/GoogleCloudPlatform/anthos-config-management-samples/namespace-inheritance/config@init
-  SYNCED   <commit-id>
+  <root>   https://github.com/GoogleCloudPlatform/anthos-config-management-samples/hierarchical-format/config@init   
+  SYNCED   c4fee081 
 ```
 
 ## Examining your configs

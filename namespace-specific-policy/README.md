@@ -73,13 +73,41 @@ Then you can follow the instructions in this session. It is optional and shouldn
 #### Update the base
 When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/configsync-src/base`, the change will be propagated to configuration for all of `tenant-a`, `tenant-b` and `tenant-c`.
 #### Update an overlay
-An overlay is a kustomization that depends on another customization. In this example, there are three overlays: `tenant-a`, `tenant-b` and `tenant-c`. If you only need to update some configuration in one overlay, for example, add another Role to  `tenant-a`. Then you only need to touch the directory `acm-samples/namespace-specific-policy/configsync-src/tenant-a`.
+An overlay is a kustomization that depends on another customization.
+In this example, there are three overlays: `tenant-a`, `tenant-b`
+and `tenant-c`. If you only need to update some configuration in
+one overlay, you only need to touch the directory for that overlay.
 
+Here is an example of adding another Role in the overlay `tenant-a`.
+We can add a new file
+`acm-samples/namespace-specific-policy/configsync-src/tenant-a/another-role.yaml`
+with the following content:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+```
+Then include the new config in
+`acm-samples/namespace-specific-policy/configsync-src/tenant-a/kustomization.yaml`
+by adding the file name under `resources`.
+
+```yaml
+# kustomization.yaml
+resources:
+- ../base
+- another-role.yaml
+...
+```
 
 After the update, you should rebuild the kustomize output for each namespace by revoking the `render.sh` script.
 ```
-$ cd acm-samples && git checkout init
-$ cd namespace-specific-policy
+$ cd acm-samples/namespace-specific-policy
 $ ./scripts/render.sh
 ```
 
@@ -98,7 +126,7 @@ the kustomize output into a different Git repository if desired.
 ## Sync namespace specific policies
 
 Now you can configure ConfigSync to sync these policies to the cluster.
-You can do this either using the GCP console or `kubectl apply`.
+You can do this either using the GCP console or `gcloud`.
 
 ### Using GCP console
 
@@ -114,29 +142,44 @@ you need to
    - the **Source format** field should **unstructured**.
    - the **Policy directory** field should be `namespace-specific-policy/configsync`.
 
-### Using kubectl
+### Using gcloud
 
-You can also use `kubectl apply` to configure ConfigSync.
+You can also configure the Git repository information in a
+`config-management.yaml` file and use a `gcloud` command to apply it.
 
-```
-cat << EOF > config-management.yaml
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  git:
-    policyDir: namespace-specific-policy/configsync
-    secretType: none
-    syncBranch: init
-    # If you're using your forked repo,
-    # syncRepo field should be https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git
-    syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git
-  sourceFormat: unstructured
-EOF
+1. Create the `config-management.yaml` file
 
-kubectl apply -f config-management.yaml
-```
+   ```
+   cat << EOF > config-management.yaml
+   apiVersion: configmanagement.gke.io/v1
+   kind: ConfigManagement
+   metadata:
+     name: config-management
+   spec:
+     git:
+       policyDir: namespace-specific-policy/configsync
+       secretType: none
+       syncBranch: init
+       # If you're using your forked repo,
+       # syncRepo field should be https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git
+       syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git
+     sourceFormat: unstructured
+   EOF
+   ```
+
+1. Apply the `config-management.yaml` file.
+
+   ```
+   gcloud alpha container hub config-management apply \
+   --membership=CLUSTER_NAME \
+   --config=config-management.yaml \
+   --project=PROJECT_ID
+   ```
+
+   Replace the following variables:
+   - `CLUSTER_NAME`: the name of the registered cluster that you want to apply
+     this configuration to.
+   - `PROJECT_ID`: your GCP project ID.
 
 ## Verify namespace specific policies are synced
 Now you can verify that the namespace specific policies are synced to the cluster.
