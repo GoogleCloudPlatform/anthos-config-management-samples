@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_anthos_config_management_samples_ci_pipeline_unstructured_yaml_/tmp/askmeegs/anthos_config_management_samples/ci_pipeline_unstructured/cloudbuild.yaml]
+# [START anthos_config_management_anthos_config_management_samples_ci_pipeline_unstructured_yaml_cloudbuild.yaml]
 steps:
 - args:
   - chmod
@@ -32,5 +32,5 @@ steps:
   - --input
   - /workspace/config-source.yaml
   name: gcr.io/config-management-release/policy-controller-validate
-# [END anthos_config_management_anthos_config_management_samples_ci_pipeline_unstructured_yaml_/tmp/askmeegs/anthos_config_management_samples/ci_pipeline_unstructured/cloudbuild.yaml]
+# [END anthos_config_management_anthos_config_management_samples_ci_pipeline_unstructured_yaml_cloudbuild.yaml]
 ---

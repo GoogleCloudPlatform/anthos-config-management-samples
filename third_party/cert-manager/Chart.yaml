@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_third_party_cert_manager_yaml_/tmp/askmeegs/anthos_config_management_samples/third_party/cert_manager/Chart.yaml]
+# [START anthos_config_management_third_party_cert_manager_yaml_Chart.yaml]
 apiVersion: v1
 appVersion: v1.3.0
 description: A Helm chart for cert-manager
@@ -31,5 +31,5 @@ name: cert-manager
 sources:
 - https://github.com/jetstack/cert-manager
 version: v1.3.0
-# [END anthos_config_management_third_party_cert_manager_yaml_/tmp/askmeegs/anthos_config_management_samples/third_party/cert_manager/Chart.yaml]
+# [END anthos_config_management_third_party_cert_manager_yaml_Chart.yaml]
 ---

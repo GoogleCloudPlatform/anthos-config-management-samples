@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_configsync_src_tenant_b_yaml_/tmp/askmeegs/anthos_config_management_samples/namespace_specific_policy/configsync_src/tenant_b/kustomization.yaml]
+# [START anthos_config_management_configsync_src_tenant_b_yaml_kustomization.yaml]
 namespace: tenant-b
 patches:
 - patch: "- op: replace\n  path: /subjects/0/name\n  value: tenant-b-admin@mydomain.com"
@@ -26,5 +26,5 @@ patches:
     name: default
 resources:
 - ../base
-# [END anthos_config_management_configsync_src_tenant_b_yaml_/tmp/askmeegs/anthos_config_management_samples/namespace_specific_policy/configsync_src/tenant_b/kustomization.yaml]
+# [END anthos_config_management_configsync_src_tenant_b_yaml_kustomization.yaml]
 ---

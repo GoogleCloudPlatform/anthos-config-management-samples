@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_configsync_src_all_clusters_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_cluster_ingress/repos/platform/configsync_src/all_clusters/kustomization.yaml]
+# [START anthos_config_management_configsync_src_all_clusters_kustomization_kustomization.yaml]
 apiVersion: kustomize.config.k8s.io/v1beta1
 commonLabels:
   owner: platform-team
 kind: Kustomization
 resources:
 - namespaces.yaml
-# [END anthos_config_management_configsync_src_all_clusters_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_cluster_ingress/repos/platform/configsync_src/all_clusters/kustomization.yaml]
+# [END anthos_config_management_configsync_src_all_clusters_kustomization_kustomization.yaml]
 ---

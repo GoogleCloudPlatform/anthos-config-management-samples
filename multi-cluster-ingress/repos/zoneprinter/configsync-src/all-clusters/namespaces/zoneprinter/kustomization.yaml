@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespaces_zoneprinter_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_cluster_ingress/repos/zoneprinter/configsync_src/all_clusters/namespaces/zoneprinter/kustomization.yaml]
+# [START anthos_config_management_namespaces_zoneprinter_kustomization_kustomization.yaml3]
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - zoneprinter-deployment.yaml
-# [END anthos_config_management_namespaces_zoneprinter_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_cluster_ingress/repos/zoneprinter/configsync_src/all_clusters/namespaces/zoneprinter/kustomization.yaml]
+# [END anthos_config_management_namespaces_zoneprinter_kustomization_kustomization.yaml3]
 ---

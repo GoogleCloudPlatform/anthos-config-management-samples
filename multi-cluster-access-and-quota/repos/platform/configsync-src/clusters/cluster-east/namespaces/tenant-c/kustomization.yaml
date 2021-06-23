@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespaces_tenant_c_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_cluster_access_and_quota/repos/platform/configsync_src/clusters/cluster_east/namespaces/tenant_c/kustomization.yaml]
+# [START anthos_config_management_namespaces_tenant_c_kustomization_kustomization.yaml]
 apiVersion: kustomize.config.k8s.io/v1beta1
 commonLabels:
   cluster: cluster-east
@@ -22,5 +22,5 @@ namespace: tenant-c
 resources:
 - ../../../../all-clusters/all-namespaces/
 - ../../../../all-clusters/namespaces/tenant-c/
-# [END anthos_config_management_namespaces_tenant_c_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_cluster_access_and_quota/repos/platform/configsync_src/clusters/cluster_east/namespaces/tenant_c/kustomization.yaml]
+# [END anthos_config_management_namespaces_tenant_c_kustomization_kustomization.yaml]
 ---

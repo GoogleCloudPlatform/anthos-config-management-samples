@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_third_party_cert_manager_yaml_/tmp/askmeegs/anthos_config_management_samples/third_party/cert_manager/values.yaml]
+# [START anthos_config_management_third_party_cert_manager_yaml_values.yaml]
 affinity: {}
 cainjector:
   affinity: {}
@@ -108,5 +108,5 @@ webhook:
   strategy: {}
   timeoutSeconds: 10
   tolerations: []
-# [END anthos_config_management_third_party_cert_manager_yaml_/tmp/askmeegs/anthos_config_management_samples/third_party/cert_manager/values.yaml]
+# [END anthos_config_management_third_party_cert_manager_yaml_values.yaml]
 ---

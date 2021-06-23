@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_config_source_base_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_environments_kustomize/config_source/base/kustomization.yaml]
+# [START anthos_config_management_config_source_base_kustomization_kustomization.yaml]
 apiVersion: kustomize.config.k8s.io/v1beta1
 bases:
 - foo/
@@ -21,5 +21,5 @@ kind: Kustomization
 resources:
 - pod-creator-clusterrole.yaml
 - pod-creator-rolebinding.yaml
-# [END anthos_config_management_config_source_base_kustomization_/tmp/askmeegs/anthos_config_management_samples/multi_environments_kustomize/config_source/base/kustomization.yaml]
+# [END anthos_config_management_config_source_base_kustomization_kustomization.yaml]
 ---
