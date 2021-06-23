@@ -1,17 +1,37 @@
-kind: NamespaceSelector
+
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START anthos_config_management_namespaces_eng_namespaceselector_analytics_selector]
 apiVersion: configmanagement.gke.io/v1
+kind: NamespaceSelector
 metadata:
   name: analytics-selector
 spec:
   selector:
     matchLabels:
       app: analytics
+# [END anthos_config_management_namespaces_eng_namespaceselector_analytics_selector]
 ---
-kind: NamespaceSelector
+# [START anthos_config_management_namespaces_eng_namespaceselector_gamestore_selector]
 apiVersion: configmanagement.gke.io/v1
+kind: NamespaceSelector
 metadata:
   name: gamestore-selector
 spec:
   selector:
     matchLabels:
       app: gamestore
+# [END anthos_config_management_namespaces_eng_namespaceselector_gamestore_selector]
+---

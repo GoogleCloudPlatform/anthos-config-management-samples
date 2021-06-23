@@ -1,3 +1,19 @@
+
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_alertmanagerconfigs.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -41,8 +57,8 @@ spec:
               is equal to the namespace of the AlertmanagerConfig resource.
             properties:
               inhibitRules:
-                description: List of inhibition rules. The rules will only apply to
-                  alerts matching the resource’s namespace.
+                description: "List of inhibition rules. The rules will only apply\
+                  \ to alerts matching the resource\u2019s namespace."
                 items:
                   description: InhibitRule defines an inhibition rule that allows
                     to mute alerts when other alerts are already firing. See https://prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
@@ -54,9 +70,9 @@ spec:
                         type: string
                       type: array
                     sourceMatch:
-                      description: Matchers for which one or more alerts have to exist
-                        for the inhibition to take effect. The operator enforces that
-                        the alert matches the resource’s namespace.
+                      description: "Matchers for which one or more alerts have to\
+                        \ exist for the inhibition to take effect. The operator enforces\
+                        \ that the alert matches the resource\u2019s namespace."
                       items:
                         description: Matcher defines how to match on alert's labels.
                         properties:
@@ -76,9 +92,9 @@ spec:
                         type: object
                       type: array
                     targetMatch:
-                      description: Matchers that have to be fulfilled in the alerts
-                        to be muted. The operator enforces that the alert matches
-                        the resource’s namespace.
+                      description: "Matchers that have to be fulfilled in the alerts\
+                        \ to be muted. The operator enforces that the alert matches\
+                        \ the resource\u2019s namespace."
                       items:
                         description: Matcher defines how to match on alert's labels.
                         properties:
@@ -1179,11 +1195,11 @@ spec:
                             description: Notification title.
                             type: string
                           token:
-                            description: The secret's key that contains the registered
-                              application’s API token, see https://pushover.net/apps.
-                              The secret needs to be in the same namespace as the
-                              AlertmanagerConfig object and accessible by the Prometheus
-                              Operator.
+                            description: "The secret's key that contains the registered\
+                              \ application\u2019s API token, see https://pushover.net/apps.\
+                              \ The secret needs to be in the same namespace as the\
+                              \ AlertmanagerConfig object and accessible by the Prometheus\
+                              \ Operator."
                             properties:
                               key:
                                 description: The key of the secret to select from.  Must
@@ -1209,10 +1225,10 @@ spec:
                               just the URL is shown
                             type: string
                           userKey:
-                            description: The secret's key that contains the recipient
-                              user’s user key. The secret needs to be in the same
-                              namespace as the AlertmanagerConfig object and accessible
-                              by the Prometheus Operator.
+                            description: "The secret's key that contains the recipient\
+                              \ user\u2019s user key. The secret needs to be in the\
+                              \ same namespace as the AlertmanagerConfig object and\
+                              \ accessible by the Prometheus Operator."
                             properties:
                               key:
                                 description: The key of the secret to select from.  Must
@@ -2362,9 +2378,9 @@ spec:
                   type: object
                 type: array
               route:
-                description: The Alertmanager route definition for alerts matching
-                  the resource’s namespace. If present, it will be added to the generated
-                  Alertmanager configuration as a first-level route.
+                description: "The Alertmanager route definition for alerts matching\
+                  \ the resource\u2019s namespace. If present, it will be added to\
+                  \ the generated Alertmanager configuration as a first-level route."
                 properties:
                   continue:
                     description: Boolean indicating whether an alert should continue
@@ -2387,10 +2403,10 @@ spec:
                       seconds minutes hours).
                     type: string
                   matchers:
-                    description: 'List of matchers that the alert’s labels should
-                      match. For the first level route, the operator removes any existing
-                      equality and regexp matcher on the `namespace` label and adds
-                      a `namespace: <object namespace>` matcher.'
+                    description: "List of matchers that the alert\u2019s labels should\
+                      \ match. For the first level route, the operator removes any\
+                      \ existing equality and regexp matcher on the `namespace` label\
+                      \ and adds a `namespace: <object namespace>` matcher."
                     items:
                       description: Matcher defines how to match on alert's labels.
                       properties:
@@ -2430,7 +2446,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_alertmanagerconfigs.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_alertmanagers.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -5479,14 +5497,14 @@ spec:
                   common container settings. This defaults to the default PodSecurityContext.
                 properties:
                   fsGroup:
-                    description: "A special supplemental group that applies to all
-                      containers in a pod. Some volume types allow the Kubelet to
-                      change the ownership of that volume to be owned by the pod:
-                      \n 1. The owning GID will be the FSGroup 2. The setgid bit is
-                      set (new files created in the volume will be owned by FSGroup)
-                      3. The permission bits are OR'd with rw-rw---- \n If unset,
-                      the Kubelet will not modify the ownership and permissions of
-                      any volume."
+                    description: "A special supplemental group that applies to all\
+                      \ containers in a pod. Some volume types allow the Kubelet to\
+                      \ change the ownership of that volume to be owned by the pod:\
+                      \ \n 1. The owning GID will be the FSGroup 2. The setgid bit\
+                      \ is set (new files created in the volume will be owned by FSGroup)\
+                      \ 3. The permission bits are OR'd with rw-rw---- \n If unset,\
+                      \ the Kubelet will not modify the ownership and permissions\
+                      \ of any volume."
                     format: int64
                     type: integer
                   fsGroupChangePolicy:
@@ -7321,7 +7339,9 @@ spec:
     served: true
     storage: true
     subresources: {}
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_alertmanagers.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_podmonitors.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -7768,7 +7788,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_podmonitors.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_probes.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -8191,7 +8213,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_probes.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_prometheuses.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -12539,14 +12563,14 @@ spec:
                   common container settings. This defaults to the default PodSecurityContext.
                 properties:
                   fsGroup:
-                    description: "A special supplemental group that applies to all
-                      containers in a pod. Some volume types allow the Kubelet to
-                      change the ownership of that volume to be owned by the pod:
-                      \n 1. The owning GID will be the FSGroup 2. The setgid bit is
-                      set (new files created in the volume will be owned by FSGroup)
-                      3. The permission bits are OR'd with rw-rw---- \n If unset,
-                      the Kubelet will not modify the ownership and permissions of
-                      any volume."
+                    description: "A special supplemental group that applies to all\
+                      \ containers in a pod. Some volume types allow the Kubelet to\
+                      \ change the ownership of that volume to be owned by the pod:\
+                      \ \n 1. The owning GID will be the FSGroup 2. The setgid bit\
+                      \ is set (new files created in the volume will be owned by FSGroup)\
+                      \ 3. The permission bits are OR'd with rw-rw---- \n If unset,\
+                      \ the Kubelet will not modify the ownership and permissions\
+                      \ of any volume."
                     format: int64
                     type: integer
                   fsGroupChangePolicy:
@@ -13051,11 +13075,11 @@ spec:
                   the image URL.'
                 type: string
               thanos:
-                description: "Thanos configuration allows configuring various aspects
-                  of a Prometheus server in a Thanos environment. \n This section
-                  is experimental, it may change significantly without deprecation
-                  notice in any release. \n This is experimental and may change significantly
-                  without backward compatibility in any release."
+                description: "Thanos configuration allows configuring various aspects\
+                  \ of a Prometheus server in a Thanos environment. \n This section\
+                  \ is experimental, it may change significantly without deprecation\
+                  \ notice in any release. \n This is experimental and may change\
+                  \ significantly without backward compatibility in any release."
                 properties:
                   baseImage:
                     description: 'Thanos base image if other than default. Deprecated:
@@ -14752,7 +14776,9 @@ spec:
     served: true
     storage: true
     subresources: {}
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_prometheuses.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_prometheusrules.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -14842,7 +14868,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_prometheusrules.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_servicemonitors.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -15312,7 +15340,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_servicemonitors.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_customresourcedefinition_thanosrulers.monitoring.coreos.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -18537,14 +18567,14 @@ spec:
                   common container settings. This defaults to the default PodSecurityContext.
                 properties:
                   fsGroup:
-                    description: "A special supplemental group that applies to all
-                      containers in a pod. Some volume types allow the Kubelet to
-                      change the ownership of that volume to be owned by the pod:
-                      \n 1. The owning GID will be the FSGroup 2. The setgid bit is
-                      set (new files created in the volume will be owned by FSGroup)
-                      3. The permission bits are OR'd with rw-rw---- \n If unset,
-                      the Kubelet will not modify the ownership and permissions of
-                      any volume."
+                    description: "A special supplemental group that applies to all\
+                      \ containers in a pod. Some volume types allow the Kubelet to\
+                      \ change the ownership of that volume to be owned by the pod:\
+                      \ \n 1. The owning GID will be the FSGroup 2. The setgid bit\
+                      \ is set (new files created in the volume will be owned by FSGroup)\
+                      \ 3. The permission bits are OR'd with rw-rw---- \n If unset,\
+                      \ the Kubelet will not modify the ownership and permissions\
+                      \ of any volume."
                     format: int64
                     type: integer
                   fsGroupChangePolicy:
@@ -20338,7 +20368,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthos_config_management_root_acm_monitor_customresourcedefinition_thanosrulers.monitoring.coreos.com]
 ---
+# [START anthos_config_management_root_acm_monitor_serviceaccount_prometheus_operator]
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -20348,7 +20380,9 @@ metadata:
     app.kubernetes.io/version: 0.47.0
   name: prometheus-operator
   namespace: monitoring
+# [END anthos_config_management_root_acm_monitor_serviceaccount_prometheus_operator]
 ---
+# [START anthos_config_management_root_acm_monitor_clusterrole_prometheus_operator]
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -20381,21 +20415,21 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - ""
+  - ''
   resources:
   - configmaps
   - secrets
   verbs:
   - '*'
 - apiGroups:
-  - ""
+  - ''
   resources:
   - pods
   verbs:
   - list
   - delete
 - apiGroups:
-  - ""
+  - ''
   resources:
   - services
   - services/finalizers
@@ -20406,14 +20440,14 @@ rules:
   - update
   - delete
 - apiGroups:
-  - ""
+  - ''
   resources:
   - nodes
   verbs:
   - list
   - watch
 - apiGroups:
-  - ""
+  - ''
   resources:
   - namespaces
   verbs:
@@ -20428,7 +20462,9 @@ rules:
   - get
   - list
   - watch
+# [END anthos_config_management_root_acm_monitor_clusterrole_prometheus_operator]
 ---
+# [START anthos_config_management_root_acm_monitor_clusterrolebinding_prometheus_operator]
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -20445,7 +20481,9 @@ subjects:
 - kind: ServiceAccount
   name: prometheus-operator
   namespace: monitoring
+# [END anthos_config_management_root_acm_monitor_clusterrolebinding_prometheus_operator]
 ---
+# [START anthos_config_management_root_acm_monitor_service_prometheus_operator]
 apiVersion: v1
 kind: Service
 metadata:
@@ -20464,7 +20502,9 @@ spec:
   selector:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
+# [END anthos_config_management_root_acm_monitor_service_prometheus_operator]
 ---
+# [START anthos_config_management_root_acm_monitor_deployment_prometheus_operator]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20511,3 +20551,5 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
       serviceAccountName: prometheus-operator
+# [END anthos_config_management_root_acm_monitor_deployment_prometheus_operator]
+---

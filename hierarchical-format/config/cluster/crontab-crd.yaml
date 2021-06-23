@@ -1,40 +1,48 @@
+
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START anthos_config_management_config_cluster_customresourcedefinition_crontabs.stable.example.com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  # name must match the spec fields below, and be in the form: <plural>.<group>
   name: crontabs.stable.example.com
 spec:
-  # group name to use for REST API: /apis/<group>/<version>
   group: stable.example.com
-  # list of versions supported by this CustomResourceDefinition
-  versions:
-    - name: v1
-      # Each version can be enabled/disabled by Served flag.
-      served: true
-      # One and only one version must be marked as the storage version.
-      storage: true
-      schema:
-        openAPIV3Schema:
-          type: object
-          properties:
-            spec:
-              type: object
-              properties:
-                cronSpec:
-                  type: string
-                image:
-                  type: string
-                replicas:
-                  type: integer
-  # either Namespaced or Cluster
-  scope: Namespaced
   names:
-    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
-    plural: crontabs
-    # singular name to be used as an alias on the CLI and for display
-    singular: crontab
-    # kind is normally the CamelCased singular type. Your resource manifests use this.
     kind: CronTab
-    # shortNames allow shorter string to match your resource on the CLI
+    plural: crontabs
     shortNames:
     - ct
+    singular: crontab
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              cronSpec:
+                type: string
+              image:
+                type: string
+              replicas:
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+# [END anthos_config_management_config_cluster_customresourcedefinition_crontabs.stable.example.com]
+---

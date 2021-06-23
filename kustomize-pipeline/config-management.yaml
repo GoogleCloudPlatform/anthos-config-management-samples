@@ -1,15 +1,29 @@
-# config-management.yaml
+
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START anthos_config_management_anthos_config_management_samples_kustomize_pipeline_configmanagement_config_management]
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
 metadata:
   name: config-management
 spec:
   git:
-    # Change this to point to your repo
-    syncRepo: https://github.com/YOUR_USERNAME/YOUR_REPO
-    # We recommend securing your source repository.
-    # Other supported secretType: `ssh`, `cookiefile`, `token`, `gcenode`.
-    secretType: none
     policyDir: deploy-config/
+    secretType: none
     syncBranch: main
+    syncRepo: https://github.com/YOUR_USERNAME/YOUR_REPO
   sourceFormat: unstructured
+# [END anthos_config_management_anthos_config_management_samples_kustomize_pipeline_configmanagement_config_management]
+---
