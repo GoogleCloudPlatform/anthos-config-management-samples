@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_clusters_cluster_east_kustomization_kustomization.yaml]
+# [START anthos_config_management_clusters_cluster_east_kustomization_kustomization]
 apiVersion: kustomize.config.k8s.io/v1beta1
 commonLabels:
   cluster: cluster-east
 kind: Kustomization
 resources:
 - ../../all-clusters/
-# [END anthos_config_management_clusters_cluster_east_kustomization_kustomization.yaml]
+# [END anthos_config_management_clusters_cluster_east_kustomization_kustomization]
 ---

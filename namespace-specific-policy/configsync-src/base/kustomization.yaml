@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_configsync_src_base_yaml_kustomization.yaml]
+# [START anthos_config_management_configsync_src_base_yaml_kustomization]
 resources:
 - namespace.yaml
 - rolebinding.yaml
 - role.yaml
 - networkpolicy.yaml
-# [END anthos_config_management_configsync_src_base_yaml_kustomization.yaml]
+# [END anthos_config_management_configsync_src_base_yaml_kustomization]
 ---

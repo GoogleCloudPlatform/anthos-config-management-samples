@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespaces_tenant_a_kustomization_kustomization.yaml2]
+# [START anthos_config_management_namespaces_tenant_a_kustomization_kustomization2]
 apiVersion: kustomize.config.k8s.io/v1beta1
 commonLabels:
   cluster: cluster-west
@@ -22,5 +22,5 @@ namespace: tenant-a
 resources:
 - ../../../../all-clusters/all-namespaces/
 - ../../../../all-clusters/namespaces/tenant-a/
-# [END anthos_config_management_namespaces_tenant_a_kustomization_kustomization.yaml2]
+# [END anthos_config_management_namespaces_tenant_a_kustomization_kustomization2]
 ---

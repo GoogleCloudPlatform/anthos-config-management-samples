@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_overlays_prod_kustomization_kustomization.yaml]
+# [START anthos_config_management_overlays_prod_kustomization_kustomization]
 apiVersion: kustomize.config.k8s.io/v1beta1
 bases:
 - ../../base
@@ -29,5 +29,5 @@ patches:
   target:
     kind: RoleBinding
     name: pod-creators
-# [END anthos_config_management_overlays_prod_kustomization_kustomization.yaml]
+# [END anthos_config_management_overlays_prod_kustomization_kustomization]
 ---
