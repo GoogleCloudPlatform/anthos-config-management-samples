@@ -3,6 +3,7 @@ Anthos Config Management Samples
 
 This repository contains samples for [Anthos Config Management][1].
 
+
 ## Examples 
 
 ### [Quickstart](quickstart/)
