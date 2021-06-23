@@ -1,0 +1,19 @@
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  labels:
+    app: zoneprinter
+    cluster: cluster-west
+    owner: zoneprinter-team
+  name: zoneprinter
+  namespace: zoneprinter
+spec:
+  template:
+    spec:
+      ports:
+      - name: web
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+      selector:
+        app: zoneprinter

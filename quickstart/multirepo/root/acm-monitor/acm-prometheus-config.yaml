@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-acm
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-acm
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-acm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-acm
+subjects:
+- kind: ServiceAccount
+  name: prometheus-acm
+  namespace: monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: acm
+  namespace: monitoring
+  labels:
+    prometheus: acm
+spec:
+  replicas: 3
+  serviceAccountName: prometheus-acm
+  serviceMonitorSelector:
+    matchLabels:
+      prometheus: config-management
+  alerting:
+    alertmanagers:
+    - namespace: default
+      name: alertmanager
+      port: web
+  resources:
+    requests:
+      memory: 400Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-acm
+  namespace: monitoring
+  labels:
+    prometheus: acm
+spec:
+  type: NodePort
+  ports:
+  - name: web
+    nodePort: 31900
+    port: 9190
+    protocol: TCP
+    targetPort: web
+  selector:
+    app: prometheus
+    prometheus: acm
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: acm-service
+  namespace: monitoring
+  labels:
+    prometheus: config-management
+spec:
+  selector:
+    matchLabels:
+      monitored: "true"
+  namespaceSelector:
+    matchNames:
+    # If you are using mono-repo mode, choose config-management-system
+    # If you are using multi-repo mode, choose config-management-monitoring
+    # - config-management-system
+    - config-management-monitoring
+  endpoints:
+  - port: metrics
+    interval: 10s

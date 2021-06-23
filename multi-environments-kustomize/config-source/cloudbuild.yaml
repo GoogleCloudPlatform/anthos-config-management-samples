@@ -1,0 +1,76 @@
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+steps: 
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
+  id: Render foo-config-dev 
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
+    cd foo-config-dev 
+    git config user.email $$GITHUB_EMAIL
+    git config user.name $$GITHUB_USERNAME 
+    git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-dev.git
+    cd ..
+
+    kustomize build overlays/dev --output foo-config-dev/
+    cd foo-config-dev 
+
+    rm README.md 
+    echo "Update: ${SHORT_SHA}" > README.md
+
+    git add . && \
+    git commit -m "Rendered: ${SHORT_SHA}
+    Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
+    Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
+    git push origin main
+  secretEnv: ['GITHUB_EMAIL', 'GITHUB_USERNAME', 'GITHUB_TOKEN']
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
+  id: Render foo-config-prod
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    git clone https://github.com/$$GITHUB_USERNAME/foo-config-prod
+    cd foo-config-prod
+    git config user.email $$GITHUB_EMAIL
+    git config user.name $$GITHUB_USERNAME 
+    git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-prod.git
+    cd ..
+
+    kustomize build overlays/prod --output foo-config-prod/
+    cd foo-config-prod 
+
+    rm README.md 
+    echo "Update: ${SHORT_SHA}" > README.md
+
+    git add . && \
+    git commit -m "Rendered: ${SHORT_SHA}
+    Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
+    Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
+    git push origin main
+  secretEnv: ['GITHUB_EMAIL', 'GITHUB_USERNAME', 'GITHUB_TOKEN']
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_ID}/secrets/github-username/versions/1 
+    env: 'GITHUB_USERNAME'
+  - versionName: projects/${PROJECT_ID}/secrets/github-token/versions/1 
+    env: 'GITHUB_TOKEN'
+  - versionName: projects/${PROJECT_ID}/secrets/github-email/versions/1 
+    env: 'GITHUB_EMAIL'

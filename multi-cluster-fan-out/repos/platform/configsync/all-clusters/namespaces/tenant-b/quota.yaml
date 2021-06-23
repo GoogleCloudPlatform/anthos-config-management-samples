@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  labels:
+    owner: platform-team
+  name: hard-limit
+  namespace: tenant-b
+spec:
+  hard:
+    cpu: "100"
+    memory: 10Gi
+    pods: "10"

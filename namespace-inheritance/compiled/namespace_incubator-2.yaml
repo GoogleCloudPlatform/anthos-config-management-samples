@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/rnd/incubator-2/namespace.yaml
+    configsync.gke.io/declared-fields: '{}'
+    hnc.x-k8s.io/managed-by: configmanagement.gke.io
+  labels:
+    configsync.gke.io/declared-version: v1
+    incubator-2.tree.hnc.x-k8s.io/depth: "0"
+    rnd.tree.hnc.x-k8s.io/depth: "1"
+  name: incubator-2

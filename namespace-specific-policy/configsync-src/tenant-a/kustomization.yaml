@@ -1,0 +1,21 @@
+namespace: tenant-a
+
+resources:
+- ../base
+
+patches:
+- target:
+    kind: RoleBinding
+    name: tenant-admin-rolebinding
+  patch: |-
+    - op: replace
+      path: /subjects/0/name
+      value: tenant-a-admin@mydomain.com
+- target:
+    kind: Namespace
+    name: default
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: tenant-a
+

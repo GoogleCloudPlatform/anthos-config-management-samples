@@ -1,0 +1,22 @@
+apiVersion: configsync.gke.io/v1alpha1
+kind: RepoSync
+metadata:
+  # There can be at most one RepoSync object per namespace.
+  # To enforce this restriction, the object name must be repo-sync. 
+  name: repo-sync
+  namespace: gamestore
+spec:
+  # Since this is for a namespace repository, the format should be unstructured
+  sourceFormat: unstructured
+  git:
+    # If you fork this repo, change the url to point to your fork
+    repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
+    # If you move the configs to a different branch, update the branch here
+    branch: init
+    dir: quickstart/multirepo/namespaces/gamestore
+    # We recommend securing your source repository.
+    # Other supported auth: `ssh`, `cookiefile`, `token`, `gcenode`.
+    auth: none
+    # Refer to a Secret you create to hold the private key, cookiefile, or token.
+    # secretRef:
+    #   name: SECRET_NAME

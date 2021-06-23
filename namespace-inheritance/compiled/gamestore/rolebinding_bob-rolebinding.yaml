@@ -1,0 +1,20 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/eng/gamestore/bob-rolebinding.yaml
+    configsync.gke.io/declared-fields: '{"f:roleRef":{"f:apiGroup":{},"f:kind":{},"f:name":{}},"f:subjects":{}}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: bob-rolebinding
+  namespace: gamestore
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: foo-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: bob@example.com

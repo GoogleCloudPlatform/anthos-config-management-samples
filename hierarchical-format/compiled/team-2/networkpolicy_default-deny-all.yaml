@@ -1,0 +1,17 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/team-2/network-policy-default-deny-all.yaml
+    configsync.gke.io/declared-fields: '{"f:spec":{"f:policyTypes":{}}}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: default-deny-all
+  namespace: team-2
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress

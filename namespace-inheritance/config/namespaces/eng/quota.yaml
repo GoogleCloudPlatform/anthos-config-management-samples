@@ -1,0 +1,23 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: quota
+  annotations:
+    configmanagement.gke.io/namespace-selector: analytics-selector
+spec:
+  hard:
+    pods: "1"
+    cpu: "100m"
+    memory: 100Mi
+---
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: quota
+  annotations:
+    configmanagement.gke.io/namespace-selector: gamestore-selector
+spec:
+  hard:
+    pods: "1"
+    cpu: "200m"
+    memory: 200Mi

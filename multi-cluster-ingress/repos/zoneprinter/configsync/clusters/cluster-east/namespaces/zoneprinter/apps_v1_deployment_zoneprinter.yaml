@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: zoneprinter
+    cluster: cluster-east
+    owner: zoneprinter-team
+  name: zoneprinter
+  namespace: zoneprinter
+spec:
+  selector:
+    matchLabels:
+      app: zoneprinter
+      cluster: cluster-east
+      owner: zoneprinter-team
+  template:
+    metadata:
+      labels:
+        app: zoneprinter
+        cluster: cluster-east
+        owner: zoneprinter-team
+    spec:
+      containers:
+      - image: gcr.io/google-samples/zone-printer:0.2
+        name: frontend
+        ports:
+        - containerPort: 8080

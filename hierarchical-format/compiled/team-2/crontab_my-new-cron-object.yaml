@@ -1,0 +1,15 @@
+---
+apiVersion: stable.example.com/v1
+kind: CronTab
+metadata:
+  annotations:
+    configmanagement.gke.io/cluster-name: defaultcluster
+    configmanagement.gke.io/source-path: config/namespaces/team-2/crontab.yaml
+    configsync.gke.io/declared-fields: '{"f:metadata":{"f:annotations":{},"f:labels":{}},"f:spec":{".":{},"f:cronSpec":{},"f:image":{}}}'
+  labels:
+    configsync.gke.io/declared-version: v1
+  name: my-new-cron-object
+  namespace: team-2
+spec:
+  cronSpec: '* * * * */5'
+  image: my-awesome-cron-image

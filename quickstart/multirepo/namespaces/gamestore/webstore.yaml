@@ -1,0 +1,8 @@
+kind: WebStore
+apiVersion: marketplace.com/v2
+metadata:
+  name: gameplace
+  namespace: gamestore
+spec:
+  product: "boardgames"
+  employees: 5

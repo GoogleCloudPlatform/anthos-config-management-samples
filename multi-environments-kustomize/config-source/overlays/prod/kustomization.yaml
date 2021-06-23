@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../base
+patches:
+# ServiceAccount - make name unique per environ 
+- target:
+    kind: ServiceAccount
+    name: foo-ksa
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: foo-ksa-prod
+# Pod creators - only give CD pod creation access
+- target:
+    kind: RoleBinding
+    name: pod-creators
+  patch: |-
+    - op: replace
+      path: /subjects/0/name
+      value: deploy-bot@foo-corp.com
+commonLabels:
+  environment: prod

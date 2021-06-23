@@ -1,0 +1,12 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: eng-admin
+subjects:
+  - kind: Group
+    name: eng@example.com
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: eng-viewer
+  apiGroup: rbac.authorization.k8s.io
