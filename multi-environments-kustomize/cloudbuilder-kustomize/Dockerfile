@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# creates namespace named "hello"
+
 # [START anthos_config_management_multi_environments_kustomize_dockerfile] 
 FROM gcr.io/cloud-builders/kubectl:latest 
 RUN apt-get update && apt-get install -y wget 
