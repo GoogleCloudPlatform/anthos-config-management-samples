@@ -53,7 +53,7 @@ subjects:
 - kind: ServiceAccount
   name: prometheus-acm
   namespace: monitoring
-# [EMD anthos_config_management_quickstart_monorepo_root_acm_monitor_cluster_role_binding_prometheus_acm] 
+# [END anthos_config_management_quickstart_monorepo_root_acm_monitor_cluster_role_binding_prometheus_acm] 
 ---
 # [START anthos_config_management_quickstart_monorepo_root_acm_monitor_prometheus] 
 apiVersion: monitoring.coreos.com/v1
