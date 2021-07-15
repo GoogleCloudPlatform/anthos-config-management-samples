@@ -18,7 +18,7 @@ spec:
   configSync:
     enabled: true
     sourceFormat: unstructured
-    syncRepo: https://github.com/askmeegs/foo-config-prod/
+    syncRepo: https://github.com/GITHUB_USERNAME/foo-config-prod/
     syncBranch: main
     secretType: none
     policyDir: "/"
