@@ -13,15 +13,17 @@
 # limitations under the License.
 
 # [START anthos_config_management_multi_environments_kustomize_install_config_dev] 
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
+applySpecVersion: 1
 spec:
-  git:
+  configSync:
+    enabled: true
+    sourceFormat: unstructured
     syncRepo: https://github.com/GITHUB_USERNAME/foo-config-dev/
     syncBranch: main
     secretType: none
     policyDir: "/"
-  sourceFormat: unstructured
+  policyController:
+    enabled: false
+  hierarchyController:
+    enabled: false
 # [END anthos_config_management_multi_environments_kustomize_install_config_dev] 

@@ -266,7 +266,7 @@ gke_megan-dev4_us-east1-b_dev
   SYNCED   5e5cf84f
 ```
 
-14. **Switch to the `dev` cluster context.** Get namespaces to verify that the resources are synced - you should see the `foo-dev` namespace appear, synced from the `foo-config-dev` repo. 
+14. **Switch to the `dev` cluster context.** Get namespaces to verify that the resources are synced - you should see the `foo` namespace appear, synced from the `foo-config-dev` repo. 
 
 
 ```
@@ -278,14 +278,15 @@ Expected output:
 
 ```
 NAME                           STATUS   AGE
-config-management-monitoring   Active   86m
-config-management-system       Active   86m
-default                        Active   102m
-foo-dev                        Active   9m42s
-gke-connect                    Active   98m
-kube-node-lease                Active   102m
-kube-public                    Active   102m
-kube-system                    Active   102m
+config-management-monitoring   Active   2m7s
+config-management-system       Active   2m7s
+default                        Active   13m
+foo                            Active   98s
+gke-connect                    Active   12m
+kube-node-lease                Active   13m
+kube-public                    Active   13m
+kube-system                    Active   13m
+resource-group-system          Active   119s
 ```
 
 Congrats! You just set up automated config rendering for a dev and prod environment, across multiple Google Cloud projects and environments. 
