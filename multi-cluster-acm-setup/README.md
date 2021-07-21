@@ -256,8 +256,15 @@ Clusters cannot be undeleted with a project, so it's recommended to delete them 
 Clusters also generate firewalls which may block network deletion.
 
 ```
-gcloud container clusters delete cluster-west --region us-west1
-gcloud container clusters delete cluster-east --region us-east1
+gcloud container clusters delete cluster-west --region us-west1 --async
+gcloud container clusters delete cluster-east --region us-east1 --async
+
+# Wait for async operations to complete
+while IFS='' read -r line; do
+    gcloud container operations wait \
+        "$(echo "${line}" | cut -d',' -f1)" \
+        --region "$(echo "${line}" | cut -d',' -f2)"
+done <<< "$(gcloud container operations list --filter=STATUS!=DONE --format "csv[no-heading](name,zone)")"
 ```
 
 **Delete the firewalls:**
