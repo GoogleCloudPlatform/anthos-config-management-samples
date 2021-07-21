@@ -284,7 +284,13 @@ This triggers the following actions:
 
 ## Configure Config Sync for zoneprinter config
 
-To configure GitOps with a seperate Git repository for the zoneprinter namespace, you create a `RepoSync` resource and a `RoleBinding`:
+To configure GitOps for the zoneprinter namespace to use a dedicated Git repo, we use the platform Git repo.
+
+This allows for multi-tenancy in GitOps, seperating cluster-level and namespace-level configuration.
+
+**Configure RepoSync for each cluster:**
+
+This tells Config Sync to pull zoneprinter namespace resource config from your zoneprinter GitHub repo.
 
 ```
 cd "${WORKSPACE}/platform/"
@@ -323,9 +329,13 @@ spec:
     dir: "configsync/clusters/cluster-east/namespaces/zoneprinter"
     auth: none
 EOF
+```
 
-# Grant Config Sync permission to administer the zoneprinter namespace
+**Configure RoleBinding for all clusters:**
 
+This grants Config Sync permission to administer the zoneprinter namespace.
+
+```
 mkdir -p configsync-src/all-clusters/namespaces/zoneprinter/
 
 cat > configsync-src/all-clusters/namespaces/zoneprinter/configsync-rbac.yaml << EOF
@@ -343,9 +353,11 @@ roleRef:
   name: admin
   apiGroup: rbac.authorization.k8s.io
 EOF
+```
 
-# Update the kustomize config to include the new files
+**Configure kustomize to include the new files:**
 
+```
 cat > configsync-src/all-clusters/namespaces/zoneprinter/kustomization.yaml << EOF
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -370,11 +382,19 @@ resources:
 - repo-sync.yaml
 namespace: zoneprinter
 EOF
+```
 
-# Render the config (configsync-src -> configsync)
+**Render the config:**
+
+This runs kustomize on source files in `configsync-src/` and writes to `configsync/`.
+
+```
 scripts/render.sh
+```
 
-# commit and push
+**Commit and push:**
+
+```
 git add .
 git commit -m "add zoneprinter repo-sync"
 git push
