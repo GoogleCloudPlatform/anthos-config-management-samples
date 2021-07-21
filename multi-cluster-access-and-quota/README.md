@@ -246,7 +246,7 @@ rm config-management-east.yaml
 This triggers the following actions:
 1. Hub installs the ACM Operator
 1. Hub configures the ACM Operator using a `ConfigManagement` resource
-1. ACM installs ConfigSync
+1. ACM Operator installs ConfigSync
 1. Hub configures ConfigSync using a `RootSync` resources
 
 ## Validating success

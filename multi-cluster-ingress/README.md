@@ -188,7 +188,7 @@ git push
 
 ```
 GITHUB_USER_NAME=<user>
-GITHUB_REPO_NAME=<platform-repo>
+GITHUB_REPO_NAME=<zoneprinter-repo>
 
 ZONEPRINTER_REPO_HTTPS="https://github.com/${GITHUB_USER_NAME}/${GITHUB_REPO_NAME}/"
 ZONEPRINTER_REPO_SSH="git@github.com:${GITHUB_USER_NAME}/${GITHUB_REPO_NAME}.git"
@@ -279,7 +279,7 @@ rm config-management-east.yaml
 This triggers the following actions:
 1. Hub installs the ACM Operator
 1. Hub configures the ACM Operator using a `ConfigManagement` resource
-1. ACM installs ConfigSync
+1. ACM Operator installs ConfigSync
 1. Hub configures ConfigSync using a `RootSync` resources
 
 ## Configure Config Sync for zoneprinter config
@@ -390,6 +390,20 @@ This runs kustomize on source files in `configsync-src/` and writes to `configsy
 
 ```
 scripts/render.sh
+```
+
+If you're not using kustomize to render config, copy the files to `configsync/` manually:
+
+```
+cp configsync-src/clusters/cluster-west/namespaces/zoneprinter/repo-sync.yaml \
+  configsync/clusters/cluster-west/namespaces/zoneprinter/repo-sync.yaml
+cp configsync-src/clusters/cluster-east/namespaces/zoneprinter/repo-sync.yaml \
+  configsync/clusters/cluster-east/namespaces/zoneprinter/repo-sync.yaml
+
+cp configsync-src/all-clusters/namespaces/zoneprinter/configsync-rbac.yaml \
+  configsync/clusters/cluster-west/namespaces/zoneprinter/configsync-rbac.yaml
+cp configsync-src/all-clusters/namespaces/zoneprinter/configsync-rbac.yaml \
+  configsync/clusters/cluster-east/namespaces/zoneprinter/configsync-rbac.yaml
 ```
 
 **Commit and push:**
@@ -613,7 +627,7 @@ cd "${WORKSPACE}/"
 rm -rf "${WORKSPACE}/platform/"
 ```
 
-# Disable Multi-Cluster Ingress via Hub
+**Disable Multi-Cluster Ingress via Hub:**
 
 ```
 gcloud alpha container hub ingress disable \
