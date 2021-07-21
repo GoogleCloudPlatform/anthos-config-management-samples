@@ -2,7 +2,7 @@
 
 This tutorial shows how to manage an application with Multi-Cluster Ingress using Anthos Config Management, GitOps, and Kustomize.
 
-This tutorial is based on [Deploying Ingress across clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), except it uses ConfigSync and kustomize to deploy to multiple multi-tenant clusters.
+This tutorial is based on [Deploying Ingress across clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-ingress), except it uses Config Sync and kustomize to deploy to multiple multi-tenant clusters.
 
 In addition, this tutorial shows how to use the Kustomize configuration from [Multi-Cluster Access and Quota](../multi-cluster-access-and-quota/) to manage cluster resources seperately from namespace resources, which is useful if you have a platform team managing clusters for seperate application teams.
 
@@ -106,9 +106,9 @@ To invoke Kustomize, execute `scripts/render.sh` to render the resources under `
 
 If you don't want to use Kustomize, just use the resources under the `configsync/` directory and delete the `configsync-src/` and `scripts/render.sh` script.
 
-## ConfigSync
+## Config Sync
 
-This tutorial installs ConfigSync on two clusters and configures them to pull config from different `configsync/clusters/${cluster-name}/` directories in the same Git repository.
+This tutorial installs Config Sync on two clusters and configures them to pull config from different `configsync/clusters/${cluster-name}/` directories in the same Git repository.
 
 ## Progressive rollouts
 
@@ -127,7 +127,11 @@ To read more about progressive delivery patterns, see [Safe rollouts with Anthos
 [Github: Create a repo](https://docs.github.com/en/github/getting-started-with-github/create-a-repo)
 
 ```
-PLATFORM_REPO="https://github.com/USER_NAME/REPO_NAME/"
+GITHUB_USER_NAME=<user>
+GITHUB_REPO_NAME=<platform-repo>
+
+PLATFORM_REPO_HTTPS="https://github.com/${GITHUB_USER_NAME}/${GITHUB_REPO_NAME}/"
+PLATFORM_REPO_SSH="git@github.com:${GITHUB_USER_NAME}/${GITHUB_REPO_NAME}.git"
 ```
 
 **Select or create a local workspace directory:**
@@ -157,7 +161,7 @@ git clone https://github.com/GoogleCloudPlatform/anthos-config-management-sample
 ```
 cd "${WORKSPACE}"
 
-git clone "${PLATFORM_REPO}" platform
+git clone "${PLATFORM_REPO_SSH}" platform
 ```
 
 **Copy the platform config from the tutorial repo:**
@@ -174,9 +178,7 @@ cp -r anthos-config-management-samples/multi-cluster-ingress/repos/platform/* pl
 cd "${WORKSPACE}/platform/"
 
 git add .
-
 git commit -m "initialize platform config"
-
 git push
 ```
 
@@ -185,7 +187,11 @@ git push
 [Github: Create a repo](https://docs.github.com/en/github/getting-started-with-github/create-a-repo)
 
 ```
-ZONEPRINTER_REPO="https://github.com/USER_NAME/REPO_NAME/"
+GITHUB_USER_NAME=<user>
+GITHUB_REPO_NAME=<platform-repo>
+
+ZONEPRINTER_REPO_HTTPS="https://github.com/${GITHUB_USER_NAME}/${GITHUB_REPO_NAME}/"
+ZONEPRINTER_REPO_SSH="git@github.com:${GITHUB_USER_NAME}/${GITHUB_REPO_NAME}.git"
 ```
 
 **Clone the zoneprinter repo:**
@@ -193,7 +199,7 @@ ZONEPRINTER_REPO="https://github.com/USER_NAME/REPO_NAME/"
 ```
 cd "${WORKSPACE}"
 
-git clone "${PLATFORM_REPO}" zoneprinter
+git clone "${ZONEPRINTER_REPO_SSH}" zoneprinter
 ```
 
 **Copy the zoneprinter config from the tutorial repo:**
@@ -210,9 +216,7 @@ cp -r anthos-config-management-samples/multi-cluster-ingress/repos/zoneprinter/*
 cd "${WORKSPACE}/zoneprinter/"
 
 git add .
-
 git commit -m "initialize zoneprinter config"
-
 git push
 ```
 
@@ -220,124 +224,40 @@ git push
 
 ```
 gcloud alpha container hub ingress enable \
-    --config-membership projects/${PROJECT}/locations/global/memberships/cluster-west
+    --config-membership projects/${PLATFORM_PROJECT_ID}/locations/global/memberships/cluster-west
 ```
 
 This configures cluster-west as the cluster to manage `MultiClusterIngress` and `MultiClusterService` resources for the Environ.
 
-## Configure Anthos Config Management for platform config
+## Configure Config Sync for platform config
 
-[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is used to install ConfigSync. ConfigSync can then be configured using the `RootSync` and `RepoSync` resources.
+[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is used to install and configure Config Sync.
 
-`RootSync` can be used to manage any cluster resource, including both cluster-scoped and namespace-scoped resources. Only on `RootSync` is allowed per cluster.
+[Hub](https://cloud.google.com/sdk/gcloud/reference/container/hub) is used to install and configure ACM.
 
-`RepoSync` can be used to manage resources in a single namespace. ConfigSync supports one `RepoSync` per namespace.
-
-**Configure ACM using kubectl (recommended):**
-
-If you installed ACM using kubectl, you must also configure `ConfigManagement` using kubectl.
-
-```
-kubectl apply --context ${CLUSTER_WEST_CONTEXT} -f - << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  clusterName: cluster-west
-  enableMultiRepo: true
-EOF
-
-kubectl apply --context ${CLUSTER_EAST_CONTEXT} -f - << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  clusterName: cluster-east
-  enableMultiRepo: true
-EOF
-```
-
-**Wait for the RootSync CRD to be created:**
-
-The ACM installer also installs the RootSync Custom Resource Definition (CRD).
-The next apply command will fail if the RootSync CRD is not available yet.
-This process should only take a few seconds.
-
-**Configure RootSync using kubectl (recommended):**
-
-If you installed ACM using kubectl, you must also configure `RootSync` using kubectl.
-
-```
-kubectl apply --context ${CLUSTER_WEST_CONTEXT} -f - << EOF
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: ${PLATFORM_REPO}
-    branch: main
-    revision: HEAD
-    dir: "configsync/clusters/cluster-west"
-    auth: none
-EOF
-
-kubectl apply --context ${CLUSTER_EAST_CONTEXT} -f - << EOF
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: ${PLATFORM_REPO}
-    branch: main
-    revision: HEAD
-    dir: "configsync/clusters/cluster-east"
-    auth: none
-EOF
-```
-
-**Configure ACM and RootSync using Hub:**
-
-If you installed ACM using Hub, you must also configure `ConfigManagement` using Hub.
-
-When using Hub to manage ACM configuration, the `RootSync` resource will automatically be generated using the legacy configuration syntax in the `ConfigManagement` resource.
+**Configure Config Sync using Hub:**
 
 ```
 cat > config-management-west.yaml << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
+applySpecVersion: 1
 spec:
-  sourceFormat: unstructured
-  git:
-    syncRepo: ${PLATFORM_REPO}
+  configSync:
+    enabled: true
+    sourceFormat: unstructured
+    syncRepo: ${PLATFORM_REPO_HTTPS}
     syncBranch: main
     syncRev: HEAD
     policyDir: "configsync/clusters/cluster-west"
     secretType: none
 EOF
 
-gcloud alpha container hub config-management apply \
-  --membership "cluster-west" \
-  --config config-management-west.yaml
-
 cat > config-management-east.yaml << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
+applySpecVersion: 1
 spec:
-  sourceFormat: unstructured
-  git:
-    syncRepo: ${PLATFORM_REPO}
+  configSync:
+    enabled: true
+    sourceFormat: unstructured
+    syncRepo: ${PLATFORM_REPO_HTTPS}
     syncBranch: main
     syncRev: HEAD
     policyDir: "configsync/clusters/cluster-east"
@@ -345,22 +265,34 @@ spec:
 EOF
 
 gcloud alpha container hub config-management apply \
+  --membership "cluster-west" \
+  --config config-management-west.yaml
+
+gcloud alpha container hub config-management apply \
   --membership "cluster-east" \
   --config config-management-east.yaml
+
+rm config-management-west.yaml
+rm config-management-east.yaml
 ```
 
-**TODO**: Validate `gcloud alpha container hub config-management apply` supports ConfigSync multi-repo.
+This triggers the following actions:
+1. Hub installs the ACM Operator
+1. Hub configures the ACM Operator using a `ConfigManagement` resource
+1. ACM installs ConfigSync
+1. Hub configures ConfigSync using a `RootSync` resources
 
-## Configure Anthos Config Management for zoneprinter config
+## Configure Config Sync for zoneprinter config
 
-Unlike `RootSync` resources, which bootstrap GitOps for each cluster, `RepoSync` resources can themselves be managed by GitOps along with the rest of the cluster config.
+To configure GitOps with a seperate Git repository for the zoneprinter namespace, you create a `RepoSync` resource and a `RoleBinding`:
 
 ```
 cd "${WORKSPACE}/platform/"
 
 mkdir -p configsync-src/clusters/cluster-west/namespaces/zoneprinter/
+mkdir -p configsync-src/clusters/cluster-east/namespaces/zoneprinter/
 
-cat > configsync-src/clusters/cluster-west/namespaces/zoneprinter/repo-sync.yaml < EOF
+cat > configsync-src/clusters/cluster-west/namespaces/zoneprinter/repo-sync.yaml << EOF
 apiVersion: configsync.gke.io/v1beta1
 kind: RepoSync
 metadata:
@@ -369,16 +301,14 @@ metadata:
 spec:
   sourceFormat: unstructured
   git:
-    repo: ${ZONEPRINTER_REPO}
+    repo: ${ZONEPRINTER_REPO_HTTPS}
     branch: main
     revision: HEAD
     dir: "configsync/clusters/cluster-west/namespaces/zoneprinter"
     auth: none
 EOF
 
-mkdir -p configsync-src/clusters/cluster-east/namespaces/zoneprinter/
-
-cat > configsync-src/clusters/cluster-east/namespaces/zoneprinter/repo-sync.yaml < EOF
+cat > configsync-src/clusters/cluster-east/namespaces/zoneprinter/repo-sync.yaml << EOF
 apiVersion: configsync.gke.io/v1beta1
 kind: RepoSync
 metadata:
@@ -387,31 +317,94 @@ metadata:
 spec:
   sourceFormat: unstructured
   git:
-    repo: ${ZONEPRINTER_REPO}
+    repo: ${ZONEPRINTER_REPO_HTTPS}
     branch: main
     revision: HEAD
     dir: "configsync/clusters/cluster-east/namespaces/zoneprinter"
     auth: none
 EOF
 
+# Grant Config Sync permission to administer the zoneprinter namespace
+
+mkdir -p configsync-src/all-clusters/namespaces/zoneprinter/
+
+cat > configsync-src/all-clusters/namespaces/zoneprinter/configsync-rbac.yaml << EOF
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: configsync-admin
+  namespace: zoneprinter
+subjects:
+- kind: ServiceAccount
+  name: ns-reconciler-zoneprinter
+  namespace: config-management-system
+roleRef:
+  kind: ClusterRole
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+# Update the kustomize config to include the new files
+
+cat > configsync-src/all-clusters/namespaces/zoneprinter/kustomization.yaml << EOF
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- configsync-rbac.yaml
+EOF
+
+cat > configsync-src/clusters/cluster-west/namespaces/zoneprinter/kustomization.yaml << EOF
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../../all-clusters/namespaces/zoneprinter/
+- repo-sync.yaml
+namespace: zoneprinter
+EOF
+
+cat > configsync-src/clusters/cluster-east/namespaces/zoneprinter/kustomization.yaml << EOF
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../../all-clusters/namespaces/zoneprinter/
+- repo-sync.yaml
+namespace: zoneprinter
+EOF
+
+# Render the config (configsync-src -> configsync)
+scripts/render.sh
+
+# commit and push
 git add .
-
 git commit -m "add zoneprinter repo-sync"
-
 git push
 ```
 
 ## Validating success
 
-**Lookup latest commit SHA:**
+**Lookup latest commit SHA for the platform repo:**
 
 ```
-(cd "${WORKSPACE}/platform/" && git log -1 --oneline)
-
-(cd "${WORKSPACE}/zoneprinter/" && git log -1 --oneline)
+(cd "${WORKSPACE}/platform/" && git rev-parse --short HEAD)
 ```
 
-**Wait for config to be deployed:**
+**Lookup the Config Sync status:**
+
+```
+gcloud alpha container hub config-management status
+```
+
+Should say "SYNCED" for both clusters with the latest commit SHA.
+
+If not yet SYNCED, you may need to wait and retry.
+
+**Lookup latest commit SHA for the zoneprinter repo:**
+
+```
+(cd "${WORKSPACE}/zoneprinter/" && git rev-parse --short HEAD)
+```
+
+**Lookup the Config Sync status with the `nomos` tool:**
 
 ```
 nomos status --contexts ${CLUSTER_WEST_CONTEXT},${CLUSTER_EAST_CONTEXT}
@@ -419,11 +412,12 @@ nomos status --contexts ${CLUSTER_WEST_CONTEXT},${CLUSTER_EAST_CONTEXT}
 
 Should say "SYNCED" for both clusters with the latest commit SHA.
 
+If not yet SYNCED, you may need to wait and retry.
+
 **Verify expected namespaces exist:**
 
 ```
 kubectl get ns --context ${CLUSTER_WEST_CONTEXT}
-
 kubectl get ns --context ${CLUSTER_EAST_CONTEXT}
 ```
 
@@ -446,9 +440,15 @@ Should include (non-exclusive):
 **Poll the ingress endpoint to see which cluster responds:**
 
 ```
-INGRESS_ENDPOINT=$(TODO)
+INGRESS_VIP=$(kubectl get MultiClusterIngress zoneprinter -n zoneprinter --context ${CLUSTER_WEST_CONTEXT} -o=custom-columns=VIP:.status.VIP --no-headers)
 
-for i in {1..100}; do curl ${INGRESS_ENDPOINT}; done
+curl -L "http://${INGRESS_VIP}/ping"
+```
+
+Google Cloud Load Balancer uses multiple factors to decide how to route. From a single machine, you will probably get the same backend every time, as long as it's healthy and not overloaded.
+
+```
+for i in {1..100}; do curl -L "http://${INGRESS_VIP}/ping"; echo; done
 ```
 
 ## Cleaning up
@@ -457,22 +457,28 @@ If you plan to follow more multi-cluster tutorials, you can clean up these clust
 
 **Delete the zoneprinter config in the zoneprinter repo:**
 
+Leave an empty invisible file to keep the directory in git.
+
 ```
 cd "${WORKSPACE}/zoneprinter/"
 
-rm -rf ./*
+rm -rf ./configsync/*
+
+mkdir -p ./configsync/clusters/cluster-west/namespaces/zoneprinter/
+mkdir -p ./configsync/clusters/cluster-east/namespaces/zoneprinter/
+
+touch ./configsync/clusters/cluster-west/namespaces/zoneprinter/.gitignore
+touch ./configsync/clusters/cluster-east/namespaces/zoneprinter/.gitignore
 
 git add .
-
 git commit -m "delete zoneprinter config"
-
 git push
 ```
 
 **Lookup latest commit SHA:**
 
 ```
-git log -1 --oneline
+git rev-parse --short HEAD
 ```
 
 **Wait for config to be synchronized:**
@@ -485,48 +491,88 @@ Should say "SYNCED" for both clusters with the latest commit SHA.
 
 **Delete the platform config in the platform repo:**
 
+Config Sync prevents you from deleting all resources at once (to prevent accidental deletions). Instead, you will need to teardown your resources in a few steps.
+
+First, delete everything and add a new unused namespace as a tombstone:
+
 ```
 cd "${WORKSPACE}/platform/"
+rm -rf ./configsync/*
 
-rm -rf ./*
+mkdir -p ./configsync/clusters/cluster-west/
+mkdir -p ./configsync/clusters/cluster-east/
+
+cat > ./configsync/clusters/cluster-west/tombstone.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tombstone
+EOF
+
+cat > ./configsync/clusters/cluster-east/tombstone.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tombstone
+EOF
 
 git add .
+git commit -m "delete platform config & replace with tombstones"
+git push
+```
 
-git commit -m "delete platform config"
+Then, delete the tombstone and leave an empty invisible file to keep the directory in git:
 
+```
+cd "${WORKSPACE}/platform/"
+rm -rf ./configsync/*
+
+mkdir -p ./configsync/clusters/cluster-west/
+mkdir -p ./configsync/clusters/cluster-east/
+
+touch ./configsync/clusters/cluster-west/.gitignore
+touch ./configsync/clusters/cluster-east/.gitignore
+
+git add .
+git commit -m "delete tombstone namespace"
 git push
 ```
 
 **Lookup latest commit SHA:**
 
 ```
-git log -1 --oneline
+git rev-parse --short HEAD
 ```
 
 **Wait for config to be synchronized:**
 
 ```
-nomos status --contexts ${CLUSTER_WEST_CONTEXT},${CLUSTER_EAST_CONTEXT}
+gcloud alpha container hub config-management status
 ```
 
 Should say "SYNCED" for both clusters with the latest commit SHA.
 
-**Delete the ACM resources with kubectl (recommended):**
+If not yet SYNCED, you may need to wait and retry.
 
-If you installed ACM with kubectl, the `RootSync` and `ConfigManagement` resources must also be deleted with kubectl.
-
-```
-kubectl delete RootSync,ConfigManagement --all --context ${CLUSTER_WEST_CONTEXT}
-kubectl delete RootSync,ConfigManagement --all --context ${CLUSTER_EAST_CONTEXT}
-```
-
-**Delete the ACM resources with Hub:**
-
-If you installed ACM with Hub, the `RootSync` and `ConfigManagement` resources must also be deleted with Hub.
+**Disable Config Sync with Hub:**
 
 ```
-gcloud alpha container hub config-management delete --membership "cluster-west"
-gcloud alpha container hub config-management delete --membership "cluster-east"
+cat > config-management.yaml << EOF
+applySpecVersion: 1
+spec:
+  configSync:
+    enabled: false
+EOF
+
+gcloud alpha container hub config-management apply \
+  --membership "cluster-west" \
+  --config config-management.yaml
+
+gcloud alpha container hub config-management apply \
+  --membership "cluster-east" \
+  --config config-management.yaml
+
+rm config-management.yaml
 ```
 
 **Delete the zoneprinter repo:**
@@ -534,6 +580,7 @@ gcloud alpha container hub config-management delete --membership "cluster-east"
 [Github: Deleting a repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/archiving-a-github-repository)
 
 ```
+cd "${WORKSPACE}/"
 rm -rf "${WORKSPACE}/zoneprinter/"
 ```
 
@@ -542,5 +589,13 @@ rm -rf "${WORKSPACE}/zoneprinter/"
 [Github: Deleting a repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/archiving-a-github-repository)
 
 ```
+cd "${WORKSPACE}/"
 rm -rf "${WORKSPACE}/platform/"
+```
+
+# Disable Multi-Cluster Ingress via Hub
+
+```
+gcloud alpha container hub ingress disable \
+    --config-membership projects/${PLATFORM_PROJECT_ID}/locations/global/memberships/cluster-west
 ```

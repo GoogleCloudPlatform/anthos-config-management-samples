@@ -2,7 +2,7 @@
 
 This tutorial shows how to manage Namespaces, RoleBindings, and ResourceQuotas across multiple clusters using Anthos Config Management, GitOps, and Kustomize.
 
-The resources in this tutorial are different for each cluster. So ConfigSync is configured to pull config from different directories. If you want your config to be identical for every cluster, check out the [Multi-Cluster Fan-out](../multi-cluster-fan-out/) tutorial instead.
+The resources in this tutorial are different for each cluster. So Config Sync is configured to pull config from different directories. If you want your config to be identical for every cluster, check out the [Multi-Cluster Fan-out](../multi-cluster-fan-out/) tutorial instead.
 
 ![Architecture Diagram](docs/architecture.png)
 
@@ -121,9 +121,9 @@ To invoke Kustomize, execute `scripts/render.sh` to render the resources under `
 
 If you don't want to use Kustomize, just use the resources under the `configsync/` directory and delete the `configsync-src/` and `scripts/render.sh` script.
 
-## ConfigSync
+## Config Sync
 
-This tutorial installs ConfigSync on two clusters and configures them to pull config from different `configsync/clusters/${cluster-name}/` directories in the same Git repository.
+This tutorial installs Config Sync on two clusters and configures them to pull config from different `configsync/clusters/${cluster-name}/` directories in the same Git repository.
 
 ## Progressive rollouts
 
@@ -142,7 +142,8 @@ To read more about progressive delivery patterns, see [Safe rollouts with Anthos
 [Github: Create a repo](https://docs.github.com/en/github/getting-started-with-github/create-a-repo)
 
 ```
-PLATFORM_REPO="https://github.com/USER_NAME/REPO_NAME/"
+PLATFORM_REPO_HTTPS="https://github.com/USER_NAME/REPO_NAME/"
+PLATFORM_REPO_SSH="git@github.com:USER_NAME/REPO_NAME.git"
 ```
 
 **Select or create a local workspace directory:**
@@ -172,7 +173,7 @@ git clone https://github.com/GoogleCloudPlatform/anthos-config-management-sample
 ```
 cd "${WORKSPACE}"
 
-git clone "${PLATFORM_REPO}" platform
+git clone "${PLATFORM_REPO_SSH}" platform
 ```
 
 **Copy the platform config from the tutorial repo:**
@@ -195,119 +196,35 @@ git commit -m "initialize platform config"
 git push
 ```
 
-## Configure Anthos Config Management for platform config
+## Configure Config Sync for platform config
 
-[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is used to install ConfigSync. ConfigSync can then be configured using the `RootSync` and `RepoSync` resources.
+[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is used to install and configure Config Sync.
 
-`RootSync` can be used to manage any cluster resource, including both cluster-scoped and namespace-scoped resources. Only on `RootSync` is allowed per cluster.
+[Hub](https://cloud.google.com/sdk/gcloud/reference/container/hub) is used to install and configure ACM.
 
-`RepoSync` can be used to manage resources in a single namespace. ConfigSync supports one `RepoSync` per namespace.
-
-**Configure ACM using kubectl (recommended):**
-
-If you installed ACM using kubectl, you must also configure `ConfigManagement` using kubectl.
-
-```
-kubectl apply --context ${CLUSTER_WEST_CONTEXT} -f - << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  clusterName: cluster-west
-  enableMultiRepo: true
-EOF
-
-kubectl apply --context ${CLUSTER_EAST_CONTEXT} -f - << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  clusterName: cluster-east
-  enableMultiRepo: true
-EOF
-```
-
-**Wait for the RootSync CRD to be created:**
-
-The ACM installer also installs the RootSync Custom Resource Definition (CRD).
-The next apply command will fail if the RootSync CRD is not available yet.
-This process should only take a few seconds.
-
-**Configure RootSync using kubectl (recommended):**
-
-If you installed ACM using kubectl, you must also configure `RootSync` using kubectl.
-
-```
-kubectl apply --context ${CLUSTER_WEST_CONTEXT} -f - << EOF
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: ${PLATFORM_REPO}
-    branch: main
-    revision: HEAD
-    dir: "configsync/clusters/cluster-west"
-    auth: none
-EOF
-
-kubectl apply --context ${CLUSTER_EAST_CONTEXT} -f - << EOF
-apiVersion: configsync.gke.io/v1beta1
-kind: RootSync
-metadata:
-  name: root-sync
-  namespace: config-management-system
-spec:
-  sourceFormat: unstructured
-  git:
-    repo: ${PLATFORM_REPO}
-    branch: main
-    revision: HEAD
-    dir: "configsync/clusters/cluster-east"
-    auth: none
-EOF
-```
-
-**Configure ACM and RootSync using Hub:**
-
-If you installed ACM using Hub, you must also configure `ConfigManagement` using Hub.
-
-When using Hub to manage ACM configuration, the `RootSync` resource will automatically be generated using the legacy configuration syntax in the `ConfigManagement` resource.
+**Configure Config Sync using Hub:**
 
 ```
 cat > config-management-west.yaml << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
+applySpecVersion: 1
 spec:
-  sourceFormat: unstructured
-  git:
-    syncRepo: ${PLATFORM_REPO}
+  configSync:
+    enabled: true
+    sourceFormat: unstructured
+    syncRepo: ${PLATFORM_REPO_HTTPS}
     syncBranch: main
     syncRev: HEAD
     policyDir: "configsync/clusters/cluster-west"
     secretType: none
 EOF
 
-gcloud alpha container hub config-management apply \
-  --membership "cluster-west" \
-  --config config-management-west.yaml
-
 cat > config-management-east.yaml << EOF
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
+applySpecVersion: 1
 spec:
-  sourceFormat: unstructured
-  git:
-    syncRepo: ${PLATFORM_REPO}
+  configSync:
+    enabled: true
+    sourceFormat: unstructured
+    syncRepo: ${PLATFORM_REPO_HTTPS}
     syncBranch: main
     syncRev: HEAD
     policyDir: "configsync/clusters/cluster-east"
@@ -315,19 +232,42 @@ spec:
 EOF
 
 gcloud alpha container hub config-management apply \
+  --membership "cluster-west" \
+  --config config-management-west.yaml
+
+gcloud alpha container hub config-management apply \
   --membership "cluster-east" \
   --config config-management-east.yaml
+
+rm config-management-west.yaml
+rm config-management-east.yaml
 ```
+
+This triggers the following actions:
+1. Hub installs the ACM Operator
+1. Hub configures the ACM Operator using a `ConfigManagement` resource
+1. ACM installs ConfigSync
+1. Hub configures ConfigSync using a `RootSync` resources
 
 ## Validating success
 
 **Lookup latest commit SHA:**
 
 ```
-(cd "${WORKSPACE}/platform/" && git log -1 --oneline)
+(cd "${WORKSPACE}/platform/" && git rev-parse --short HEAD)
 ```
 
-**Wait for config to be deployed:**
+**Lookup the Config Sync status:**
+
+```
+gcloud alpha container hub config-management status
+```
+
+Should say "SYNCED" for both clusters with the latest commit SHA.
+
+If not yet SYNCED, you may need to wait and retry.
+
+**Alternatively, use the `nomos` tool:**
 
 ```
 nomos status --contexts ${CLUSTER_WEST_CONTEXT},${CLUSTER_EAST_CONTEXT}
@@ -335,11 +275,12 @@ nomos status --contexts ${CLUSTER_WEST_CONTEXT},${CLUSTER_EAST_CONTEXT}
 
 Should say "SYNCED" for both clusters with the latest commit SHA.
 
+If not yet SYNCED, you may need to wait and retry.
+
 **Verify expected namespaces exist:**
 
 ```
 kubectl get ns --context ${CLUSTER_WEST_CONTEXT}
-
 kubectl get ns --context ${CLUSTER_EAST_CONTEXT}
 ```
 
@@ -373,48 +314,85 @@ If you plan to follow more multi-cluster tutorials, you can clean up these clust
 
 **Delete the platform config in the platform repo:**
 
+Config Sync prevents you from deleting all resources at once (to prevent accidental deletions). Instead, you will need to teardown your resources in a few steps.
+
+First, delete everything and add a new unused namespace as a tombstone:
+
 ```
 cd "${WORKSPACE}/platform/"
+rm -rf ./configsync/*
 
-rm -rf ./*
+mkdir -p ./configsync/clusters/cluster-west/
+mkdir -p ./configsync/clusters/cluster-east/
+
+cat > ./configsync/clusters/cluster-west/tombstone.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tombstone
+EOF
+
+cat > ./configsync/clusters/cluster-east/tombstone.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tombstone
+EOF
 
 git add .
+git commit -m "delete platform config & replace with tombstones"
+git push
+```
 
-git commit -m "delete platform config"
+Then, delete the tombstone and leave an empty invisible file to keep the directory in git:
 
+```
+cd "${WORKSPACE}/platform/"
+rm -rf ./configsync/*
+
+touch ./configsync/clusters/cluster-west/.gitignore
+touch ./configsync/clusters/cluster-east/.gitignore
+
+git add .
+git commit -m "delete tombstone namespace"
 git push
 ```
 
 **Lookup latest commit SHA:**
 
 ```
-git log -1 --oneline
+(cd "${WORKSPACE}/platform/" && git rev-parse --short HEAD)
 ```
 
 **Wait for config to be synchronized:**
 
 ```
-nomos status --contexts ${CLUSTER_WEST_CONTEXT},${CLUSTER_EAST_CONTEXT}
+gcloud alpha container hub config-management status
 ```
 
 Should say "SYNCED" for both clusters with the latest commit SHA.
 
-**Delete the ACM resources with kubectl (recommended):**
+If not yet SYNCED, you may need to wait and retry.
 
-If you installed ACM with kubectl, the `RootSync` and `ConfigManagement` resources must also be deleted with kubectl.
-
-```
-kubectl delete RootSync,ConfigManagement --all --context ${CLUSTER_WEST_CONTEXT}
-kubectl delete RootSync,ConfigManagement --all --context ${CLUSTER_EAST_CONTEXT}
-```
-
-**Delete the ACM resources with Hub:**
-
-If you installed ACM with Hub, the `RootSync` and `ConfigManagement` resources must also be deleted with Hub.
+**Disable Config Sync with Hub:**
 
 ```
-gcloud alpha container hub config-management delete --membership "cluster-west"
-gcloud alpha container hub config-management delete --membership "cluster-east"
+cat > config-management.yaml << EOF
+applySpecVersion: 1
+spec:
+  configSync:
+    enabled: false
+EOF
+
+gcloud alpha container hub config-management apply \
+  --membership "cluster-west" \
+  --config config-management.yaml
+
+gcloud alpha container hub config-management apply \
+  --membership "cluster-east" \
+  --config config-management.yaml
+
+rm config-management.yaml
 ```
 
 **Delete the platform repo:**
@@ -422,6 +400,7 @@ gcloud alpha container hub config-management delete --membership "cluster-east"
 [Github: Deleting a repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/archiving-a-github-repository)
 
 ```
+cd "${WORKSPACE}/"
 rm -rf "${WORKSPACE}/platform/"
 ```
 

@@ -135,7 +135,8 @@ gcloud container clusters create cluster-west \
     --master-authorized-networks 0.0.0.0/0 \
     --enable-stackdriver-kubernetes \
     --workload-pool "${PLATFORM_PROJECT_ID}.svc.id.goog" \
-    --enable-autoscaling --max-nodes 10 --min-nodes 1
+    --enable-autoscaling --max-nodes 10 --min-nodes 1 \
+    --async
 
 gcloud container clusters create cluster-east \
     --region us-east1 \
@@ -148,7 +149,15 @@ gcloud container clusters create cluster-east \
     --master-authorized-networks 0.0.0.0/0 \
     --enable-stackdriver-kubernetes \
     --workload-pool "${PLATFORM_PROJECT_ID}.svc.id.goog" \
-    --enable-autoscaling --max-nodes 10 --min-nodes 1
+    --enable-autoscaling --max-nodes 10 --min-nodes 1 \
+    --async
+
+# Wait for async operations to complete
+while IFS='' read -r line; do
+    gcloud container operations wait \
+        "$(echo "${line}" | cut -d',' -f1)" \
+        --region "$(echo "${line}" | cut -d',' -f2)"
+done <<< "$(gcloud container operations list --filter=STATUS!=DONE --format "csv[no-heading](name,zone)")"
 ```
 
 **Authenticate with cluster-west:**
@@ -175,7 +184,7 @@ CLUSTER_EAST_CONTEXT=$(kubectl config current-context)
 
 ## Register the GKE clusters with Hub
 
-[Hub](https://www.google.com/url?q=https://cloud.google.com/sdk/gcloud/reference/container/hub) is a cluster registry for discovery and feature management. In order to use features like Anthos Config Management and Multi-Cluster Ingress, we first need to register the cluster with Hub.
+[Hub](https://cloud.google.com/sdk/gcloud/reference/container/hub) is a cluster registry for discovery and feature management. In order to use features like Anthos Config Management and Multi-Cluster Ingress, we first need to register the cluster with Hub.
 
 Registering with Hub will install the Connect Agent on the cluster. To make permission management for the agent easier and more secure, use workload identity mode. If you do not have Workload Identity configured on the clusters, you will need to manage the service accounts, security keys, and IAM policy yourself. For more details, see [Registering a cluster](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster).
 
@@ -191,33 +200,25 @@ gcloud container hub memberships register "cluster-east" \
     --enable-workload-identity
 ```
 
-## Deploy Anthos Config Management
+## Enable Anthos Config Management
 
-[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) is an operator that manages the lifecycle of other operators, including Config Sync, Policy Controller, Binary Authorization, Hierarchy Controller, and Config Connector.
+[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/docs/overview) includes an operator that manages the lifecycle of other operators: 
+- Config Sync
+- Policy Controller
+- Binary Authorization
+- Hierarchy Controller
 
-Installing ACM now will enable you to later configure those other components using a `ConfigManagement` resource.
+These operators are all managed as features using Hub.
 
-Choose whether to manage ACM with kubectl or Hub. This choice will impact how you configure ACM and its components later.
-
-**Deploy ACM using kubectl (recommended):**
-
-Using kubectl to manage ACM is currently recommended because it gives you more control over upgrades and configuration. 
-
-```
-gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
-
-kubectl apply -f config-management-operator.yaml --context ${CLUSTER_WEST_CONTEXT}
-
-kubectl apply -f config-management-operator.yaml --context ${CLUSTER_EAST_CONTEXT}
-```
-
-**Deploy ACM using Hub:**
-
-Using Hub to manage ACM is optional and may be easier in some cases because it does not require you to have direct network access to the cluster nor local credentials configured for kubectl.
+**Enable ACM on the Hub:**
 
 ```
 gcloud alpha container hub config-management enable
 ```
+
+The ACM Operator will not be installed until one of its components is enabled and configured.
+
+For Config Sync, this requires knowing what repository to pull from. So this will be done in subsequent tutorials.
 
 ## Validating success
 
@@ -236,6 +237,7 @@ Each cluster should have the following namespaces:
 - kube-node-lease
 - kube-public
 - kube-system
+- resource-group-system
 
 ## Next steps
 
