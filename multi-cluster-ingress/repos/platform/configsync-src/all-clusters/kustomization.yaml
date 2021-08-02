@@ -16,7 +16,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+- gke-networking-rbac.yaml
 - namespaces.yaml
-commonLabels:
-  owner: platform-team
 # [END anthos_config_management_multi_cluster_ingress_platform_all_clusters_kustomization] 

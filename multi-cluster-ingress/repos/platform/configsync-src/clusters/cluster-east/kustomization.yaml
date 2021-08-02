@@ -19,4 +19,5 @@ resources:
 - ../../all-clusters/
 commonLabels:
   cluster: cluster-east
+  owner: platform-team
 # [END anthos_config_management_multi_cluster_ingress_platform_cluster_east_kustomization] 
