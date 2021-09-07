@@ -26,7 +26,7 @@ spec:
     # If you fork this repo, change the url to point to your fork
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
     # If you move the configs to a different branch, update the branch here
-    branch: init
+    branch: main
     dir: quickstart/multirepo/namespaces/gamestore
     # We recommend securing your source repository.
     # Other supported auth: `ssh`, `cookiefile`, `token`, `gcenode`.
