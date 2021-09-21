@@ -36,7 +36,6 @@ You can fork the repository to your local workstation, or create a new one with 
   ```
  
 ### Render the manifests using helm template.
-There are two options to render the manifests.
 You can download the helm chart locally and render the manifests upon your local chart.
 ```console
 # Add the helm chart repository
@@ -69,10 +68,10 @@ you need to
 - Select **None** in the **Git Repository Authentication for ACM** section
 - Select **Enable Config Sync** in the **ACM settings for your clusters** section
    - If you're using your forked repo, the **URL** should be the Git repository url for your fork: `https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samples.git`; otherwise the **URL** should be `https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git`
-   - the **Branch** should be `init`.
+   - the **Branch** should be `master`.
    - the **Tag/Commit** should be `HEAD`.
    - the **Source format** field should **unstructured**.
-   - the **Policy directory** field should be `helm-component/manifests`.
+   - the **Policy directory** field should be `helm-component/manual-rendering/manifests`.
 
 ### Using gcloud
 
@@ -90,9 +89,9 @@ You can also configure the Git repository information in a config-management.yam
      sourceFormat: unstructured
      git:
        syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples/
-       syncBranch: init
+       syncBranch: master
        secretType: none
-       policyDir: helm-component/manifests
+       policyDir: helm-component/manual-rendering/manifests
     ```
 1.  Apply the config-management.yaml file:
     ```console
