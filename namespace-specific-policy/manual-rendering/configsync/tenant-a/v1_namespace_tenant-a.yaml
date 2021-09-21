@@ -11,19 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#!/bin/bash
 
-# Render kustomizations
-
-set -o errexit -o nounset -o pipefail
-
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-cd "${REPO_ROOT}"
-
-cd configsync-src/
-for tenant in tenant-*; do
-    if [[ -f ${tenant}/kustomization.yaml ]]; then
-        echo "Rendering ${tenant}"
-        kustomize build ${tenant} -o ../configsync/${tenant}/
-    fi
-done
+# [START anthos_config_management_namespace_specific_policy_tenant_a_namespace]
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-a
+# [END anthos_config_management_namespace_specific_policy_tenant_a_namespace]
