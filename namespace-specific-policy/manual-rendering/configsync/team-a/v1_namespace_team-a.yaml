@@ -12,17 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_specific_policy_tenant_a_role] 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+# [START anthos_config_management_namespace_specific_policy_team_a_namespace] 
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: tenant-admin
-  namespace: tenant-a
-rules:
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - '*'
-# [END anthos_config_management_namespace_specific_policy_tenant_a_role] 
+  name: team-a
+# [END anthos_config_management_namespace_specific_policy_team_a_namespace] 

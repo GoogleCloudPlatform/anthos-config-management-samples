@@ -17,13 +17,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: tenant-admin-rolebinding
+  name: team-admin-rolebinding
 subjects:
 - kind: Group
-  name: tenant-admin@mydomain.com
+  name: team-admin@mydomain.com
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: tenant-admin
+  name: team-admin
   apiGroup: rbac.authorization.k8s.io
 # [END anthos_config_management_namespace_specific_policy_src_base_role_binding] 

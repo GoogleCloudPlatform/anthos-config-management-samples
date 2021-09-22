@@ -1,7 +1,7 @@
 # Configuring namespace specific policies
 
-One cluster can be shared between multiple tenants. For multi-tenancy, the namespaces used by different tenants should have different policies according to the best practices for multi-tenancy.
-This doc walks you through the steps for configuring namespace specific policies, such as Role, RoleBinding and NetworkPolicy for a cluster shared between tenants.
+One cluster can be shared between multiple teams. For multi-tenancy, the namespaces used by different teams should have different policies according to the best practices for multi-tenancy.
+This doc walks you through the steps for configuring namespace specific policies, such as Role, RoleBinding and NetworkPolicy for a cluster shared between teams.
 
 This example provides two different ways of rendering and syncing your configurations
 - **[manual rendering](manual-rendering/README.md)**:
@@ -19,19 +19,19 @@ The directory `configsync-src` contains the configuration in Kustomize format.
 
 The manual rendering method and the automated rendering method shares the same source Kustomize configurations.
 
-The source Kustomize configurations include one base and three overlays `tenant-a`, `tenant-b` and `tenant-c`.
+The source Kustomize configurations include one base and three overlays `team-a`, `team-b` and `team-c`.
 Each overlay is a customization of the shared `base`.
 The difference between different overlays is from two parts:
-- Namespace. The configuration inside the directory `configsync-src/<TENANT>` is all in the namespace `<TENANT>`.
-  This is achieved by adding the namespace directive in `configsync-src/<TENANT>/kustomization.yaml`.
-  For example, in `configsync-src/tenant-a/kustomization.yaml`:
+- Namespace. The configuration inside the directory `configsync-src/<TEAM>` is all in the namespace `<TEAM>`.
+  This is achieved by adding the namespace directive in `configsync-src/<TEAM>/kustomization.yaml`.
+  For example, in `configsync-src/team-a/kustomization.yaml`:
   ```yaml
-  namespace: tenant-a
+  namespace: team-a
   ```
 
-- RoleBinding. For each tenant, the RoleBinding is for a different Group.
-  For example, in `configsync-src/tenant-a`, the RoleBinding is for the group `tenant-a-admin@mydomain.com`.
-  This is achieved by applying the patch file `configsync-src/tenant-a/rolebinding.yaml`.
+- RoleBinding. For each team, the RoleBinding is for a different Group.
+  For example, in `configsync-src/team-a`, the RoleBinding is for the group `team-a-admin@mydomain.com`.
+  This is achieved by applying the patch file `configsync-src/team-a/rolebinding.yaml`.
   So the RoleBinding from the `base` is overwritten.
 
 The folder directory of the `namespace-specific-policy` example:
@@ -48,29 +48,29 @@ The folder directory of the `namespace-specific-policy` example:
 │   │   ├── networkpolicy.yaml
 │   │   ├── rolebinding.yaml
 │   │   └── role.yaml
-│   ├── tenant-a
+│   ├── team-a
 │   │   └── kustomization.yaml
-│   ├── tenant-b
+│   ├── team-b
 │   │   └── kustomization.yaml
-│   └── tenant-c
+│   └── team-c
 │       └── kustomization.yaml
 ├── manual-rendering
 │   ├── configsync
-│   │   ├── tenant-a
+│   │   ├── team-a
 │   │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
-│   │   │   └── v1_namespace_tenant-a.yaml
-│   │   ├── tenant-b
+│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   │   └── v1_namespace_team-a.yaml
+│   │   ├── team-b
 │   │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
-│   │   │   └── v1_namespace_tenant-b.yaml
-│   │   ├── tenant-c
+│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   │   └── v1_namespace_team-b.yaml
+│   │   ├── team-c
 │   │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
-│   │   │   └── v1_namespace_tenant-c.yaml
+│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   │   └── v1_namespace_team-c.yaml
 │   ├── README.md
 │   └── scripts
 │       └── render.sh

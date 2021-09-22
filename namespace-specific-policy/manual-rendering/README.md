@@ -1,6 +1,6 @@
 # Configuring namespace specific policies
 
-One cluster can be shared between multiple tenants. For multi-tenancy, the namespaces used by different tenants should have different policies according to the best practices for multi-tenancy. This doc walks you through the steps for configuring namespace specific policies, such as Role, RoleBinding and NetworkPolicy for a cluster shared between tenants.
+One cluster can be shared between multiple teams. For multi-tenancy, the namespaces used by different teams should have different policies according to the best practices for multi-tenancy. This doc walks you through the steps for configuring namespace specific policies, such as Role, RoleBinding and NetworkPolicy for a cluster shared between teams.
 
 ## Objectives
 In this tutorial, you will
@@ -17,24 +17,24 @@ This section describes prerequisites you must meet before this tutorial.
 ## Create namespace specific policies
 
 ### Get the example configuration
-This `manual-rendering` example contains three namespaces for different tenants. It contains the following directories and files.
+This `manual-rendering` example contains three namespaces for different teams. It contains the following directories and files.
 ```
 .
 ├── configsync
-│   ├── tenant-a
+│   ├── team-a
 │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
-│   │   ├── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
+│   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
 │   │   └── v1_namespace_default.yaml
-│   ├── tenant-b
+│   ├── team-b
 │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
-│   │   ├── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
+│   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
 │   │   └── v1_namespace_default.yaml
-│   └── tenant-c
+│   └── team-c
 │       ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│       ├── rbac.authorization.k8s.io_v1_rolebinding_tenant-admin-rolebinding.yaml
-│       ├── rbac.authorization.k8s.io_v1_role_tenant-admin.yaml
+│       ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│       ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
 │       └── v1_namespace_default.yaml
 ├── README.md
 └── scripts
@@ -52,16 +52,16 @@ $ git clone https://github.com/<YOUR_ORGANIZATION>/anthos-config-management-samp
 
 Then you can follow the instructions in this session. It is optional and shouldn’t affect the steps below.
 #### Update the base
-When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/configsync-src/base`, the change will be propagated to configuration for all of `tenant-a`, `tenant-b` and `tenant-c`.
+When you add new configuration or update configuration under the directory `acm-samples/namespace-specific-policy/configsync-src/base`, the change will be propagated to configuration for all of `team-a`, `team-b` and `team-c`.
 #### Update an overlay
 An overlay is a kustomization that depends on another customization.
-In this example, there are three overlays: `tenant-a`, `tenant-b`
-and `tenant-c`. If you only need to update some configuration in
+In this example, there are three overlays: `team-a`, `team-b`
+and `team-c`. If you only need to update some configuration in
 one overlay, you only need to touch the directory for that overlay.
 
-Here is an example of adding another Role in the overlay `tenant-a`.
+Here is an example of adding another Role in the overlay `team-a`.
 We can add a new file
-`acm-samples/namespace-specific-policy/configsync-src/tenant-a/another-role.yaml`
+`acm-samples/namespace-specific-policy/configsync-src/team-a/another-role.yaml`
 with the following content:
 
 ```yaml
@@ -75,7 +75,7 @@ rules:
   verbs: ["get", "watch", "list"]
 ```
 Then include the new config in
-`acm-samples/namespace-specific-policy/configsync-src/tenant-a/kustomization.yaml`
+`acm-samples/namespace-specific-policy/configsync-src/team-a/kustomization.yaml`
 by adding the file name under `resources`.
 
 ```yaml
@@ -173,27 +173,27 @@ You can also double-check the resources exist in the cluster.
 
 ```
 # Verify the RoleBinding exist
-$ kubectl get RoleBinding/tenant-admin-rolebinding -n tenant-a
+$ kubectl get RoleBinding/team-admin-rolebinding -n team-a
 
 # Verify the Role exist
-$ kubectl get Role/tenant-admin -n tenant-a
+$ kubectl get Role/team-admin -n team-a
 
 # Verify the NetworkPolicy exist
-$ kubectl get NetworkPolicy/deny-all -n tenant-a
+$ kubectl get NetworkPolicy/deny-all -n team-a
 ```
 
 
 ## Cleanup
-To clean up the tenant namespaces and policies for them, we recommend removing the directories that contain their configuration from your Git repository.
+To clean up the team namespaces and policies for them, we recommend removing the directories that contain their configuration from your Git repository.
 
 ```
-$ rm -r acm-samples/namespace-specific-policy/manual-rendering/configsync/tenant-*/*
+$ rm -r acm-samples/namespace-specific-policy/manual-rendering/configsync/team-*/*
 $ git add .
 $ git commit -m 'clean up'
 $ git push
 ```
 
-When the last commit from the root repository is synced, the three namespace `tenant-a`, `tenant-b` and `tenant-c` are deleted from the cluster.
+When the last commit from the root repository is synced, the three namespace `team-a`, `team-b` and `team-c` are deleted from the cluster.
 
 To stop the syncing using ConfigSync, you can delete the ConfigManagement
 resource.
