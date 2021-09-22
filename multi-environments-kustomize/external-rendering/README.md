@@ -1,6 +1,6 @@
 #  Using ConfigSync with Multiple Environments
 
-This guide shows you how to set up Config Sync for GKE across two environments using config management best practices. 
+This guide shows you how to set up Config Sync for GKE across two environments using an external rendering pipeline. 
 
 ## Overview 
 
