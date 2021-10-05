@@ -11,20 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_namespace_specific_policy_namespace_foo] 
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: foo
-# [END anthos_config_management_namespace_specific_policy_namespace_foo] 
----
-# [START anthos_config_management_namespace_specific_policy_namespace_istio_system] 
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: istio-system
-  labels:
-    istio: system
-  annotations:
-    foo: barbar
-# [END anthos_config_management_namespace_specific_policy_namespace_istio_system] 
+#!/bin/bash
+
+# Render kustomizations
+
+set -o errexit -o nounset -o pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
+cd "${REPO_ROOT}"
+
+cd configsync-src/
+for team in team-*; do
+    if [[ -f ${team}/kustomization.yaml ]]; then
+        echo "Rendering ${team}"
+        kustomize build ${team} -o ../manual-rendering/configsync/${team}/
+    fi
+done
