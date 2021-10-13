@@ -21,7 +21,7 @@ spec:
   clusterName: my-cluster
   git:
     syncRepo: git@github.com:<GITHUB-USERNAME>/anthos-config-management-samples.git
-    syncBranch: 1.0.0
+    syncBranch: main
     secretType: ssh
     policyDir: "hello-namespace/config-root"
 # [END anthos_config_management_hello_namespace_config_management] 
