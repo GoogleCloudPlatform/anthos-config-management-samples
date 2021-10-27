@@ -34,24 +34,31 @@ if [[ -z "$PROD_CLUSTER_ZONE" ]]; then
     exit 1
 fi
 
-if [[ -z "$GITHUB_USERNAME" ]]; then
-    echo "Must provide GITHUB_USERNAME in environment" 1>&2
+if [[ -z "$CM_CONFIG_DIR" ]]; then
+    echo "Must provide CM_CONFIG_DIR in environment" 1>&2
+    exit 1
+fi
+
+if [[ $CM_CONFIG_DIR == "cloud-build-rendering" ]] && [[ -z "$GITHUB_USERNAME" ]]; then
+    echo "Must provide GITHUB_USERNAME in environment when using cloud-build-rendering" 1>&2
     exit 1
 fi
 
 export DEV_CTX="gke_${DEV_PROJECT}_${DEV_CLUSTER_ZONE}_dev"
 export PROD_CTX="gke_${PROD_PROJECT}_${PROD_CLUSTER_ZONE}_prod"
 
-echo "😺 Populating configmangement.yaml with your Github repo info..." 
-sed -i "s/GITHUB_USERNAME/$GITHUB_USERNAME/g" install-config/config-management-dev.yaml
-sed -i "s/GITHUB_USERNAME/$GITHUB_USERNAME/g" install-config/config-management-prod.yaml
+if [[ $CM_CONFIG_DIR == "cloud-build-rendering" ]]; then
+    echo "😺 Populating configmangement.yaml with your Github repo info..."
+    sed -i "s/GITHUB_USERNAME/$GITHUB_USERNAME/g" $CM_CONFIG_DIR/install-config/config-management-dev.yaml
+    sed -i "s/GITHUB_USERNAME/$GITHUB_USERNAME/g" $CM_CONFIG_DIR/install-config/config-management-prod.yaml
+fi
 
 echo "🔁 Installing ConfigSync on the dev cluster..."
 gcloud config set project $DEV_PROJECT
 kubectl config use-context $DEV_CTX
 gcloud alpha container hub config-management apply \
     --membership=dev \
-    --config="install-config/config-management-dev.yaml" \
+    --config="$CM_CONFIG_DIR/install-config/config-management-dev.yaml" \
     --project=${DEV_PROJECT}
 
 echo "🔁 Installing ConfigSync on the prod cluster..."
@@ -59,5 +66,5 @@ gcloud config set project $PROD_PROJECT
 kubectl config use-context $PROD_CTX
 gcloud alpha container hub config-management apply \
     --membership=prod \
-    --config="install-config/config-management-prod.yaml" \
+    --config="$CM_CONFIG_DIR/install-config/config-management-prod.yaml" \
     --project=${PROD_PROJECT}
