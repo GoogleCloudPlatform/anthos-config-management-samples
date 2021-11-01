@@ -21,11 +21,3 @@ This example provides two different ways of rendering and syncing your configura
   Each cluster will be configured to sync from one of the rendered repo.
 
   Please see http://cloud/anthos-config-management/docs/tutorials/multiple-environments to get started. 
-
-## Overview
-
-In this scenario, you're part of a platform admin team at Foo Corp.
-The Foo Corp applications are deployed to GKE, with resources divided across two projects, `dev` and `prod`.
-The `dev` project contains a development GKE cluster, and the `prod` project contains the production GKE cluster.
-Your goal as the platform admin is to ensure that both environments stay within compliance of Foo Corp's policies,
-and that base level resources - like Kubernetes namespaces and service accounts- remain consistent across both environments. 
