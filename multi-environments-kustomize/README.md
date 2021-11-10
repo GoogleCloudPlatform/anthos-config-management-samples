@@ -10,7 +10,7 @@ This example provides two different ways of rendering and syncing your configura
   You can check in the Kustomize configurations to your Git repository,
   and Config Sync will render and sync them to your clusters.
   
-  Please see http://cloud/anthos-config-management/docs/tutorials/multiple-environments-hydration to get started.
+  Please see https://cloud.google.com/anthos-config-management/docs/tutorials/multiple-environments-config-sync to get started.
   
 - **[Cloud Build Rendering](cloud-build-rendering)**:
   
@@ -20,4 +20,4 @@ This example provides two different ways of rendering and syncing your configura
 
   Each cluster will be configured to sync from one of the rendered repo.
 
-  Please see http://cloud/anthos-config-management/docs/tutorials/multiple-environments to get started. 
+  Please see https://cloud.google.com/anthos-config-management/docs/tutorials/multiple-environments-cloud-build to get started. 
