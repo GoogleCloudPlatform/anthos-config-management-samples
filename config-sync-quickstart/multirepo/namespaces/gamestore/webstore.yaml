@@ -11,18 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_sync_quickstart__resources_service_hello] 
-apiVersion: v1
-kind: Service
+# [START anthos_config_management_config_sync_quickstart__multirepo_gamestore_webstore] 
+kind: WebStore
+apiVersion: marketplace.com/v2
 metadata:
-  name: hello
-  namespace: default
+  name: gameplace
+  namespace: gamestore
 spec:
-  type: LoadBalancer
-  selector:
-    app: hello
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8080
-# [END anthos_config_sync_quickstart__resources_service_hello] 
+  product: "boardgames"
+  employees: 5
+# [END anthos_config_management_config_sync_quickstart__multirepo_gamestore_webstore] 
