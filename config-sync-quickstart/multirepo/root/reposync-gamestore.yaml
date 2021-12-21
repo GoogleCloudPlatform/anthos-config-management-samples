@@ -27,7 +27,7 @@ spec:
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
     # If you move the configs to a different branch, update the branch here
     branch: main
-    dir: quickstart/multirepo/namespaces/gamestore
+    dir: config-sync-quickstart/multirepo/namespaces/gamestore
     # We recommend securing your source repository.
     # Other supported auth: `ssh`, `cookiefile`, `token`, `gcenode`.
     auth: none
