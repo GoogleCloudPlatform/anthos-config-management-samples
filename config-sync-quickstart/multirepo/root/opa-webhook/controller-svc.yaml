@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: transientcontroller-webhook
+  namespace: kube-system
+  labels:
+    app: transientcontroller-webhook
+spec:
+  type: ClusterIP
+  selector:
+    app: transientcontroller-webhook
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8181
+      targetPort: 8181

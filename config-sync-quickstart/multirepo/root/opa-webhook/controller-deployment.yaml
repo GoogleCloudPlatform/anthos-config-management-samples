@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transientcontroller-webhook
+  namespace: kube-system
+  labels:
+    app: transientcontroller-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transientcontroller-webhook
+  template:
+    metadata:
+      labels:
+        app: transientcontroller-webhook
+      name: transientcontroller-webhook
+    spec:
+      containers:
+      - name: transientcontroller-webhook
+        image: openpolicyagent/opa:0.36.1
+        ports:
+        - name: http
+          containerPort: 8181
+        args:
+        - "run"
+        - "--ignore=.*"  # exclude hidden dirs created by Kubernetes
+        - "--server"
+        - "/policies"
+        volumeMounts:
+        - readOnly: true
+          mountPath: /policies
+          name: transientcontroller
+      volumes:
+      - name: transientcontroller
+        configMap:
+          name: transientcontroller

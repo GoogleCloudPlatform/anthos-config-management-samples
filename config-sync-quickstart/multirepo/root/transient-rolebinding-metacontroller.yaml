@@ -1,0 +1,23 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: transient-rolebinding-controller
+spec:
+  parentResource:
+    apiVersion:  example.com/v1
+    resource: transientrolebindings
+    revisionHistory:
+      fieldPaths:
+      - validUntil
+  childResources:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    resource: rolebindings
+    updateStrategy:
+      method: Recreate
+  generateSelector: true
+  resyncPeriodSeconds: 300
+  hooks:
+    sync:
+      webhook:
+        url: http://transientcontroller-webhook.kube-system:8181/v0/data/controller
+        timeout: 10s
