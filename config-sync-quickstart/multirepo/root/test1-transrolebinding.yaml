@@ -1,0 +1,13 @@
+apiVersion: example.com/v1
+kind: TransientRoleBinding
+metadata:
+  name: test1
+validUntil: 2022-02-05T21:20:00+08:00
+validFrom: 2022-01-24T21:08:00+08:00
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: User
+  name: someuser@example.com
