@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_foo_corp_shipping_app_backend_quota] 
+# [START anthosconfig_foo_corp_shipping_app_backend_quota] 
 kind: ResourceQuota
 apiVersion: v1
 metadata:
@@ -21,4 +21,4 @@ spec:
     pods: "3"
     cpu: "1"
     memory: 1Gi
-# [END anthos_config_management_foo_corp_shipping_app_backend_quota] 
+# [END anthosconfig_foo_corp_shipping_app_backend_quota] 

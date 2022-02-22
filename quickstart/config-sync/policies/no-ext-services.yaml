@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_quickstart_policies_no_ext_services] 
+# [START anthosconfig_quickstart_policies_no_ext_services] 
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sNoExternalServices
 metadata:
@@ -19,4 +19,4 @@ metadata:
 spec:
   parameters:
     internalCIDRs: []
-# [END anthos_config_management_quickstart_policies_no_ext_services] 
+# [END anthosconfig_quickstart_policies_no_ext_services] 

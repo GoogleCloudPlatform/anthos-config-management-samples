@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_kustomize_pipeline_config_management]
+# [START anthosconfig_kustomize_pipeline_config_management]
 # config-management.yaml
 apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
@@ -27,4 +27,4 @@ spec:
     policyDir: deploy-config/
     syncBranch: main
   sourceFormat: unstructured
-# [END anthos_config_management_kustomize_pipeline_config_management]
+# [END anthosconfig_kustomize_pipeline_config_management]

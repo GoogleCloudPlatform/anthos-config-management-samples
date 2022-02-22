@@ -13,11 +13,11 @@
 # limitations under the License.
 # For the mono-repo mode, declaring a Repo resource under system/ directory is required.
 # For the multi-repo mode, declaring a Repo resource under system/ directory is optional.
-# [START anthos_config_management_hierarchical_format_config_repo]
+# [START anthosconfig_hierarchical_format_config_repo]
 apiVersion: configmanagement.gke.io/v1
 kind: Repo
 metadata:
   name: repo
 spec:
   version: 1.0.0
-# [END anthos_config_management_hierarchical_format_config_repo]
+# [END anthosconfig_hierarchical_format_config_repo]

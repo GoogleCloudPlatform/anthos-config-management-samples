@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_config_namespaces_eng_resource_quota_analytics_selector] 
+# [START anthosconfig_namespace_inheritance_config_namespaces_eng_resource_quota_analytics_selector] 
 kind: ResourceQuota
 apiVersion: v1
 metadata:
@@ -24,9 +24,9 @@ spec:
     pods: "1"
     cpu: "100m"
     memory: 100Mi
-# [END anthos_config_management_namespace_inheritance_config_namespaces_eng_resource_quota_analytics_selector] 
+# [END anthosconfig_namespace_inheritance_config_namespaces_eng_resource_quota_analytics_selector] 
 ---
-# [START anthos_config_management_namespace_inheritance_config_namespaces_eng_resource_quota_gamestore_selector] 
+# [START anthosconfig_namespace_inheritance_config_namespaces_eng_resource_quota_gamestore_selector] 
 kind: ResourceQuota
 apiVersion: v1
 metadata:
@@ -38,4 +38,4 @@ spec:
     pods: "1"
     cpu: "200m"
     memory: 200Mi
-# [END anthos_config_management_namespace_inheritance_config_namespaces_eng_resource_quota_gamestore_selector] 
+# [END anthosconfig_namespace_inheritance_config_namespaces_eng_resource_quota_gamestore_selector] 

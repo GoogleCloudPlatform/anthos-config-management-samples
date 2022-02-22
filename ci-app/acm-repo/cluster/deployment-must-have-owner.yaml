@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_app_deployment_must_have_owner]
+# [START anthosconfig_ci_app_deployment_must_have_owner]
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sRequiredLabels
 metadata:
@@ -25,4 +25,4 @@ spec:
     labels:
       - key: "owner"
     message: "Deployment objects should have an 'owner' label indicating who created them."
-# [END anthos_config_management_ci_app_deployment_must_have_owner]
+# [END anthosconfig_ci_app_deployment_must_have_owner]

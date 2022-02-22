@@ -11,15 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_service_account] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_service_account] 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: prometheus-acm
   namespace: monitoring
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_service_account] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_service_account] 
 ---
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role] 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -38,9 +38,9 @@ rules:
   verbs: ["get"]
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role] 
 ---
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role_binding] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role_binding] 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -53,9 +53,9 @@ subjects:
 - kind: ServiceAccount
   name: prometheus-acm
   namespace: monitoring
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role_binding] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_cluster_role_binding] 
 ---
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_prometheus] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_prometheus] 
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
@@ -77,9 +77,9 @@ spec:
   resources:
     requests:
       memory: 400Mi
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_prometheus] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_prometheus] 
 ---
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_service] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_service] 
 apiVersion: v1
 kind: Service
 metadata:
@@ -98,9 +98,9 @@ spec:
   selector:
     app: prometheus
     prometheus: acm
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_service] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_service] 
 ---
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_service_monitor] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_service_monitor] 
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -121,4 +121,4 @@ spec:
   endpoints:
   - port: metrics
     interval: 10s
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_acm_monitor_service_monitor] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_acm_monitor_service_monitor] 

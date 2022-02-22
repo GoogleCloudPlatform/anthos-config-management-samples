@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # LimitRange Reference: https://kubernetes.io/docs/concepts/policy/limit-range/
-# [START anthos_config_management_hierarchical_format_config_namespaces_limit_range]
+# [START anthosconfig_hierarchical_format_config_namespaces_limit_range]
 apiVersion: v1
 kind: LimitRange
 metadata:
@@ -26,4 +26,4 @@ spec:
   - type: PersistentVolumeClaim
     max:
       storage: 2Gi
-# [END anthos_config_management_hierarchical_format_config_namespaces_limit_range]
+# [END anthosconfig_hierarchical_format_config_namespaces_limit_range]

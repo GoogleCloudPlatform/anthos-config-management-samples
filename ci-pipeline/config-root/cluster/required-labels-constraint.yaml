@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_all_must_have_cost_center]
+# [START anthosconfig_ci_pipeline_all_must_have_cost_center]
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sRequiredLabels
 metadata:
@@ -26,4 +26,4 @@ spec:
     labels:
       - key: cost-center
         allowedRegex: "^[a-zA-Z]+.foo-corp.com$"
-# [END anthos_config_management_ci_pipeline_all_must_have_cost_center]
+# [END anthosconfig_ci_pipeline_all_must_have_cost_center]

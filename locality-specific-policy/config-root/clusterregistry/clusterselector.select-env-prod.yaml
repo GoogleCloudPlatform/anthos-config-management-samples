@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_locality_specific_policy_cluster_selector_env_prod]
+# [START anthosconfig_locality_specific_policy_cluster_selector_env_prod]
 # selects clusters with prod environment label
 kind: ClusterSelector
 apiVersion: configmanagement.gke.io/v1
@@ -21,4 +21,4 @@ spec:
   selector:
     matchLabels:
       environment: prod
-# [END anthos_config_management_locality_specific_policy_cluster_selector_env_prod]
+# [END anthosconfig_locality_specific_policy_cluster_selector_env_prod]

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_namespace_incubator_2] 
+# [START anthosconfig_namespace_inheritance_compiled_namespace_incubator_2] 
 ---
 apiVersion: v1
 kind: Namespace
@@ -27,4 +27,4 @@ metadata:
     incubator-2.tree.hnc.x-k8s.io/depth: "0"
     rnd.tree.hnc.x-k8s.io/depth: "1"
   name: incubator-2
-# [END anthos_config_management_namespace_inheritance_compiled_namespace_incubator_2] 
+# [END anthosconfig_namespace_inheritance_compiled_namespace_incubator_2] 

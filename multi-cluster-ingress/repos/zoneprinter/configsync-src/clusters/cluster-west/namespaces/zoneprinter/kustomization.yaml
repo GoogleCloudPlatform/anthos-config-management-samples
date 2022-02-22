@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_ingress_zoneprinter_src_cluster_west_kustomization] 
+# [START anthosconfig_multi_cluster_ingress_zoneprinter_src_cluster_west_kustomization] 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -23,4 +23,4 @@ commonLabels:
   app: zoneprinter
   owner: zoneprinter-team
   cluster: cluster-west
-# [END anthos_config_management_multi_cluster_ingress_zoneprinter_src_cluster_west_kustomization] 
+# [END anthosconfig_multi_cluster_ingress_zoneprinter_src_cluster_west_kustomization] 

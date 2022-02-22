@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_ingress_zoneprinter_src_all_clusters_deployment] 
+# [START anthosconfig_multi_cluster_ingress_zoneprinter_src_all_clusters_deployment] 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,4 +25,4 @@ spec:
         image: gcr.io/google-samples/zone-printer:0.2
         ports:
         - containerPort: 8080
-# [END anthos_config_management_multi_cluster_ingress_zoneprinter_src_all_clusters_deployment] 
+# [END anthosconfig_multi_cluster_ingress_zoneprinter_src_all_clusters_deployment] 

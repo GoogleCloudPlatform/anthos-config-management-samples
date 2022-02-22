@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_foo_corp_shipping_dev_namespace] 
+# [START anthosconfig_foo_corp_shipping_dev_namespace] 
 apiVersion: v1
 kind: Namespace
 metadata:
   name: shipping-dev
-# [END anthos_config_management_foo_corp_shipping_dev_namespace] 
+# [END anthosconfig_foo_corp_shipping_dev_namespace] 

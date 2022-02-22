@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_namespace_specific_policy_automated_rendering_kustomization]
+# [START anthosconfig_namespace_specific_policy_automated_rendering_kustomization]
 resources:
 - configsync-src/team-a
 - configsync-src/team-b
 - configsync-src/team-c
-# [END anthos_config_management_namespace_specific_policy_automated_rendering_kustomization]
+# [END anthosconfig_namespace_specific_policy_automated_rendering_kustomization]

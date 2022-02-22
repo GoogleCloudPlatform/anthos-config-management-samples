@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_unstructured_banned_key_template] 
+# [START anthosconfig_ci_pipeline_unstructured_banned_key_template] 
 apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
@@ -40,4 +40,4 @@ spec:
           count(overlap) > 0
           val := sprintf("The following banned keys are being used in the config map: %v", [overlap])
         }
-# [END anthos_config_management_ci_pipeline_unstructured_banned_key_template] 
+# [END anthosconfig_ci_pipeline_unstructured_banned_key_template] 

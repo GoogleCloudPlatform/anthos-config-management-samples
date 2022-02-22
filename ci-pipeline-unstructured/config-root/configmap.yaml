@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_unstructured_configmap] 
+# [START anthosconfig_ci_pipeline_unstructured_configmap] 
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -19,4 +19,4 @@ metadata:
   namespace: default
 data:
   private_key: sensitive data goes here
-# [END anthos_config_management_ci_pipeline_unstructured_configmap] 
+# [END anthosconfig_ci_pipeline_unstructured_configmap] 

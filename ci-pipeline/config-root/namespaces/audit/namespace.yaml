@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_audit]
+# [START anthosconfig_ci_pipeline_audit]
 apiVersion: v1
 kind: Namespace
 metadata:
   name: audit
   labels:
     cost-center: "audit.foo-corp.com"
-# [END anthos_config_management_ci_pipeline_audit]
+# [END anthosconfig_ci_pipeline_audit]

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_multi_cluster_access_and_quota_cluster_west_tenant_c_namespace]
+# [START anthosconfig_multi_cluster_access_and_quota_cluster_west_tenant_c_namespace]
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -19,4 +19,4 @@ metadata:
     cluster: cluster-west
     owner: platform-team
   name: tenant-c
-# [END anthos_config_management_multi_cluster_access_and_quota_cluster_west_tenant_c_namespace]
+# [END anthosconfig_multi_cluster_access_and_quota_cluster_west_tenant_c_namespace]

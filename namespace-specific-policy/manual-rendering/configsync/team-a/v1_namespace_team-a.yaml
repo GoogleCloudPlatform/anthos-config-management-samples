@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_specific_policy_team_a_namespace] 
+# [START anthosconfig_namespace_specific_policy_team_a_namespace] 
 apiVersion: v1
 kind: Namespace
 metadata:
   name: team-a
-# [END anthos_config_management_namespace_specific_policy_team_a_namespace] 
+# [END anthosconfig_namespace_specific_policy_team_a_namespace] 

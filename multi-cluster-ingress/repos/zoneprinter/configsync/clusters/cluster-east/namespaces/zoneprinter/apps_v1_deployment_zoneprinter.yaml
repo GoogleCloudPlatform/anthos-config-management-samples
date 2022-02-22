@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_ingress_zoneprinter_cluster_east_deployment] 
+# [START anthosconfig_multi_cluster_ingress_zoneprinter_cluster_east_deployment] 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -40,4 +40,4 @@ spec:
         name: frontend
         ports:
         - containerPort: 8080
-# [END anthos_config_management_multi_cluster_ingress_zoneprinter_cluster_east_deployment] 
+# [END anthosconfig_multi_cluster_ingress_zoneprinter_cluster_east_deployment] 

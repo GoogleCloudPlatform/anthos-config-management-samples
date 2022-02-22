@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_repo] 
+# [START anthosconfig_namespace_inheritance_repo] 
 apiVersion: configmanagement.gke.io/v1
 kind: Repo
 metadata:
   name: repo
 spec:
   version: 1.0.0
-# [END anthos_config_management_namespace_inheritance_repo] 
+# [END anthosconfig_namespace_inheritance_repo] 

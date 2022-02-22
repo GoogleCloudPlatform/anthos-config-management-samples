@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_config_sync_quickstart_monorepo_root_gamestore_configmap_store_inventory] 
+# [START anthosconfig_config_sync_quickstart_monorepo_root_gamestore_configmap_store_inventory] 
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -23,4 +23,4 @@ data:
   single_player: "20"
   cooperative: "60"
   competitive: "300"
-# [END anthos_config_management_config_sync_quickstart_monorepo_root_gamestore_configmap_store_inventory] 
+# [END anthosconfig_config_sync_quickstart_monorepo_root_gamestore_configmap_store_inventory] 

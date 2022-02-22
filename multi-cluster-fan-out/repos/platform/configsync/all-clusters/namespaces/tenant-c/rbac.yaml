@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_fanout_tenant_c_role_binding] 
+# [START anthosconfig_multi_cluster_fanout_tenant_c_role_binding] 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -31,4 +31,4 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User
   name: user-c2
-# [END anthos_config_management_multi_cluster_fanout_tenant_c_role_binding] 
+# [END anthosconfig_multi_cluster_fanout_tenant_c_role_binding] 

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_locality_specific_policy_cluster_selector_location_belgium]
+# [START anthosconfig_locality_specific_policy_cluster_selector_location_belgium]
 # selects clusters with belgium location label
 kind: ClusterSelector
 apiVersion: configmanagement.gke.io/v1
@@ -21,4 +21,4 @@ spec:
   selector:
     matchLabels:
       location: belgium
-# [END anthos_config_management_locality_specific_policy_cluster_selector_location_belgium]
+# [END anthosconfig_locality_specific_policy_cluster_selector_location_belgium]

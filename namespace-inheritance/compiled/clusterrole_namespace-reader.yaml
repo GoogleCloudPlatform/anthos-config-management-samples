@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_cluster_role_namespace_reader] 
+# [START anthosconfig_namespace_inheritance_compiled_cluster_role_namespace_reader] 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -33,4 +33,4 @@ rules:
   - get
   - watch
   - list
-# [END anthos_config_management_namespace_inheritance_compiled_cluster_role_namespace_reader] 
+# [END anthosconfig_namespace_inheritance_compiled_cluster_role_namespace_reader] 

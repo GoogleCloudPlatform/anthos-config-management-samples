@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_locality_specific_policy_cluster_taiwan]
+# [START anthosconfig_locality_specific_policy_cluster_taiwan]
 # applies location and environment labels to cluster
 kind: Cluster
 apiVersion: clusterregistry.k8s.io/v1alpha1
@@ -20,4 +20,4 @@ metadata:
   labels:
     environment: prod
     location: taiwan
-# [END anthos_config_management_locality_specific_policy_cluster_taiwan]
+# [END anthosconfig_locality_specific_policy_cluster_taiwan]

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_config_namespaces_eng_namespace_selector_analytics] 
+# [START anthosconfig_namespace_inheritance_config_namespaces_eng_namespace_selector_analytics] 
 kind: NamespaceSelector
 apiVersion: configmanagement.gke.io/v1
 metadata:
@@ -21,9 +21,9 @@ spec:
   selector:
     matchLabels:
       app: analytics
-# [END anthos_config_management_namespace_inheritance_config_namespaces_eng_namespace_selector_analytics] 
+# [END anthosconfig_namespace_inheritance_config_namespaces_eng_namespace_selector_analytics] 
 ---
-# [START anthos_config_management_namespace_inheritance_config_namespaces_eng_namespace_selector_gamestore] 
+# [START anthosconfig_namespace_inheritance_config_namespaces_eng_namespace_selector_gamestore] 
 kind: NamespaceSelector
 apiVersion: configmanagement.gke.io/v1
 metadata:
@@ -32,4 +32,4 @@ spec:
   selector:
     matchLabels:
       app: gamestore
-# [END anthos_config_management_namespace_inheritance_config_namespaces_eng_namespace_selector_gamestore] 
+# [END anthosconfig_namespace_inheritance_config_namespaces_eng_namespace_selector_gamestore] 

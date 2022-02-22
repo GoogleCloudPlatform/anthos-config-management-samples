@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_kustomize_pipeline_cloudbuild]
+# [START anthosconfig_kustomize_pipeline_cloudbuild]
 steps:
 - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
   id: kustomize-render
@@ -50,4 +50,4 @@ availableSecrets:
   secretManager:
   - versionName: projects/${PROJECT_ID}/secrets/github-token/versions/1 
     env: 'GITHUB_TOKEN'
-# [END anthos_config_management_kustomize_pipeline_cloudbuild]
+# [END anthosconfig_kustomize_pipeline_cloudbuild]

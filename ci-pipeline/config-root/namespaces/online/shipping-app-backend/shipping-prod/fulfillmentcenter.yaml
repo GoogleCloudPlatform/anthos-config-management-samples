@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_shipping_prod_fulfillment_center]
+# [START anthosconfig_ci_pipeline_shipping_prod_fulfillment_center]
 kind: FulfillmentCenter
 apiVersion: foo-corp.com/v1
 metadata:
   name: production
 spec:
   address: "100 Industry St."
-# [END anthos_config_management_ci_pipeline_shipping_prod_fulfillment_center]
+# [END anthosconfig_ci_pipeline_shipping_prod_fulfillment_center]

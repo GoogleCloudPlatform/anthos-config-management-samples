@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_ingress_zoneprinter_src_cluster_west_mci] 
+# [START anthosconfig_multi_cluster_ingress_zoneprinter_src_cluster_west_mci] 
 apiVersion: networking.gke.io/v1
 kind: MultiClusterIngress
 metadata:
@@ -23,9 +23,9 @@ spec:
       backend:
         serviceName: zoneprinter
         servicePort: 8080
-# [END anthos_config_management_multi_cluster_ingress_zoneprinter_src_cluster_west_mci] 
+# [END anthosconfig_multi_cluster_ingress_zoneprinter_src_cluster_west_mci] 
 ---
-# [START anthos_config_management_multi_cluster_ingress_zoneprinter_src_cluster_west_mcs] 
+# [START anthosconfig_multi_cluster_ingress_zoneprinter_src_cluster_west_mcs] 
 apiVersion: networking.gke.io/v1
 kind: MultiClusterService
 metadata:
@@ -40,4 +40,4 @@ spec:
         protocol: TCP
         port: 8080
         targetPort: 8080
-# [END anthos_config_management_multi_cluster_ingress_zoneprinter_src_cluster_west_mcs] 
+# [END anthosconfig_multi_cluster_ingress_zoneprinter_src_cluster_west_mcs] 

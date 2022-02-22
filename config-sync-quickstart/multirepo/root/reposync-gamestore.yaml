@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_config_sync_quickstart_multirepo_root_repo_sync] 
+# [START anthosconfig_config_sync_quickstart_multirepo_root_repo_sync] 
 apiVersion: configsync.gke.io/v1alpha1
 kind: RepoSync
 metadata:
@@ -34,4 +34,4 @@ spec:
     # Refer to a Secret you create to hold the private key, cookiefile, or token.
     # secretRef:
     #   name: SECRET_NAME
-# [END anthos_config_management_config_sync_quickstart_multirepo_root_repo_sync] 
+# [END anthosconfig_config_sync_quickstart_multirepo_root_repo_sync] 

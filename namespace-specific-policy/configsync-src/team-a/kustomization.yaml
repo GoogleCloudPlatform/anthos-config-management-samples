@@ -13,7 +13,7 @@
 # limitations under the License.
 # deny all ingress traffic to avoid Pods from one namespace
 # accidentally sending traffic to Services in other namespaces.
-# [START anthos_config_management_namespace_specific_policy_src_team_a_kustomization] 
+# [START anthosconfig_namespace_specific_policy_src_team_a_kustomization] 
 namespace: team-a
 
 resources:
@@ -34,4 +34,4 @@ patches:
     - op: replace
       path: /metadata/name
       value: team-a
-# [END anthos_config_management_namespace_specific_policy_src_team_a_kustomization] 
+# [END anthosconfig_namespace_specific_policy_src_team_a_kustomization] 

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_environments_kustomize_install_config_dev] 
+# [START anthosconfig_multi_environments_kustomize_install_config_dev] 
 applySpecVersion: 1
 spec:
   configSync:
@@ -26,4 +26,4 @@ spec:
     enabled: false
   hierarchyController:
     enabled: false
-# [END anthos_config_management_multi_environments_kustomize_install_config_dev] 
+# [END anthosconfig_multi_environments_kustomize_install_config_dev] 

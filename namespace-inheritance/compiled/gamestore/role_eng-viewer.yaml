@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_gamestore_role_eng_viewer] 
+# [START anthosconfig_namespace_inheritance_compiled_gamestore_role_eng_viewer] 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -33,4 +33,4 @@ rules:
   verbs:
   - get
   - list
-# [END anthos_config_management_namespace_inheritance_compiled_gamestore_role_eng_viewer] 
+# [END anthosconfig_namespace_inheritance_compiled_gamestore_role_eng_viewer] 
