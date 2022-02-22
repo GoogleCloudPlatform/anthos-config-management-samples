@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_alertmanagerconfigs_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -2443,7 +2445,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_alertmanagerconfigs_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_alertmanagers_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -7334,7 +7338,9 @@ spec:
     served: true
     storage: true
     subresources: {}
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_alertmanagers_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_podmonitors_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -7781,7 +7787,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_podmonitors_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_probes_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -8204,7 +8212,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_probes_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_prometheuses_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -14765,7 +14775,9 @@ spec:
     served: true
     storage: true
     subresources: {}
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_prometheuses_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_prometheusrules_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -14855,7 +14867,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_prometheusrules_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_servicemonitors_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -15325,7 +15339,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_servicemonitors_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_thanosrulers_monitoring_coreos_com]
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -20351,7 +20367,9 @@ spec:
         type: object
     served: true
     storage: true
+# [END anthosconfig_acm_monitor_prometheus_operator_customresourcedefinition_thanosrulers_monitoring_coreos_com]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_serviceaccount_prometheus_operator]
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -20361,7 +20379,9 @@ metadata:
     app.kubernetes.io/version: 0.47.0
   name: prometheus-operator
   namespace: monitoring
+# [END anthosconfig_acm_monitor_prometheus_operator_serviceaccount_prometheus_operator]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_clusterrole_prometheus_operator]
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -20441,7 +20461,9 @@ rules:
   - get
   - list
   - watch
+# [END anthosconfig_acm_monitor_prometheus_operator_clusterrole_prometheus_operator]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_clusterrolebinding_prometheus_operator]
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -20458,7 +20480,9 @@ subjects:
 - kind: ServiceAccount
   name: prometheus-operator
   namespace: monitoring
+# [END anthosconfig_acm_monitor_prometheus_operator_clusterrolebinding_prometheus_operator]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_service_prometheus_operator]
 apiVersion: v1
 kind: Service
 metadata:
@@ -20477,7 +20501,9 @@ spec:
   selector:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
+# [END anthosconfig_acm_monitor_prometheus_operator_service_prometheus_operator]
 ---
+# [START anthosconfig_acm_monitor_prometheus_operator_deployment_prometheus_operator]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20524,3 +20550,4 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
       serviceAccountName: prometheus-operator
+# [END anthosconfig_acm_monitor_prometheus_operator_deployment_prometheus_operator]

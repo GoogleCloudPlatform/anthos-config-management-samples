@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# [START anthosconfig_helm_component_automated_rendering_kustomization_yaml]
 resources:
 - base
 
@@ -18,3 +20,4 @@ patches:
 - path: ignore-deployment-mutation-patch.yaml
   target:
     kind: Deployment
+# [END anthosconfig_helm_component_automated_rendering_kustomization_yaml]
