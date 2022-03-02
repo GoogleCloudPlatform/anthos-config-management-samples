@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_hierarchical_format_config_namespaces_team_1_crontab]
+# [START anthosconfig_hierarchical_format_config_namespaces_team_1_crontab]
 apiVersion: "stable.example.com/v1"
 kind: CronTab
 metadata:
@@ -19,4 +19,4 @@ metadata:
 spec:
   cronSpec: "* * * * */5"
   image: my-awesome-cron-image
-# [END anthos_config_management_hierarchical_format_config_namespaces_team_1_crontab]
+# [END anthosconfig_hierarchical_format_config_namespaces_team_1_crontab]

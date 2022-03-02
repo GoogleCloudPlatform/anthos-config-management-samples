@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_shipping_dev_namespace]
+# [START anthosconfig_ci_pipeline_shipping_dev_namespace]
 apiVersion: v1
 kind: Namespace
 metadata:
   name: shipping-dev
   labels:
     cost-center: "shipping.foo-corp.com"
-# [END anthos_config_management_ci_pipeline_shipping_dev_namespace]
+# [END anthosconfig_ci_pipeline_shipping_dev_namespace]

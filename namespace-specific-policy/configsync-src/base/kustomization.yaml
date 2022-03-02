@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_namespace_specific_policy_src_base_kustomization] 
+# [START anthosconfig_namespace_specific_policy_src_base_kustomization] 
 resources:
 - namespace.yaml
 - rolebinding.yaml
 - role.yaml
 - networkpolicy.yaml
-# [END anthos_config_management_namespace_specific_policy_src_base_kustomization] 
+# [END anthosconfig_namespace_specific_policy_src_base_kustomization] 

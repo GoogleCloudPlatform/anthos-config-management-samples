@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_shipping_dev_job_creators]
+# [START anthosconfig_ci_pipeline_shipping_dev_job_creators]
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -24,4 +24,4 @@ roleRef:
   kind: Role
   name: job-creator
   apiGroup: rbac.authorization.k8s.io
-# [END anthos_config_management_ci_pipeline_shipping_dev_job_creators]
+# [END anthosconfig_ci_pipeline_shipping_dev_job_creators]

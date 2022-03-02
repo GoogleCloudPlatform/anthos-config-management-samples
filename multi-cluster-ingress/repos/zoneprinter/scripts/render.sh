@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,9 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# LimitRange Reference: https://kubernetes.io/docs/concepts/policy/limit-range/
-#!/usr/bin/env bash
 
+# LimitRange Reference: https://kubernetes.io/docs/concepts/policy/limit-range/
+# [START anthosconfig_scripts_render]
 # Render kustomizations
 
 set -o errexit -o nounset -o pipefail
@@ -49,3 +51,5 @@ for CLUSTER_PATH in "${SRC}/clusters/"*/; do
         done
     fi
 done
+
+# [END anthosconfig_scripts_render]

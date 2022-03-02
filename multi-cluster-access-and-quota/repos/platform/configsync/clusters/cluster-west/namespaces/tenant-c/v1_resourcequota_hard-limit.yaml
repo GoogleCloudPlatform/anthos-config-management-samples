@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_multi_cluster_access_and_quota_cluster_west_tenant_c_resource_quota]
+# [START anthosconfig_multi_cluster_access_and_quota_cluster_west_tenant_c_resource_quota]
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -25,4 +25,4 @@ spec:
     cpu: "100"
     memory: 10Gi
     pods: "10"
-# [END anthos_config_management_multi_cluster_access_and_quota_cluster_west_tenant_c_resource_quota]
+# [END anthosconfig_multi_cluster_access_and_quota_cluster_west_tenant_c_resource_quota]

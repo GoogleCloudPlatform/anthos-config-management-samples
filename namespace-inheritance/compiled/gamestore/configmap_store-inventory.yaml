@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_gamestore_configmap] 
+# [START anthosconfig_namespace_inheritance_compiled_gamestore_configmap] 
 ---
 apiVersion: v1
 data:
@@ -30,4 +30,4 @@ metadata:
     configsync.gke.io/declared-version: v1
   name: store-inventory
   namespace: gamestore
-# [END anthos_config_management_namespace_inheritance_compiled_gamestore_configmap] 
+# [END anthosconfig_namespace_inheritance_compiled_gamestore_configmap] 

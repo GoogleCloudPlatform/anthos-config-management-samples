@@ -13,7 +13,7 @@
 # limitations under the License.
 # deny all ingress traffic to avoid Pods from one namespace
 # accidentally sending traffic to Services in other namespaces.
-# [START anthos_config_management_namespace_specific_policy_src_base_role_binding] 
+# [START anthosconfig_namespace_specific_policy_src_base_role_binding] 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -26,4 +26,4 @@ roleRef:
   kind: Role
   name: team-admin
   apiGroup: rbac.authorization.k8s.io
-# [END anthos_config_management_namespace_specific_policy_src_base_role_binding] 
+# [END anthosconfig_namespace_specific_policy_src_base_role_binding] 

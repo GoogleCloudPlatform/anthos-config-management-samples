@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_environments_kustomize_config_source_cloudbuild] 
+# [START anthosconfig_multi_environments_kustomize_config_source_cloudbuild] 
 steps: 
 - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
   id: Render foo-config-dev 
@@ -76,4 +76,4 @@ availableSecrets:
     env: 'GITHUB_TOKEN'
   - versionName: projects/${PROJECT_ID}/secrets/github-email/versions/1 
     env: 'GITHUB_EMAIL'
-# [END anthos_config_management_multi_environments_kustomize_config_source_cloudbuild] 
+# [END anthosconfig_multi_environments_kustomize_config_source_cloudbuild] 

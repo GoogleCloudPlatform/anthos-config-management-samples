@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_fanout_tenant_b_resource_quota] 
+# [START anthosconfig_multi_cluster_fanout_tenant_b_resource_quota] 
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -25,4 +25,4 @@ spec:
     cpu: "100"
     memory: 10Gi
     pods: "10"
-# [END anthos_config_management_multi_cluster_fanout_tenant_b_resource_quota] 
+# [END anthosconfig_multi_cluster_fanout_tenant_b_resource_quota] 

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_gamestore_resource_quota] 
+# [START anthosconfig_namespace_inheritance_compiled_gamestore_resource_quota] 
 ---
 apiVersion: v1
 kind: ResourceQuota
@@ -31,4 +31,4 @@ spec:
     cpu: 200m
     memory: 200Mi
     pods: "1"
-# [END anthos_config_management_namespace_inheritance_compiled_gamestore_resource_quota] 
+# [END anthosconfig_namespace_inheritance_compiled_gamestore_resource_quota] 

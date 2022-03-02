@@ -11,29 +11,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_multi_cluster_fanout_tenant_a_namespace] 
+# [START anthosconfig_multi_cluster_fanout_tenant_a_namespace] 
 apiVersion: v1
 kind: Namespace
 metadata:
   labels:
     owner: platform-team
   name: tenant-a
-# [END anthos_config_management_multi_cluster_fanout_tenant_a_namespace] 
+# [END anthosconfig_multi_cluster_fanout_tenant_a_namespace] 
 ---
-# [START anthos_config_management_multi_cluster_fanout_tenant_b_namespace] 
+# [START anthosconfig_multi_cluster_fanout_tenant_b_namespace] 
 apiVersion: v1
 kind: Namespace
 metadata:
   labels:
     owner: platform-team
   name: tenant-b
-# [END anthos_config_management_multi_cluster_fanout_tenant_b_namespace] 
+# [END anthosconfig_multi_cluster_fanout_tenant_b_namespace] 
 ---
-# [START anthos_config_management_multi_cluster_fanout_tenant_c_namespace] 
+# [START anthosconfig_multi_cluster_fanout_tenant_c_namespace] 
 apiVersion: v1
 kind: Namespace
 metadata:
   labels:
     owner: platform-team
   name: tenant-c
-# [END anthos_config_management_multi_cluster_fanout_tenant_c_namespace] 
+# [END anthosconfig_multi_cluster_fanout_tenant_c_namespace] 

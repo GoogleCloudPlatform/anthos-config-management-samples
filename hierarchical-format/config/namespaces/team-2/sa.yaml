@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_hierarchical_format_config_namespaces_team_2_service_account]
+# [START anthosconfig_hierarchical_format_config_namespaces_team_2_service_account]
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: sa
-# [END anthos_config_management_hierarchical_format_config_namespaces_team_2_service_account]
+# [END anthosconfig_hierarchical_format_config_namespaces_team_2_service_account]

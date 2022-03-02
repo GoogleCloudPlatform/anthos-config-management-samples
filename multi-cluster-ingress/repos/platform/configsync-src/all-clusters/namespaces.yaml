@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_cluster_ingress_platform_all_clusters_namespace_zoneprinter] 
+# [START anthosconfig_multi_cluster_ingress_platform_all_clusters_namespace_zoneprinter] 
 apiVersion: v1
 kind: Namespace
 metadata:
   name: zoneprinter
-# [END anthos_config_management_multi_cluster_ingress_platform_all_clusters_namespace_zoneprinter] 
+# [END anthosconfig_multi_cluster_ingress_platform_all_clusters_namespace_zoneprinter] 

@@ -1,3 +1,5 @@
+# !/bin/bash
+
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,7 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# !/bin/bash
+
+# [START anthosconfig_multi_environments_kustomize_install_config_sync]
 
 if [[ -z "$DEV_PROJECT" ]]; then
     echo "Must provide DEV_PROJECT in environment" 1>&2
@@ -68,3 +71,5 @@ gcloud alpha container hub config-management apply \
     --membership=prod \
     --config="$CM_CONFIG_DIR/install-config/config-management-prod.yaml" \
     --project=${PROD_PROJECT}
+
+# [END anthosconfig_multi_environments_kustomize_install_config_sync]

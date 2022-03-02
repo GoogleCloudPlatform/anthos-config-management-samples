@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# [START anthosconfig_base_deployment_deployment_nginx_deployment]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,3 +34,4 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
+# [END anthosconfig_base_deployment_deployment_nginx_deployment]

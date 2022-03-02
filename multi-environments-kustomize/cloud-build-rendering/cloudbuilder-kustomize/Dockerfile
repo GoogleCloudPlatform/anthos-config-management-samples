@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_environments_kustomize_dockerfile] 
+# [START anthosconfig_multi_environments_kustomize_dockerfile] 
 FROM gcr.io/cloud-builders/kubectl:latest 
 RUN apt-get update && apt-get install -y wget 
 
 RUN wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.0.5/kustomize_v4.0.5_linux_amd64.tar.gz 
 
 RUN tar xf kustomize_v4.0.5_linux_amd64.tar.gz -C /usr/local/bin 
-# [END anthos_config_management_multi_environments_kustomize_dockerfile] 
+# [END anthosconfig_multi_environments_kustomize_dockerfile] 

@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_repo]
+# [START anthosconfig_ci_pipeline_repo]
 apiVersion: configmanagement.gke.io/v1
 kind: Repo
 metadata:
   name: repo
 spec:
   version: 1.0.0
-# [END anthos_config_management_ci_pipeline_repo]
+# [END anthosconfig_ci_pipeline_repo]

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthos_config_management_ci_pipeline_cloud_build]
+# [START anthosconfig_ci_pipeline_cloud_build]
 steps:
 # Generate the kubeconfig file needed to authenticate to the GKE cluster. The root user generates this file with restricted permissions.
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -47,4 +47,4 @@ steps:
 # Validate input configs against any OPA ConstraintTemplates and Constraints it finds in its input.
 - name: 'gcr.io/config-management-release/policy-controller-validate'
   args: ['--input', '/workspace/config-source.yaml']
-# [END anthos_config_management_ci_pipeline_cloud_build]
+# [END anthosconfig_ci_pipeline_cloud_build]

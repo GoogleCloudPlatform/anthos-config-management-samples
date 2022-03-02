@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_config_namespaces_eng_gamestore_configmap_store_inventory] 
+# [START anthosconfig_namespace_inheritance_config_namespaces_eng_gamestore_configmap_store_inventory] 
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -23,4 +23,4 @@ data:
   action: "30"
   documentary: "5"
   sci_fi: "1000"
-# [END anthos_config_management_namespace_inheritance_config_namespaces_eng_gamestore_configmap_store_inventory] 
+# [END anthosconfig_namespace_inheritance_config_namespaces_eng_gamestore_configmap_store_inventory] 

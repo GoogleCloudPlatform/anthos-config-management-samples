@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,7 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#!/bin/bash
+
+# [START anthosconfig_multi_environments_kustomize_cleanup]
 
 if [[ -z "$DEV_PROJECT" ]]; then
     echo "Must provide DEV_PROJECT in environment" 1>&2
@@ -83,3 +86,5 @@ if [[ $CM_CONFIG_DIR == "cloud-build-rendering" ]]; then
     rm -rf foo-config-dev/
     rm -rf foo-config-prod/
 fi
+
+# [END anthosconfig_multi_environments_kustomize_cleanup]

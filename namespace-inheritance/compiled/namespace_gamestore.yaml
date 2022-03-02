@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_namespace_gamestore] 
+# [START anthosconfig_namespace_inheritance_compiled_namespace_gamestore] 
 ---
 apiVersion: v1
 kind: Namespace
@@ -29,4 +29,4 @@ metadata:
     eng.tree.hnc.x-k8s.io/depth: "1"
     gamestore.tree.hnc.x-k8s.io/depth: "0"
   name: gamestore
-# [END anthos_config_management_namespace_inheritance_compiled_namespace_gamestore] 
+# [END anthosconfig_namespace_inheritance_compiled_namespace_gamestore] 

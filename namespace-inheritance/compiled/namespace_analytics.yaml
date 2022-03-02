@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_namespace_inheritance_compiled_namespace_analytics] 
+# [START anthosconfig_namespace_inheritance_compiled_namespace_analytics] 
 ---
 apiVersion: v1
 kind: Namespace
@@ -28,4 +28,4 @@ metadata:
     configsync.gke.io/declared-version: v1
     eng.tree.hnc.x-k8s.io/depth: "1"
   name: analytics
-# [END anthos_config_management_namespace_inheritance_compiled_namespace_analytics] 
+# [END anthosconfig_namespace_inheritance_compiled_namespace_analytics] 

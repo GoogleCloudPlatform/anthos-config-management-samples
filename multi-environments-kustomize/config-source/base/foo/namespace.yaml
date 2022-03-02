@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthos_config_management_multi_environments_kustomize_config_source_base_foo_namespace] 
+# [START anthosconfig_multi_environments_kustomize_config_source_base_foo_namespace] 
 apiVersion: v1
 kind: Namespace
 metadata:
   name: foo
-# [END anthos_config_management_multi_environments_kustomize_config_source_base_foo_namespace] 
+# [END anthosconfig_multi_environments_kustomize_config_source_base_foo_namespace] 
