@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: repo-sync
+subjects:
+- kind: ServiceAccount
+  name: ns-reconciler-onlineboutique
+  namespace: config-management-system
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io

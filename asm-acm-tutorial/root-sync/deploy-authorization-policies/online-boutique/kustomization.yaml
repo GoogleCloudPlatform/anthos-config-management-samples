@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patchesJson6902:
+- target:
+    kind: RepoSync
+    name: repo-sync
+  patch: |-
+    - op: replace
+      path: /spec/git/dir
+      value: online-boutique/authorization-policies

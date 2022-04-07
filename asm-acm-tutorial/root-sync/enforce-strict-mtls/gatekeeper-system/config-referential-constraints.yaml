@@ -1,0 +1,16 @@
+apiVersion: config.gatekeeper.sh/v1alpha1
+kind: Config
+metadata:
+  name: config
+spec:
+  sync:
+    syncOnly:
+      - group: ""
+        version: "v1"
+        kind: "Namespace"
+      - group: "security.istio.io"
+        version: "v1beta1"
+        kind: "PeerAuthentication"
+      - group: "security.istio.io"
+        version: "v1beta1"
+        kind: "AuthorizationPolicy"
