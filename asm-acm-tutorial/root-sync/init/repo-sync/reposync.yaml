@@ -5,8 +5,8 @@ metadata:
 spec:
   sourceFormat: unstructured
   git:
-    repo: https://github.com/mathieu-benoit/asm-acm-tutorial
+    repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
     revision: HEAD
-    branch: main
-    dir: online-boutique/init
+    branch: asm-acm-tutorial
+    dir: asm-acm-tutorial/online-boutique/init
     auth: none
