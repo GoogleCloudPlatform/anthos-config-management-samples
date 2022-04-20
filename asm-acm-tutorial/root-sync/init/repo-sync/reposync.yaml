@@ -7,6 +7,6 @@ spec:
   git:
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
     revision: HEAD
-    branch: asm-acm-tutorial
+    branch: main
     dir: asm-acm-tutorial/online-boutique/init
     auth: none
