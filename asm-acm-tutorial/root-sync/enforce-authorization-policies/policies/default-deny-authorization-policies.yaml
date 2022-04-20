@@ -1,0 +1,8 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: AsmAuthzPolicyDefaultDeny
+metadata:
+  name: default-deny-authorization-policies
+spec:
+  enforcementAction: deny
+  parameters:
+    strictnessLevel: High
