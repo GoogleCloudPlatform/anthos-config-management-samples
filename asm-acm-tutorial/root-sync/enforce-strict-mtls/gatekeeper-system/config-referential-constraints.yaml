@@ -1,3 +1,18 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START anthosconfig_gatekeeper_system_config_referential_constraints_config_config]
 apiVersion: config.gatekeeper.sh/v1alpha1
 kind: Config
 metadata:
@@ -14,3 +29,4 @@ spec:
       - group: "security.istio.io"
         version: "v1beta1"
         kind: "AuthorizationPolicy"
+# [END anthosconfig_gatekeeper_system_config_referential_constraints_config_config]
