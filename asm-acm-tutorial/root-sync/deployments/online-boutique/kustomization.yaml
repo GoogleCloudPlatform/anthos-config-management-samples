@@ -1,3 +1,18 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START anthosconfig_deployments_online_boutique_kustomization_component]
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 patchesJson6902:
@@ -8,3 +23,4 @@ patchesJson6902:
     - op: replace
       path: /spec/git/dir
       value: online-boutique/deployments
+# [END anthosconfig_deployments_online_boutique_kustomization_component]
