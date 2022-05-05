@@ -25,7 +25,7 @@ steps:
   # and consolidates every resource in a single file.
   name: 'gcr.io/kpt-dev/kpt'
   entrypoint: '/bin/sh'
-  args: ['-c', 'kpt pkg get https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git/ci-app/acm-repo/cluster@1.0.0 constraints
+  args: ['-c', 'kpt pkg get https://github.com/GoogleCloudPlatform/anthos-config-management-samples.git/ci-app/acm-repo/cluster@main constraints
                   && kpt fn source constraints/ hydrated-manifests/ > hydrated-manifests/kpt-manifests.yaml']
 - id: 'Validate against policies'
   # This step validates that all resources comply with all policies.
