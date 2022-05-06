@@ -5,7 +5,7 @@ This folder contains the resources for the tutorial: Strengthen your app’s sec
 The `online-boutique` folder allows to deploy the Online Boutique sample apps via Kustomize with associated `ServiceAccounts` and `AuthorizationPolicies`.
 
 The `root-sync` contains the folders representing the different steps of the tutorial:
-1. `init` - install ASM and set up the `online-boutique` `RepoSync`
+1. `init` - set up the `online-boutique` `RepoSync`
 2. `deployments` - deploy the `ingress-gateway` and the `onlineboutique` namespaces and apps
 3. `enforce-sidecar-injection` - deploy policies to enforce the sidecar injection for `Namespace` and `Pod`
 4. `enforce-strict-mtls` - deploy policies to enforce `STRICT` mTLS for the entire Mesh and for any `PeerAuthentication`

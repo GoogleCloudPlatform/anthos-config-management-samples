@@ -38,6 +38,6 @@ spec:
     - resource-group-system
   parameters:
     labels:
-    - allowedRegex: (asm-managed|asm-managed-regular|asm-managed-rapid)
-      key: istio.io/rev
+    - allowedRegex: enabled
+      key: istio-injection
 # [END anthosconfig_enforce_sidecar_injection_namespace_sidecar_injection_label_k8srequiredlabels_namespace_sidecar_injection_label]
