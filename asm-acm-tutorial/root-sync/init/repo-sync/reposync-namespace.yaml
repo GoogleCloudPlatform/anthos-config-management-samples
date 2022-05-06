@@ -18,5 +18,5 @@ kind: Namespace
 metadata:
   name: onlineboutique
   labels:
-    istio.io/rev: asm-managed
+    istio-injection: enabled
 # [END anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
