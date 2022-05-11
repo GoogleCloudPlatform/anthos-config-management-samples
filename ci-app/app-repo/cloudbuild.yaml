@@ -29,6 +29,6 @@ steps:
                   && kpt fn source constraints/ hydrated-manifests/ > hydrated-manifests/kpt-manifests.yaml']
 - id: 'Validate against policies'
   # This step validates that all resources comply with all policies.
-  name: 'gcr.io/kpt-fn/gatekeeper'
+  name: 'gcr.io/kpt-fn/gatekeeper:v0.2'
   args: ['--input', 'hydrated-manifests/kpt-manifests.yaml']
 # [END cloudbuild_config]
