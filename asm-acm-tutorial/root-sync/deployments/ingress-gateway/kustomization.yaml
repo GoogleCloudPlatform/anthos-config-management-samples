@@ -18,12 +18,4 @@ kind: Kustomization
 resources:
 - github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/ingress-gateway-asm-manifests/base?ref=main
 namespace: asm-ingress
-patches:
-  - patch: |-
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: asm-ingressgateway
-        annotations:
-          config.kubernetes.io/depends-on: mesh.cloud.google.com/namespaces/istio-system/ControlPlaneRevision/asm-managed
 # [END anthosconfig_deployments_ingress_gateway_kustomization_kustomization]
