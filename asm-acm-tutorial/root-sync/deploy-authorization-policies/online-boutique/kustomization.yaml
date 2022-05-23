@@ -22,5 +22,5 @@ patchesJson6902:
   patch: |-
     - op: replace
       path: /spec/git/dir
-      value: online-boutique/authorization-policies
+      value: asm-acm-tutorial/online-boutique/authorization-policies
 # [END anthosconfig_deploy_authorization_policies_online_boutique_kustomization_component]

@@ -22,5 +22,5 @@ patchesJson6902:
   patch: |-
     - op: replace
       path: /spec/git/dir
-      value: online-boutique/deployments
+      value: asm-acm-tutorial/online-boutique/deployments
 # [END anthosconfig_deployments_online_boutique_kustomization_component]
