@@ -20,5 +20,6 @@ metadata:
 spec:
   enforcementAction: deny
   parameters:
+    rootNamespace: istio-system
     strictnessLevel: High
 # [END anthosconfig_policies_default_deny_authorization_policies_asmauthzpolicydefaultdeny_default_deny_authorization_policies]
