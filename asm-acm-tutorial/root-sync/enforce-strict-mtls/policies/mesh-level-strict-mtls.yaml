@@ -20,5 +20,6 @@ metadata:
 spec:
   enforcementAction: deny
   parameters:
+    rootNamespace: istio-system
     strictnessLevel: High
 # [END anthosconfig_policies_mesh_level_strict_mtls_asmpeerauthnmeshstrictmtls_mesh_level_strict_mtls]
