@@ -17,4 +17,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - default-deny-authorization-policies.yaml
+- authz-source-principals-not-all.yaml
 # [END anthosconfig_enforce_authorization_policies_policies_kustomization_kustomization]
