@@ -1,0 +1,14 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: AsmAuthzPolicyEnforceSourcePrincipals
+metadata:
+  name: authz-source-principals-not-all
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+    - apiGroups:
+      - security.istio.io
+      kinds:
+      - AuthorizationPolicy
+    excludedNamespaces:
+      - asm-ingress
