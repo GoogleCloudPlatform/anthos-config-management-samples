@@ -265,6 +265,14 @@ spec:
                       log all denies and dryrun failures.  No effect unless policyController
                       is enabled.  Default: false.'
                     type: boolean
+                  monitoring:
+                    description: Monitoring specifies the configuration of monitoring.
+                    properties:
+                      backends:
+                        items:
+                          type: string
+                        type: array
+                    type: object
                   mutation:
                     description: Mutation specifies the configuration of mutation.
                       This is a preview feature and may change before becoming generally
