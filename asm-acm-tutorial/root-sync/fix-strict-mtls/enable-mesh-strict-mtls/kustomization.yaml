@@ -16,6 +16,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/istio-system-manifests/with-strict-mtls?ref=main
+- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/addons/istio-system-manifests/with-strict-mtls?ref=main
 namespace: istio-system
 # [END anthosconfig_fix_strict_mtls_enable_mesh_strict_mtls_kustomization_kustomization]

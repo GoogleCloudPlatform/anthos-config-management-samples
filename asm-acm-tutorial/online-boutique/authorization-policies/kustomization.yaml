@@ -18,8 +18,8 @@ kind: Kustomization
 resources:
 - ../deployments
 components:
-- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/online-boutique-asm-manifests/service-accounts/all?ref=main
-- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/online-boutique-asm-manifests/authorization-policies/all?ref=main
+- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/online-boutique-asm-manifests/service-accounts/all?ref=main
+- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/online-boutique-asm-manifests/authorization-policies/all?ref=main
 - for-ingress-gateway
 namespace: onlineboutique
 # [END anthosconfig_online_boutique_authorization_policies_kustomization_kustomization]
