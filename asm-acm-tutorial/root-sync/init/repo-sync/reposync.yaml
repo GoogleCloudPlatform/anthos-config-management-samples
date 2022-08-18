@@ -24,7 +24,7 @@ spec:
   git:
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
     revision: HEAD
-    branch: main
+    branch: mathieu-benoit/fix-242948684 # FIXME DO NOT MERGE, back to main after tests
     dir: asm-acm-tutorial/online-boutique/init
     auth: none
 # [END anthosconfig_repo_sync_reposync_reposync_repo_sync]
