@@ -63,6 +63,10 @@ spec:
                   all ConfigSync pods. This field is intentionally left hidden/undocumented
                   since it is really only used to gather extra logs for support cases.
                 type: integer
+              allowVerticalScale:
+                description: 'AllowVerticalScale specifies if the vertical autoscaler
+                  is enabled. Default: false.'
+                type: boolean
               binauthz:
                 description: BinAuthz enables Binary Authorization as recognized by
                   the "binauthz.configmanagement.gke.io" label set to "true".
