@@ -18,4 +18,5 @@ kind: Kustomization
 resources:
 - repo-sync
 - istio-clusterrole.yaml
+- root-sync.yaml
 # [END anthosconfig_root_sync_init_kustomization_kustomization]
