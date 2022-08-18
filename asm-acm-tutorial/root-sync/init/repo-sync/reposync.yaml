@@ -18,6 +18,8 @@ kind: RepoSync
 metadata:
   name: repo-sync
 spec:
+  override:
+    enableShellInRendering: true
   sourceFormat: unstructured
   git:
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
