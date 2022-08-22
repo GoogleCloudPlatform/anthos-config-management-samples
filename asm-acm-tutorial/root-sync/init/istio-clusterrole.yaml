@@ -26,6 +26,7 @@ rules:
   resources:
   - "virtualservices"
   - "authorizationpolicies"
+  - "gateways"
   verbs:
   - "*"
 # [END anthosconfig_init_istio_clusterrole_clusterrole_custom_aggregate_to_edit_istio]
