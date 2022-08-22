@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_init_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- onlineboutique-repo-sync
-- ingressgateway-repo-sync
-- istio-clusterrole.yaml
-- root-sync.yaml
-# [END anthosconfig_root_sync_init_kustomization_kustomization]
+# [START anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ingressgateway-repo-sync
+subjects:
+- kind: ServiceAccount
+  name: ns-reconciler-asm-ingress
+  namespace: config-management-system
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+# [END anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]

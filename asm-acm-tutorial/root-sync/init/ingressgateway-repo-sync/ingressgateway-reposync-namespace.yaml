@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_init_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- onlineboutique-repo-sync
-- ingressgateway-repo-sync
-- istio-clusterrole.yaml
-- root-sync.yaml
-# [END anthosconfig_root_sync_init_kustomization_kustomization]
+# [START anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: asm-ingress
+  labels:
+    istio-injection: enabled
+# [END anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
