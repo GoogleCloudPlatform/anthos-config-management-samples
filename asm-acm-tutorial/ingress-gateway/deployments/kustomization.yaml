@@ -12,15 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_deployments_online_boutique_kustomization_component]
-apiVersion: kustomize.config.k8s.io/v1alpha1
-kind: Component
-patchesJson6902:
-- target:
-    kind: RepoSync
-    name: online-boutique-repo-sync
-  patch: |-
-    - op: replace
-      path: /spec/git/dir
-      value: asm-acm-tutorial/online-boutique/deployments
-# [END anthosconfig_deployments_online_boutique_kustomization_component]
+# [START anthosconfig_online_boutique_deployments_kustomization_kustomization]
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: asm-ingress
+resources:
+- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/ingress-gateway-asm-manifests/base?ref=main
+patchesStrategicMerge:
+- |-
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: asm-ingress
+  $patch: delete
+# [END anthosconfig_online_boutique_deployments_kustomization_kustomization]
