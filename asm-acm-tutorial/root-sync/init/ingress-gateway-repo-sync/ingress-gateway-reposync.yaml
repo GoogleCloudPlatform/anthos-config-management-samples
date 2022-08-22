@@ -16,7 +16,7 @@
 apiVersion: configsync.gke.io/v1beta1
 kind: RepoSync
 metadata:
-  name: ingressgateway-repo-sync
+  name: asm-ingress-repo-sync
 spec:
   override:
     enableShellInRendering: true
@@ -25,6 +25,6 @@ spec:
     repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
     revision: HEAD
     branch: mathieu-benoit/fix-242948684 # FIXME DO NOT MERGE, back to main after tests
-    dir: asm-acm-tutorial/ingressgateway/init
+    dir: asm-acm-tutorial/ingress-gateway/init
     auth: none
 # [END anthosconfig_repo_sync_reposync_reposync_repo_sync]

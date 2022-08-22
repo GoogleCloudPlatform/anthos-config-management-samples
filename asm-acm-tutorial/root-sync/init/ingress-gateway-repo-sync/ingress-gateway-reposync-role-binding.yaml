@@ -16,7 +16,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: ingressgateway-repo-sync
+  name: asm-ingress-repo-sync
 subjects:
 - kind: ServiceAccount
   name: ns-reconciler-asm-ingress
