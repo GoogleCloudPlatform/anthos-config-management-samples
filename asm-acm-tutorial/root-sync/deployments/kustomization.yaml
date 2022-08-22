@@ -19,5 +19,5 @@ resources:
 - ../init
 components:
 - online-boutique
-#- ingress-gateway
+- ingress-gateway
 # [END anthosconfig_root_sync_deployments_kustomization_kustomization]
