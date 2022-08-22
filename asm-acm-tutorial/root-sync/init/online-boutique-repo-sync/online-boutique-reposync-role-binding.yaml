@@ -23,6 +23,6 @@ subjects:
   namespace: config-management-system
 roleRef:
   kind: ClusterRole
-  name: edit
+  name: admin
   apiGroup: rbac.authorization.k8s.io
 # [END anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]
