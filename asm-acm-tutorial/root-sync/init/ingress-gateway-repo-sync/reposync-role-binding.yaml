@@ -12,19 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_onlineboutique_repo_sync_reposync_reposync_repo_sync]
-apiVersion: configsync.gke.io/v1beta1
-kind: RepoSync
+# [START anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
-  name: asm-ingress-repo-sync
-spec:
-  override:
-    enableShellInRendering: true
-  sourceFormat: unstructured
-  git:
-    repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
-    revision: HEAD
-    branch: mathieu-benoit/fix-242948684 # FIXME DO NOT MERGE, back to main after tests
-    dir: asm-acm-tutorial/ingress-gateway/init
-    auth: none
-# [END anthosconfig_repo_sync_reposync_reposync_repo_sync]
+  name: repo-sync
+subjects:
+- kind: ServiceAccount
+  name: ns-reconciler-asm-ingress
+  namespace: config-management-system
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+# [END anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]
