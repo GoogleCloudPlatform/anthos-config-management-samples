@@ -18,7 +18,7 @@ kind: Component
 patchesJson6902:
 - target:
     kind: RepoSync
-    name: asm-ingress-repo-sync
+    name: repo-sync
   patch: |-
     - op: replace
       path: /spec/git/dir
