@@ -13,9 +13,15 @@
 # limitations under the License.
 
 # [START anthosconfig_deploy_authorization_policies_ingress_gateway_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-components:
-- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/ingress-gateway-asm-manifests/with-authorization-policies?ref=main
-namespace: asm-ingress
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patchesJson6902:
+- target:
+    kind: RepoSync
+    name: repo-sync
+    namespace: asm-ingress
+  patch: |-
+    - op: replace
+      path: /spec/git/dir
+      value: asm-acm-tutorial/ingress-gateway/authorization-policies
 # [END anthosconfig_deploy_authorization_policies_ingress_gateway_kustomization_kustomization]
