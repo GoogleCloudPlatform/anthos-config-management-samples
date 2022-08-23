@@ -19,7 +19,7 @@ patchesJson6902:
 - target:
     kind: RepoSync
     name: repo-sync
-    namespace: onlineboutique
+    namespace: asm-ingress
   patch: |-
     - op: replace
       path: /spec/git/dir
