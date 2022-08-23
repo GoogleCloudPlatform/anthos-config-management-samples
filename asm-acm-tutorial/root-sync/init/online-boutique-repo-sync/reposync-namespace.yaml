@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
+# [START anthosconfig_online_boutique_repo_sync_reposync_namespace_namespace_onlineboutique]
 apiVersion: v1
 kind: Namespace
 metadata:
   name: onlineboutique
   labels:
     istio-injection: enabled
-# [END anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
+# [END anthosconfig_online_boutique_repo_sync_reposync_namespace_namespace_onlineboutique]

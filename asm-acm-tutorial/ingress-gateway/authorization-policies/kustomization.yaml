@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_online_boutique_authorization_policies_kustomization_kustomization]
+# [START anthosconfig_ingress_gateway_authorization_policies_kustomization_kustomization]
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 components:
 - github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/ingress-gateway-asm-manifests/with-authorization-policies?ref=main
 namespace: asm-ingress
-# [END anthosconfig_online_boutique_authorization_policies_kustomization_kustomization]
+# [END anthosconfig_ingress_gateway_authorization_policies_kustomization_kustomization]

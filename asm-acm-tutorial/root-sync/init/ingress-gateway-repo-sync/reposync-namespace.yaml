@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
+# [START anthosconfig_ingress_gateway_repo_sync_reposync_namespace_namespace_asm_ingress]
 apiVersion: v1
 kind: Namespace
 metadata:
   name: asm-ingress
   labels:
     istio-injection: enabled
-# [END anthosconfig_repo_sync_reposync_namespace_namespace_onlineboutique]
+# [END anthosconfig_ingress_gateway_repo_sync_reposync_namespace_namespace_asm_ingress]

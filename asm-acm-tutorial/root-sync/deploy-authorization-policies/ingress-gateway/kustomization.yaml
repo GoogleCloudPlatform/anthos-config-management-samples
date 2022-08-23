@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_deploy_authorization_policies_ingress_gateway_kustomization_kustomization]
+# [START anthosconfig_deploy_authorization_policies_ingress_gateway_kustomization_component]
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 patchesJson6902:
@@ -24,4 +24,4 @@ patchesJson6902:
     - op: replace
       path: /spec/git/dir
       value: asm-acm-tutorial/ingress-gateway/authorization-policies
-# [END anthosconfig_deploy_authorization_policies_ingress_gateway_kustomization_kustomization]
+# [END anthosconfig_deploy_authorization_policies_ingress_gateway_kustomization_component]

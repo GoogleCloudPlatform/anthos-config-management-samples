@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_online_boutique_deployments_kustomization_kustomization]
+# [START anthosconfig_ingress_gateway_deployments_kustomization_kustomization]
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: asm-ingress
@@ -25,4 +25,4 @@ patchesStrategicMerge:
   metadata:
     name: asm-ingress
   $patch: delete
-# [END anthosconfig_online_boutique_deployments_kustomization_kustomization]
+# [END anthosconfig_ingress_gateway_deployments_kustomization_kustomization]
