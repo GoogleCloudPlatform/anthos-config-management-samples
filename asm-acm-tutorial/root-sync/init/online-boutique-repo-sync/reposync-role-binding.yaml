@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- ../fix-default-deny-authorization-policy
-components:
-- ingress-gateway
-- online-boutique
-# [END anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
+# [START anthosconfig_online_boutique_repo_sync_reposync_role_binding_rolebinding_repo_sync]
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: repo-sync
+subjects:
+- kind: ServiceAccount
+  name: ns-reconciler-onlineboutique
+  namespace: config-management-system
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+# [END anthosconfig_online_boutique_repo_sync_reposync_role_binding_rolebinding_repo_sync]

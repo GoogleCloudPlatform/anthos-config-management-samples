@@ -19,6 +19,7 @@ patchesJson6902:
 - target:
     kind: RepoSync
     name: repo-sync
+    namespace: onlineboutique
   patch: |-
     - op: replace
       path: /spec/git/dir

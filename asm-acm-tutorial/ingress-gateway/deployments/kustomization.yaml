@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
+# [START anthosconfig_ingress_gateway_deployments_kustomization_kustomization]
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: asm-ingress
 resources:
-- ../fix-default-deny-authorization-policy
-components:
-- ingress-gateway
-- online-boutique
-# [END anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
+- github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/ingress-gateway-asm-manifests/base?ref=main
+patchesStrategicMerge:
+- |-
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: asm-ingress
+  $patch: delete
+# [END anthosconfig_ingress_gateway_deployments_kustomization_kustomization]

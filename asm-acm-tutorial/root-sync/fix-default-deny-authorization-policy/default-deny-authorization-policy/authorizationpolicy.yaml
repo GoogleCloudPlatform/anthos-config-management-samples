@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- ../fix-default-deny-authorization-policy
-components:
-- ingress-gateway
-- online-boutique
-# [END anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
+# [START anthosconfig_with_default_deny_authorization_policy_authorizationpolicy_authorizationpolicy_deny_all]
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-all
+spec:
+  {}
+# [END anthosconfig_with_default_deny_authorization_policy_authorizationpolicy_authorizationpolicy_deny_all]

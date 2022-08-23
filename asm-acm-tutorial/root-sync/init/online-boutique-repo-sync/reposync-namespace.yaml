@@ -12,17 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+# [START anthosconfig_online_boutique_repo_sync_reposync_namespace_namespace_onlineboutique]
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: repo-sync
-subjects:
-- kind: ServiceAccount
-  name: ns-reconciler-onlineboutique
-  namespace: config-management-system
-roleRef:
-  kind: ClusterRole
-  name: edit
-  apiGroup: rbac.authorization.k8s.io
-# [END anthosconfig_repo_sync_reposync_role_binding_rolebinding_repo_sync]
+  name: onlineboutique
+  labels:
+    istio-injection: enabled
+# [END anthosconfig_online_boutique_repo_sync_reposync_namespace_namespace_onlineboutique]

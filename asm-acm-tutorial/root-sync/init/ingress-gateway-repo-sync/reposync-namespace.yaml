@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- ../fix-default-deny-authorization-policy
-components:
-- ingress-gateway
-- online-boutique
-# [END anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
+# [START anthosconfig_ingress_gateway_repo_sync_reposync_namespace_namespace_asm_ingress]
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: asm-ingress
+  labels:
+    istio-injection: enabled
+# [END anthosconfig_ingress_gateway_repo_sync_reposync_namespace_namespace_asm_ingress]

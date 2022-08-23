@@ -12,12 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- ../fix-default-deny-authorization-policy
-components:
-- ingress-gateway
-- online-boutique
-# [END anthosconfig_root_sync_deploy_authorization_policies_kustomization_kustomization]
+# [START anthosconfig_online_boutique_repo_sync_reposync_reposync_repo_sync]
+apiVersion: configsync.gke.io/v1beta1
+kind: RepoSync
+metadata:
+  name: repo-sync
+spec:
+  override:
+    enableShellInRendering: true
+  sourceFormat: unstructured
+  git:
+    repo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
+    revision: HEAD
+    branch: main
+    dir: asm-acm-tutorial/online-boutique/init
+    auth: none
+# [END anthosconfig_online_boutique_repo_sync_reposync_reposync_repo_sync]
