@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START anthosconfig_fix_strict_mtls_enable_mesh_strict_mtls_kustomization_kustomization]
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- peerauthentication.yaml
-namespace: istio-system
-# [END anthosconfig_fix_strict_mtls_enable_mesh_strict_mtls_kustomization_kustomization]
+# [START servicemesh_with_strict_mtls_peerauthentication_peerauthentication_default]
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+spec:
+  mtls:
+    mode: STRICT
+# [END servicemesh_with_strict_mtls_peerauthentication_peerauthentication_default]
