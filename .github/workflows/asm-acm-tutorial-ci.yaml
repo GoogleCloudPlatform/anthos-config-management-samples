@@ -40,7 +40,7 @@ jobs:
         run: |
           cd asm-acm-tutorial/${{ matrix.directories }}
           echo "## Section " + ${{ matrix.directories }}
-          SUB_DIRECTORIES=$(ls ${{ matrix.directories }}/)
+          SUB_DIRECTORIES=$(ls .)
           for d in $SUB_DIRECTORIES;
           do
               echo "## kustomize build for " + $d
