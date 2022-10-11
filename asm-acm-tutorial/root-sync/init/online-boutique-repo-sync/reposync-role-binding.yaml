@@ -19,7 +19,7 @@ metadata:
   name: repo-sync
 subjects:
 - kind: ServiceAccount
-  name: ns-reconciler-onlineboutique-repo-sync-9
+  name: ns-reconciler-onlineboutique
   namespace: config-management-system
 roleRef:
   kind: ClusterRole
