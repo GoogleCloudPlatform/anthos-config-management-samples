@@ -19,7 +19,7 @@ metadata:
   name: repo-sync
 subjects:
 - kind: ServiceAccount
-  name: ns-reconciler-asm-ingress
+  name: ns-reconciler-asm-ingress-repo-sync-9
   namespace: config-management-system
 roleRef:
   kind: ClusterRole
