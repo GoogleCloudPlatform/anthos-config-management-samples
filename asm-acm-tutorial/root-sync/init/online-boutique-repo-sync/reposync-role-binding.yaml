@@ -20,7 +20,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: ns-reconciler-onlineboutique
-  namespace: config-management-system
+  namespace: config-management-system-repo-sync-9
 roleRef:
   kind: ClusterRole
   name: edit
