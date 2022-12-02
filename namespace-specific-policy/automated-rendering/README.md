@@ -163,7 +163,7 @@ You can also configure the Git repository information in a
 1. Apply the `config-management.yaml` file.
 
    ```
-   gcloud alpha container hub config-management apply \
+   gcloud beta container fleet config-management apply \
    --membership=CLUSTER_NAME \
    --config=config-management.yaml \
    --project=PROJECT_ID

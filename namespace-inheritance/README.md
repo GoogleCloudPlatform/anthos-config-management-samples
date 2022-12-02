@@ -63,7 +63,7 @@ You can also configure the Git repository information in a config-management.yam
     ```
 1.  Apply the config-management.yaml file:
     ```console
-    gcloud alpha container hub config-management apply \
+    gcloud beta container fleet config-management apply \
         --membership=CLUSTER_NAME \
         --config=CONFIG_YAML_PATH \
         --project=PROJECT_ID
@@ -83,7 +83,7 @@ You can also configure the Git repository information in a config-management.yam
 ### Using gcloud
 Run the following command to get the status
 ```console
-gcloud alpha container hub config-management status --project=PROJECT_ID
+gcloud beta container fleet config-management status --project=PROJECT_ID
 ```
 Replace `PROJECT_ID` with your project's ID.
 
