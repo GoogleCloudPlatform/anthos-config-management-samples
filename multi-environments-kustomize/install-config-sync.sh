@@ -59,7 +59,7 @@ fi
 echo "🔁 Installing ConfigSync on the dev cluster..."
 gcloud config set project $DEV_PROJECT
 kubectl config use-context $DEV_CTX
-gcloud alpha container hub config-management apply \
+gcloud beta container fleet config-management apply \
     --membership=dev \
     --config="$CM_CONFIG_DIR/install-config/config-management-dev.yaml" \
     --project=${DEV_PROJECT}
@@ -67,7 +67,7 @@ gcloud alpha container hub config-management apply \
 echo "🔁 Installing ConfigSync on the prod cluster..."
 gcloud config set project $PROD_PROJECT
 kubectl config use-context $PROD_CTX
-gcloud alpha container hub config-management apply \
+gcloud beta container fleet config-management apply \
     --membership=prod \
     --config="$CM_CONFIG_DIR/install-config/config-management-prod.yaml" \
     --project=${PROD_PROJECT}

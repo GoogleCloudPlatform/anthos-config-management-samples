@@ -191,11 +191,11 @@ Registering with Hub will install the Connect Agent on the cluster. To make perm
 **Register a GKE cluster using Workload Identity (recommended):**
 
 ```
-gcloud container hub memberships register "cluster-west" \
+gcloud container fleet memberships register "cluster-west" \
     --gke-cluster us-west1/cluster-west \
     --enable-workload-identity
 
-gcloud container hub memberships register "cluster-east" \
+gcloud container fleet memberships register "cluster-east" \
     --gke-cluster us-east1/cluster-east \
     --enable-workload-identity
 ```
@@ -213,7 +213,7 @@ These operators are all managed as features using Hub.
 **Enable ACM on the Hub:**
 
 ```
-gcloud alpha container hub config-management enable
+gcloud beta container fleet config-management enable
 ```
 
 The ACM Operator will not be installed until one of its components is enabled and configured.

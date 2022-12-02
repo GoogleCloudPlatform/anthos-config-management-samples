@@ -231,11 +231,11 @@ spec:
     secretType: none
 EOF
 
-gcloud alpha container hub config-management apply \
+gcloud beta container fleet config-management apply \
   --membership "cluster-west" \
   --config config-management-west.yaml
 
-gcloud alpha container hub config-management apply \
+gcloud beta container fleet config-management apply \
   --membership "cluster-east" \
   --config config-management-east.yaml
 
@@ -260,7 +260,7 @@ This triggers the following actions:
 **Lookup the Config Sync status:**
 
 ```
-gcloud alpha container hub config-management status
+gcloud beta container fleet config-management status
 ```
 
 Should say "SYNCED" for both clusters with the latest commit SHA.
@@ -367,7 +367,7 @@ git push
 **Wait for config to be synchronized:**
 
 ```
-gcloud alpha container hub config-management status
+gcloud beta container fleet config-management status
 ```
 
 Should say "SYNCED" for both clusters with the latest commit SHA.
@@ -384,11 +384,11 @@ spec:
     enabled: false
 EOF
 
-gcloud alpha container hub config-management apply \
+gcloud beta container fleet config-management apply \
   --membership "cluster-west" \
   --config config-management.yaml
 
-gcloud alpha container hub config-management apply \
+gcloud beta container fleet config-management apply \
   --membership "cluster-east" \
   --config config-management.yaml
 

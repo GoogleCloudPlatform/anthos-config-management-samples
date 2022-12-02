@@ -43,10 +43,10 @@ fi
 
 echo "Turning off Anthos Config Management.."
 gcloud config set project $DEV_PROJECT
-gcloud alpha container hub config-management disable 
+gcloud beta container fleet config-management disable 
 
 gcloud config set project $PROD_PROJECT
-gcloud alpha container hub config-management disable 
+gcloud beta container fleet config-management disable 
 
 
 echo "Deleting GKE clusters..."
