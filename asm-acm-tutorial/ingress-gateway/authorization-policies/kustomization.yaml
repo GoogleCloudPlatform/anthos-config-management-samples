@@ -15,6 +15,8 @@
 # [START anthosconfig_ingress_gateway_authorization_policies_kustomization_kustomization]
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+resources:
+- ../deployments
 components:
 - github.com/GoogleCloudPlatform/anthos-service-mesh-samples/docs/ingress-gateway-asm-manifests/with-authorization-policies?ref=main
 namespace: asm-ingress
