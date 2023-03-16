@@ -21,7 +21,7 @@ metadata:
   namespace: tenant-a
 spec:
   hard:
-    cpu: "1000"
+    cpu: "900"
     memory: 100Gi
     pods: "100"
 # [END anthosconfig_multi_cluster_fanout_tenant_a_resource_quota] 
