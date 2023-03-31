@@ -1,0 +1,14 @@
+apiVersion: example.com/v1
+kind: TransientRoleBinding
+metadata:
+  name: test1
+  namespace: default
+validUntil: 2023-03-31T09:30:22Z
+validFrom: 2023-03-31T09:22:22Z
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: User
+  name: apex-anthonybob
