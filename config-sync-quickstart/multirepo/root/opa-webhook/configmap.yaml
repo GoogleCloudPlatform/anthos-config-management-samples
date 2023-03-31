@@ -1,0 +1,29 @@
+# Copyright 2022 Google LLC
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     https://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: v1
+data:
+  controller.rego: "package controller\n\nrfc3339time(ns) = concat(\"T\", [\n\tsprintf(\"%04d-%02d-%02d\",
+    time.date(ns)),\n\tsprintf(\"%02d:%02d:%02dZ\", time.clock(ns)),\n])\n\nstatus
+    := {\"conditions\": array.concat(\n\t[x |\n\t\tnot count(children) == count(input.children[_])\n\t\tcount(children)
+    < 2\n\t\tx := {\n\t\t\t\"lastTransitionTime\": rfc3339time(time.now_ns()),\n\t\t\t\"status\":
+    [\"False\", \"True\"][count(children)],\n\t\t\t\"type\": \"effective\",\n\t\t}\n\t],\n\t[input.parent.status.conditions[x]
+    | input.parent.status.conditions[x]],\n)}\n\nchildren[child] {\n\ttime.now_ns()
+    > time.parse_rfc3339_ns(input.parent.validFrom)\n\ttime.now_ns() < time.parse_rfc3339_ns(input.parent.validUntil)\n\tchild
+    := {\n\t\t\"apiVersion\": input.controller.spec.childResources[0].apiVersion,\n\t\t\"kind\":
+    split({x | input.children[x]}[_], \".\")[0],\n\t\t\"metadata\": {\"name\": input.parent.metadata.name},\n\t\t\"roleRef\":
+    input.parent.roleRef,\n\t\t\"subjects\": input.parent.subjects,\n\t}\n}\n"
+kind: ConfigMap
+metadata:
+  name: transientresourcecontroller
+  namespace: metacontroller-webhooks
