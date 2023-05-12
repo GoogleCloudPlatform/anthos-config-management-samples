@@ -20,3 +20,4 @@ spec:
   parameters:
     restrictedNamespaces:
     - default
+# [START anthosconfig_quickstart_policies_no_default_namespace] 
