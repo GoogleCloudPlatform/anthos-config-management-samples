@@ -4,4 +4,4 @@
 
 # These owners will be the default owners for everything in
 # the repo. Unless a later match takes precedence.
-*		    @GoogleCloudPlatform/anthos-dpe @bgrant0607 @haiyanmeng @janetkuo @karlkfi @Liujingfang1 @morgante @nan-yu @nicjjohns @selfmanagingresource
+*		    @GoogleCloudPlatform/anthos-dpe @haiyanmeng @janetkuo @karlkfi @nan-yu @selfmanagingresource

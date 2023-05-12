@@ -1,9 +1,14 @@
-Anthos Config Management Samples 
-============
+# Anthos Config Management Samples 
 
-This repository contains samples for [Anthos Config Management][1].
+This repository contains sample applications used in
+[Anthos Config Management (ACM)](https://cloud.google.com/anthos-config-management/) tutorials.
 
-## Examples 
+See the following resources to learn more:
+
+- [Anthos Config Management - Overview](https://cloud.google.com/anthos-config-management/docs/overview)
+- [Anthos Config Management - Quickstart](https://cloud.google.com/anthos-config-management/docs/tutorials/create-configure-cluster)
+
+## List of samples 
 
 ### [Quickstart](quickstart/)
 
@@ -83,5 +88,10 @@ NetworkPolicy.
 
 The ConfigManagement CRD is used to install Anthos Config Management.
 
-[1]: https://cloud.google.com/anthos-config-management/
-[2]: https://cloud.google.com/anthos-config-management/docs/overview/
+## Contributing
+
+* See [CONTRIBUTING.md](/.github/CONTRIBUTING.md)
+
+## Licensing
+
+* See [LICENSE](/LICENSE)
