@@ -232,6 +232,13 @@ spec:
                       to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/'
                     type: object
                 type: object
+              metricsGCPServiceAccountEmail:
+                description: MetricsGCPServiceAccountEmail specifies a Google Service
+                  Account (GSA) Email with the Monitoring Metric Writer (roles/monitoring.metricWriter)
+                  IAM role. This GSA Email is used to annotate the `default` Kubernetes
+                  ServiceAccount under the `config-management-monitoring` namespace,
+                  which allows Config Sync to export metrics to Cloud Monitoring.
+                type: string
               patches:
                 items:
                   type: object
