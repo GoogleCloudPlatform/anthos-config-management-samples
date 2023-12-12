@@ -64,8 +64,9 @@ spec:
                   since it is really only used to gather extra logs for support cases.
                 type: integer
               binauthz:
-                description: BinAuthz enables Binary Authorization as recognized by
-                  the "binauthz.configmanagement.gke.io" label set to "true".
+                description: 'Deprecated: Does nothing. binauthz can no longer be
+                  enabled/disabled with the ConfigManagement resource; the software
+                  is available as a standalone: https://cloud.google.com/binary-authorization'
                 properties:
                   enabled:
                     description: 'Enable or disable BinAuthz.  Default: false.'
@@ -159,15 +160,19 @@ spec:
                     pattern: ^(ssh|cookiefile|gcenode|gcpserviceaccount|token|none)$
                     type: string
                   syncBranch:
-                    description: 'SyncBranch is the branch to sync from.  Default:
-                      "master".'
+                    description: SyncBranch is the git branch to sync from. When `spec.enableMultiRepo`
+                      is true, `syncBranch` defaults to using the git server's default
+                      branch, unless `syncRev` is set, then `syncRev` takes precedence
+                      over `syncBranch`. It is recommended to use the `syncRev` field.
+                      When `spec.enableMultiRepo` is false, `syncBranch` defaults
+                      to `master`.
                     type: string
                   syncRepo:
                     pattern: ^(((https?|git|ssh):\/\/)|git@)
                     type: string
                   syncRev:
-                    description: 'SyncRev is the git revision (tag or hash) to check
-                      out. Default: HEAD.'
+                    description: 'SyncRev is the git revision (branch, tag or hash)
+                      to fetch. Default: HEAD.'
                     type: string
                   syncWait:
                     description: 'SyncWaitSeconds is the time duration in seconds
