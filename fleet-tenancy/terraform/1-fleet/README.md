@@ -19,3 +19,4 @@ terraform apply
 ```
 
 [variable definitions file]: ./variables.tf
+[command line variables]: https://www.terraform.io/language/values/variables#variables-on-the-command-line

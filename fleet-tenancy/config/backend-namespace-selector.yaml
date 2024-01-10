@@ -1,4 +1,4 @@
-# Copyright 2023 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,4 +19,4 @@ spec:
   mode: dynamic
   selector:
     matchLabels:
-      fleet.gke.io/fleet-scope: backend
+      fleet.gke.io/fleet-scope: backend  # Change the value of this label selector to match different scopes by scope name

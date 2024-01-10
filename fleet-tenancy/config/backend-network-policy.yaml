@@ -1,4 +1,4 @@
-# Copyright 2023 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,12 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: configmanagement.gke.io/v1
-kind: NamespaceSelector
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: frontend-scope
+  name: be-deny-all
+  annotations:
+    configmanagement.gke.io/namespace-selector: backend-scope # Actuate this resource in the namespaces with labels matched by the namespace selector
 spec:
-  mode: dynamic
-  selector:
-    matchLabels:
-      fleet.gke.io/fleet-scope: frontend
+  ingress:
+  - from:
+    - podSelector: {}
+  podSelector:
+    matchLabels: null

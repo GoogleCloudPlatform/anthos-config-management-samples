@@ -1,11 +1,11 @@
-# Configure Fleet Tenancy Resources with Config Sync
+# Manage Resources of Teams and Fleet Namespaces with Config Sync
 
 [Fleet team management] provides a way to configure Namespaces and RBAC
 resources at the scope level.
 [Config Sync] extends this capability, allowing for the configuration of
 additional namespace-scoped resources at the scope level.
 
-Here is an example of a Fleet with two scopes: `backend` and `frontend`.
+Here is an example of a Fleet with two team scopes: `backend` and `frontend`.
 
 The `backend` scope includes two memberships: `us-east-cluster` and
 `us-west-cluster`, while the `frontend` scope includes three memberships:
@@ -48,17 +48,29 @@ Notes:
 - After the step, you need to create and download the service account’s private
   key JSON file.
 
-## 2. Configure Fleet Default Member Config ConfigManagement
+## 2. Configure fleet-level defaults for Config Sync
 
-This step configures the Fleet Default Member Config ConfigManagement.
+This step configures fleet-level defaults to install Config Sync on entire
+fleet, which syncs [fleet tenancy configs](config) to all clusters in the fleet.
+
+Fleet tenancy configs include the following:
+- Two NamespaceSelector objects with the [dynamic mode], one for the `frontend`
+  team scope, and the other one for the `backend` team scope. In the dynamic
+  mode, NamespaceSelector selects both statically-declared Namespaces and those
+  dynamically present on the clusters with matching labels. For more details,
+  see [Limit which namespaces a config affects].
+- One `ResourceQuota` object that is synced to all [fleet namespaces] of the
+  team scope `frontend`.
+- One `NetworkPolicy` object that is synced to all fleet namespaces of the team
+  scope `backend`.
 
 Terraform configs: [link](terraform/2-fleet-default-config).
 
 Apply the resources via Terraform: [README.md](terraform/2-fleet-default-config/README.md).
 
 Notes:
-- The Fleet Default Member Config must be created before clusters are registered 
-  to the fleet. The default config won’t apply to previously registered clusters.
+- The fleet-level defaults must be created before clusters are registered to the
+  fleet. The default config won’t apply to previously registered clusters.
 
 ## 3. Create and register clusters
 
@@ -80,61 +92,26 @@ Terraform configs: [link](terraform/4-scopes-and-namespaces).
 
 Apply the resources via Terraform: [README.md](terraform/4-scopes-and-namespaces/README.md).
 
-## 5. Sync more resources to the scope
+After fleet scopes and Namespaces are created, Config Sync automatically detects
+new Namespaces with the associated scope, selects resources in the fleet
+Namespaces and reconciles them.
+
+So far, the `NetworkPolicy` object should be applied to all Namespaces bound to
+the `backend` scope, and the `ResourceQuota` object should be applied to all
+Namespaces bound to the `frontend` scope.
+
+![](images/fleet-tenancy-resources.png)
 
 All scopes share the same source of truth. If you want to sync more sources, you
-can add the configurations to the source repository with the correct
+can add configurations to the source repository with the correct
 NamespaceSelector annotation. Config Sync will automatically reconcile those
 resources.
 
-## 6. Remove a cluster from a scope
-
-When a cluster is removed from a scope, resources in the scope should be pruned
-from the cluster.
-
-Example:
-There are currently 4 resources reconciled on the us-west-cluster.
-
-![](images/us-west-before-remove.png)
-
-Removing the cluster from the backend scope:
-
-```bash
-gcloud container fleet memberships bindings delete us-west-backend \
-  --membership=us-west-cluster \
-  --location=us-west1 \
-  --project=your-gcp-project 
-```
-
-After the change, 2 resources in the backend scope should be pruned on the
-cluster. Because the cluster is still included in the frontend scope,
-2 resources in the frontend scope are still managed and reconciled on the
-cluster.
-
-![](images/us-west-after-remove.png)
-
-## 7. Delete a Namespace
-
-When a Namespace is deleted, resources in that Namespace should be pruned from
-the cluster and never be created again.
-
-Example:
-There are currently 4 resources reconciled on the us-east-cluster.
-
-![](images/us-east-before-delete.png)
-
-Delete the bookstore Namespaces:
-
-```bash
-gcloud container fleet scopes namespaces delete bookstore \
-  --scope=backend \
-  --project=your-gcp-project
-```
-
-After the change, resources in the bookstore Namespace should be pruned on the
-cluster. Resources in other Namespaces should remain unchanged.
-
-![](images/us-east-after-delete.png)
+Fleet resources are dynamically synced to fleet Namespaces in team scopes.
+- When a cluster is removed from a scope, resources in the scope should be
+  pruned from the cluster.
+- When a fleet Namespace is deleted, resources in that Namespace should be
+  pruned from the cluster.
 
 ## Cleanup
 
@@ -144,9 +121,12 @@ cluster. Resources in other Namespaces should remain unchanged.
 - Delete the service account and disable services
 
 To clean up, you can iterate through each terraform config directory in the
-reverse order and run the terraform destroy command with your GCP project and
+reverse order and run the `terraform destroy` command with your GCP project and
 service account key file.
 
 [Fleet team management]: https://cloud.google.com/anthos/fleet-management/docs/team-management
 [Config Sync]: https://cloud.google.com/anthos-config-management/docs/config-sync-overview
 [Set up your fleet]: https://cloud.google.com/anthos/fleet-management/docs/setup-teams#set_up_your_fleet
+[dynamic mode]: https://cloud.google.com/anthos-config-management/docs/how-to/namespace-scoped-objects#namespaceselector_mode
+[Limit which namespaces a config affects]: https://cloud.google.com/anthos-config-management/docs/how-to/namespace-scoped-objects#namespaceselectors
+[fleet namespaces]: https://cloud.google.com/anthos/fleet-management/docs/team-management#fleet_team_management_overview

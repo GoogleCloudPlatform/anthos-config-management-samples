@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ resource "google_gke_hub_feature" "feature" {
       config_sync {
         source_format = "unstructured"
         git {
-          sync_repo = "https://github.com/nan-yu/anthos-config-management-samples"
+          sync_repo = "https://github.com/GoogleCloudPlatform/anthos-config-management-samples"
           sync_branch = "main"
           policy_dir = "fleet-tenancy/config"
           secret_type = "none"
