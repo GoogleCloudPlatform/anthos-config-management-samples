@@ -16,15 +16,14 @@
 
 terraform {
   required_providers {
-    google-beta = {
-      source = "hashicorp/google-beta"
-      version = "5.16.0"
+    google = {
+      source = "hashicorp/google"
+      version = ">= 5.16.0"
     }
   }
 }
 
-provider "google-beta" {
-  credentials = var.sa_key_file
+provider "google" {
   project = var.project
 }
 
