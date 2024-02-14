@@ -29,11 +29,6 @@ provider "google" {
   project = var.project
 }
 
-# Declare a fleet in the project
-resource "google_gke_hub_fleet" "default" {
-  display_name = "my test fleet"
-}
-
 # Enable API services
 resource "google_project_service" "services" {
   for_each = toset([
@@ -47,5 +42,12 @@ resource "google_project_service" "services" {
   ])
   service = each.value
   disable_on_destroy = false
+}
+
+# Declare a fleet in the project
+resource "google_gke_hub_fleet" "default" {
+  display_name = "my test fleet"
+
+  depends_on = [google_project_service.services]
 }
 
