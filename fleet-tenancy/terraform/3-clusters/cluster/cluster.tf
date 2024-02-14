@@ -23,11 +23,12 @@ variable "cluster_name" {
 }
 
 data "google_project" "project" {
-  provider = google-beta
+  provider = google
 }
 
+# Shared configuration among all clusters created
 resource "google_container_cluster" "cluster" {
-  provider = google-beta
+  provider = google
   name               = var.cluster_name
   location           = var.location
   initial_node_count = 3

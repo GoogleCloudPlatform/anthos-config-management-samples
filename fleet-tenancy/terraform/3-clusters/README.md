@@ -9,8 +9,6 @@ These can be provided as [command line variables] at runtime.
 
 For example:
 ```shell
-export TF_VAR_project=your-gcp-project
-export TF_VAR_sa_key_file=path/to/your-sa-key-file
 terraform init
 terraform plan
 terraform apply
