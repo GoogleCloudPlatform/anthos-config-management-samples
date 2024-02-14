@@ -17,9 +17,9 @@
 # [START config_sync_fleet_resources]
 terraform {
   required_providers {
-    google-beta = {
-      source = "hashicorp/google-beta"
-      version = "5.16.0"
+    google = {
+      source = "hashicorp/google"
+      version = ">= 5.16.0"
     }
   }
 }
@@ -49,22 +49,3 @@ resource "google_project_service" "services" {
   disable_on_destroy = false
 }
 
-# Declare a service account
-resource "google_service_account" "gcp_sa" {
-  account_id   = var.gcp_sa_id
-  display_name = var.gcp_sa_display_name
-  description = var.gcp_sa_description
-}
-
-resource "google_project_iam_member" "gcp_sa_roles" {
-  for_each = toset([
-    "roles/gkehub.admin",
-    "roles/container.admin",
-    "roles/iam.serviceAccountUser",
-    "roles/compute.viewer",
-  ])
-  role    = each.value
-  member  = "serviceAccount:${google_service_account.gcp_sa.email}"
-  project = var.project
-}
-# [END config_sync_fleet_resources]

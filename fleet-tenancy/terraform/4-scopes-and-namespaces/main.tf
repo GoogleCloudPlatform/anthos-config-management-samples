@@ -16,32 +16,31 @@
 
 terraform {
   required_providers {
-    google-beta = {
-      source = "hashicorp/google-beta"
-      version = "5.16.0"
+    google = {
+      source = "hashicorp/google"
+      version = ">= 5.16.0"
     }
   }
 }
 
-provider "google-beta" {
-  credentials = var.sa_key_file
+provider "google" {
   project = var.project
 }
 
-# [START config_sync_fleet_scopes]
+# [START anthosconfig_fleet_scopes]
 resource "google_gke_hub_scope" "scope" {
-  provider = google-beta
+  provider = google
   for_each = toset([
     "backend",
     "frontend",
   ])
   scope_id = each.value
 }
-# [END config_sync_fleet_scopes]
+# [END anthosconfig_fleet_scopes]
 
-# [START config_sync_fleet_membership_bindings]
+# [START anthosconfig_fleet_membership_bindings]
 resource "google_gke_hub_membership_binding" "membership-binding" {
-  provider = google-beta
+  provider = google
   for_each = {
     us-east-backend = {
       membership_binding_id = "us-east-backend"
@@ -82,11 +81,11 @@ resource "google_gke_hub_membership_binding" "membership-binding" {
 
   depends_on = [google_gke_hub_scope.scope]
 }
-# [END config_sync_fleet_membership_bindings]
+# [END anthosconfig_fleet_membership_bindings]
 
-# [START config_sync_fleet_namespaces]
+# [START anthosconfig_fleet_namespaces]
 resource "google_gke_hub_namespace" "fleet_namespace" {
-  provider = google-beta
+  provider = google
 
   for_each = {
     bookstore = {
@@ -117,4 +116,4 @@ resource "google_gke_hub_namespace" "fleet_namespace" {
 
   depends_on = [google_gke_hub_scope.scope]
 }
-# [END config_sync_fleet_namespaces]
+# [END anthosconfig_fleet_namespaces]

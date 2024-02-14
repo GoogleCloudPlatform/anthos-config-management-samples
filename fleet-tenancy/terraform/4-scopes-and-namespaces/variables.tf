@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-# [START config_sync_scope_variables]
+# [START anthosconfig_scope_variables]
 variable "project" {
   type = string
   description = "Name of GCP project"
@@ -24,4 +24,4 @@ variable "sa_key_file" {
   type = string
   description = "Path to the GCP service account's private key JSON file"
 }
-# [END config_sync_scope_variables]
+# [END anthosconfig_scope_variables]
