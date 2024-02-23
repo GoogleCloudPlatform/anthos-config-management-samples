@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+# [START cluster_examples]
 terraform {
   required_providers {
     google-beta = {
@@ -45,3 +45,4 @@ module "us-central-cluster" {
   cluster_name = "us-central-cluster"
   location="us-central1-c"
 }
+# [END cluster_examples]
