@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-# [START fleet_variables]
+# [START config_sync_fleet_variables]
 variable "project" {
   type = string
   description = "Name of GCP project"
@@ -34,4 +34,4 @@ variable "gcp_sa_description" {
   type = string
   description = "The description of the GCP service account"
 }
-# [END fleet_variables]
+# [END config_sync_fleet_variables]
