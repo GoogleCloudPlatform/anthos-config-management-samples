@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-# [START fleet_default_config_example]
+
+# [START config_sync_fleet_default_config_example]
 terraform {
   required_providers {
     google-beta = {
@@ -47,4 +48,4 @@ resource "google_gke_hub_feature" "feature" {
     }
   }
 }
-# [END fleet_default_config_example] 
+# [END config_sync_fleet_default_config_example] 
