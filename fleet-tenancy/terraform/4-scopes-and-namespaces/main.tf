@@ -28,7 +28,7 @@ provider "google-beta" {
   project = var.project
 }
 
-# Fleet Scopes
+# [START fleet_scopes]
 resource "google_gke_hub_scope" "scope" {
   provider = google-beta
   for_each = toset([
@@ -37,8 +37,9 @@ resource "google_gke_hub_scope" "scope" {
   ])
   scope_id = each.value
 }
+# [END fleet_scopes]
 
-# Fleet Membership Bindings
+# [START fleet_membership_bindings]
 resource "google_gke_hub_membership_binding" "membership-binding" {
   provider = google-beta
   for_each = {
@@ -81,8 +82,9 @@ resource "google_gke_hub_membership_binding" "membership-binding" {
 
   depends_on = [google_gke_hub_scope.scope]
 }
+# [END fleet_membership_bindings]
 
-# Fleet Namespaces
+# [START fleet_namespaces]
 resource "google_gke_hub_namespace" "fleet_namespace" {
   provider = google-beta
 
@@ -115,3 +117,4 @@ resource "google_gke_hub_namespace" "fleet_namespace" {
 
   depends_on = [google_gke_hub_scope.scope]
 }
+# [END fleet_namespaces]
