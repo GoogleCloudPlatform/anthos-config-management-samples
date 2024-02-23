@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+# [START fleet_default_variables]
 variable "project" {
   type = string
   description = "Name of GCP project"
@@ -23,3 +23,4 @@ variable "sa_key_file" {
   type = string
   description = "Path to the GCP service account's private key JSON file"
 }
+# [END fleet_default_variables]
