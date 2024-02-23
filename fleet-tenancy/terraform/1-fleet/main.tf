@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-# [START fleet_resources]
+# [START config_sync_fleet_resources]
 terraform {
   required_providers {
     google-beta = {
@@ -67,4 +67,4 @@ resource "google_project_iam_member" "gcp_sa_roles" {
   member  = "serviceAccount:${google_service_account.gcp_sa.email}"
   project = var.project
 }
-# [END fleet_resources]
+# [END config_sync_fleet_resources]
