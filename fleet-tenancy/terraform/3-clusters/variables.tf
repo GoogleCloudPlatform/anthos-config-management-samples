@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+# [START anthosconfig_cluster_variables]
 variable "project" {
   type = string
   description = "Name of GCP project"
 }
-
+# [END anthosconfig_cluster_variables]

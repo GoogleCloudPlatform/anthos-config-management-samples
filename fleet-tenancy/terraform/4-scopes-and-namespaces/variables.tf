@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+# [START anthosconfig_scope_variables]
 variable "project" {
   type = string
   description = "Name of GCP project"
 }
 
+# [END anthosconfig_scope_variables]

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+# [START anthosconfig_fleet_variables]
 variable "project" {
   type = string
   description = "Name of GCP project to host the Fleet"
 }
-
+# [END anthosconfig_fleet_variables]

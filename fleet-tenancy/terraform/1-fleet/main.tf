@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+# [START anthosconfig_fleet_resources]
 terraform {
   required_providers {
     google = {
@@ -49,4 +50,4 @@ resource "google_gke_hub_fleet" "default" {
 
   depends_on = [google_project_service.services]
 }
-
+# [END anthosconfig_fleet_resources]
