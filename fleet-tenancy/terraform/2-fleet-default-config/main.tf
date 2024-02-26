@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-# [START config_sync_fleet_default_config_example]
+# [START anthosconfig_fleet_default_config_example]
 terraform {
   required_providers {
     google = {
@@ -47,4 +47,4 @@ resource "google_gke_hub_feature" "feature" {
     }
   }
 }
-# [END config_sync_fleet_default_config_example] 
+# [END anthosconfig_fleet_default_config_example] 

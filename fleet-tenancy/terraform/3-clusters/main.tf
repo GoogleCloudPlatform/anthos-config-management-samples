@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-# [START config_sync_cluster_examples]
+
+# [START anthosconfig_cluster_examples]
 terraform {
   required_providers {
     google = {
@@ -44,4 +45,4 @@ module "us-central-cluster" {
   cluster_name = "us-central-cluster"
   location="us-central1-c"
 }
-# [END config_sync_cluster_examples]
+# [END anthosconfig_cluster_examples]
