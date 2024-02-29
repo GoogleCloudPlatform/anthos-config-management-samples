@@ -36,7 +36,6 @@ example: [fleet-tenancy/config](config).
 This step includes the following operations:
 - Create a Fleet in a project
 - Enable API services
-- Create a service account and grant the service account a list of IAM roles.
 
 Terraform configs: [link](terraform/1-fleet).
 
@@ -45,8 +44,6 @@ Apply the resources via Terraform: [README.md](terraform/1-fleet/README.md).
 Notes:
 - You may need to run this command multiple times to get all resources created
   successfully due to internal dependencies.
-- After the step, you need to create and download the service account’s private
-  key JSON file.
 
 ## 2. Configure fleet-level defaults for Config Sync
 
@@ -118,11 +115,10 @@ Fleet resources are dynamically synced to fleet Namespaces in team scopes.
 - Delete Fleet Scopes and Namespaces
 - Unregister and delete clusters
 - Delete Fleet default member config
-- Delete the service account and disable services
+- Disable services
 
 To clean up, you can iterate through each terraform config directory in the
-reverse order and run the `terraform destroy` command with your GCP project and
-service account key file.
+reverse order and run the `terraform destroy` command with your GCP project.
 
 [Fleet team management]: https://cloud.google.com/anthos/fleet-management/docs/team-management
 [Config Sync]: https://cloud.google.com/anthos-config-management/docs/config-sync-overview
