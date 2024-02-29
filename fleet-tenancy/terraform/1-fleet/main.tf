@@ -46,7 +46,7 @@ resource "google_project_service" "services" {
 
 # Declare a fleet in the project
 resource "google_gke_hub_fleet" "default" {
-  display_name = "my test fleet"
+  display_name = "demo"
 
   depends_on = [google_project_service.services]
 }
