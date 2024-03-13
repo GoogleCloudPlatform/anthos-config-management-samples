@@ -17,6 +17,6 @@
 # [START anthosconfig_fleet_default_variables]
 variable "project" {
   type = string
-  description = "Name of GCP project"
+  description = "GCP project ID"
 }
 # [END anthosconfig_fleet_default_variables]

@@ -17,6 +17,6 @@
 # [START anthosconfig_cluster_variables]
 variable "project" {
   type = string
-  description = "Name of GCP project"
+  description = "GCP project ID"
 }
 # [END anthosconfig_cluster_variables]

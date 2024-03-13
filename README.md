@@ -82,6 +82,11 @@ Manage an application spanning multiple GCP projects, across dev and prod enviro
 Configure namespace specific policies such as Role, RoleBinding and
 NetworkPolicy.
 
+### [Manage team resources with Config Sync](fleet-tenancy)
+
+Use Config Sync and Terraform to dynamically create team-scoped resources across
+a fleet of clusters.
+
 ## CRDs
 
 ### [ConfigManagement](crds/)
