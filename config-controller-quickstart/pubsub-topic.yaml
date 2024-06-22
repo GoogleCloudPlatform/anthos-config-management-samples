@@ -16,6 +16,6 @@
 apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
 kind: PubSubTopic
 metadata:
-  name: pubsub-topic-sample-sync-nkongkimo-0837
+  name: pubsub-topic-sample-sync-nkongkimo-0852
   namespace: config-control
 # [END anthosconfig_config_controller_quickstart_pubsub_topic]
