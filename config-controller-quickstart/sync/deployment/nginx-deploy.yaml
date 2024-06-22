@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-0119
+  name: nginx-0119-deploy
   namespace: demo-02
   labels:
     app: nginx
