@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  namespace: config-control
+  namespace: demo
   name: myapp-pod-0938
   labels:
     app: myapp
