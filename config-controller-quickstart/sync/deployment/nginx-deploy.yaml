@@ -25,7 +25,7 @@ metadata:
   name: test-0119-svc
   namespace: demo-02
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - port: 80
       targetPort: 8080
