@@ -2,10 +2,10 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: demo
-  name: myapp-pod-0938
+  name: myapp-pod-0736
   labels:
     app: myapp
 spec:
   containers:
-  - name: test
-    image: hwchiu/netutils
+    - name: test
+      image: hwchiu/netutils
