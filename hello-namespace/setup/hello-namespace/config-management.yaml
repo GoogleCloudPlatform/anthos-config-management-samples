@@ -16,12 +16,12 @@ apiVersion: configmanagement.gke.io/v1
 kind: ConfigManagement
 metadata:
   name: config-management
-  namespace: config-management-system
+  namespace: config-management-syste
 spec:
-  clusterName: my-cluster
+  clusterName: user-cluster
   git:
-    syncRepo: git@github.com:<GITHUB-USERNAME>/anthos-config-management-samples.git
-    syncBranch: main
+    syncRepo: git@github.com:nkongkimo/anthos-config-management-samples.git
+    syncBranch: patch-1
     secretType: ssh
     policyDir: "hello-namespace/config-root"
 # [END anthosconfig_hello_namespace_config_management] 
