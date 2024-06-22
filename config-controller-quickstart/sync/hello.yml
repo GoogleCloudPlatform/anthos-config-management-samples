@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello-kubernetes
-  namespace: config-control
+  namespace: demo
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: hello-kubernetes
@@ -14,16 +14,16 @@ spec:
         app: hello-kubernetes
     spec:
       containers:
-      - name: hello-kubernetes
-        image: paulbouwer/hello-kubernetes:1.7
-        ports:
-        - containerPort: 8080
+        - name: hello-kubernetes
+          image: paulbouwer/hello-kubernetes:1.7
+          ports:
+            - containerPort: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: client
-  namespace: config-control
+  namespace: demo
 spec:
   replicas: 1
   selector:
@@ -35,5 +35,5 @@ spec:
         app: client
     spec:
       containers:
-      - name: client
-        image: hwchiu/netutils
+        - name: client
+          image: hwchiu/netutils
