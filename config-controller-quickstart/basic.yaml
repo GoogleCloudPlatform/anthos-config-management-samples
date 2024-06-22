@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   namespace: config-control
-  name: myapp-pod-0930
+  name: myapp-pod-0938
   labels:
     app: myapp
 spec:
