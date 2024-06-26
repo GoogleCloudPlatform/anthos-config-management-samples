@@ -11,17 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthosconfig_hello_namespace_config_management] 
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
+# [START anthosconfig_hierarchical_format_config_namespaces_team_2_namespace]
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: config-management
-  namespace: config-management-system
-spec:
-  clusterName: gke_ingka-ccoe-rob-lab_us-central1_autopilot-cluster-1
-  git:
-    syncRepo: git@github.com:rburns629/anthos-config-management-samples.git
-    syncBranch: main
-    secretType: ssh
-    policyDir: "hello-namespace/config-root"
-# [END anthosconfig_hello_namespace_config_management] 
+  name: team-3
+# [END anthosconfig_hierarchical_format_config_namespaces_team_2_namespace]
