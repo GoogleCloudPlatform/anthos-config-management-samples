@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,17 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthosconfig_namespace_specific_policy_team_b_role] 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+
+apiVersion: v1
+data:
+  external-data.txt: FOO=Bar
+kind: ConfigMap
 metadata:
-  name: team-admin
-  namespace: team-b
-rules:
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - '*'
-# [END anthosconfig_namespace_specific_policy_team_b_role] 
+  name: my-configmap-5f4h4hkd89
+  namespace: my-namespace

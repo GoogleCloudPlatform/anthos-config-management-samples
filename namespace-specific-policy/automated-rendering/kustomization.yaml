@@ -13,7 +13,5 @@
 # limitations under the License.
 # [START anthosconfig_namespace_specific_policy_automated_rendering_kustomization]
 resources:
-- configsync-src/team-a
-- configsync-src/team-b
-- configsync-src/team-c
+- configsync-src/example
 # [END anthosconfig_namespace_specific_policy_automated_rendering_kustomization]

@@ -12,7 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: v1
-kind: Namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
-  name: team-b
+  name: team-admin-rolebinding
+  namespace: external-team
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: team-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: external-team-admin@mydomain.com

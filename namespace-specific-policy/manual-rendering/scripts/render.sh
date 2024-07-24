@@ -19,15 +19,23 @@
 
 set -o errexit -o nounset -o pipefail
 
+declare -a teams=("team-a" "team-b" "team-c" "external-team")
+
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 cd "${REPO_ROOT}"
 
-cd configsync-src/
-for team in team-*; do
-    if [[ -f ${team}/kustomization.yaml ]]; then
-        echo "Rendering ${team}"
-        kustomize build ${team} -o ../manual-rendering/configsync/${team}/
-    fi
-done
+cd configsync-src/example
+if [[ -f kustomization.yaml ]]; then
+    kustomize build --load-restrictor=LoadRestrictionsNone -o ../../manual-rendering/configsync
+fi
 
+cd "${REPO_ROOT}/manual-rendering/configsync"
+
+for team in "${teams[@]}"
+do
+    echo "Rendering ${team}"
+    for file in ${team}*.yaml *${team}.yaml; do
+        mv "$file" ${team}/
+    done
+done
 # [END anthosconfig_scripts_render]

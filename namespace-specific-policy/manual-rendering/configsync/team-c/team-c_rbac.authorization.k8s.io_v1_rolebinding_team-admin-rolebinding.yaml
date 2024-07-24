@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,12 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthosconfig_namespace_specific_policy_team_a_role_binding] 
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: team-admin-rolebinding
-  namespace: team-a
+  namespace: team-c
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -24,5 +24,4 @@ roleRef:
 subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
-  name: team-a-admin@mydomain.com
-# [END anthosconfig_namespace_specific_policy_team_a_role_binding] 
+  name: team-c-admin@mydomain.com
