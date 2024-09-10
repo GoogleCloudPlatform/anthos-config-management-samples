@@ -17,8 +17,21 @@
 namespace: external-team
 
 resources:
-- namespace.yaml
-- rolebinding.yaml
-- role.yaml
-- networkpolicy.yaml
+- ../example/base
+
+patches:
+- target:
+    kind: RoleBinding
+    name: team-admin-rolebinding
+  patch: |-
+    - op: replace
+      path: /subjects/0/name
+      value: external-team-admin@mydomain.com
+- target:
+    kind: Namespace
+    name: default
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: external-team
 # # [END anthosconfig_namespace_specific_policy_src_external_team_kustomization] 
