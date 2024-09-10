@@ -19,7 +19,7 @@ This section describes prerequisites you must meet before this tutorial.
 
 ### Get the example configuration
 
-The `automated-rendering` directory includes a root `kustomization.yaml` file that references the `example` kustomization directory.
+The `automated-rendering` directory includes a root `kustomization.yaml` file that references three team overlays in the example kustomization directory, and an external-team overlay.
 
 ```yaml
 resources:
