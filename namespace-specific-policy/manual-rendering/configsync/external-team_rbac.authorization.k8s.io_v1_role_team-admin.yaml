@@ -24,4 +24,4 @@ rules:
   - deployments
   verbs:
   - '*'
-# [END anthosconfig_namespace_specific_policy_external_team_role] 
+# [END anthosconfig_namespace_specific_policy_external_team_role]

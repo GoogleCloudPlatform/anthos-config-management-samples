@@ -20,9 +20,8 @@
 set -o errexit -o nounset -o pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
-cd "${REPO_ROOT}"
 
-cd configsync-src/example
+cd "${REPO_ROOT}/configsync-src/example"
 if [[ -f kustomization.yaml ]]; then
     kustomize build --load-restrictor=LoadRestrictionsNone -o ../../manual-rendering/configsync
 fi

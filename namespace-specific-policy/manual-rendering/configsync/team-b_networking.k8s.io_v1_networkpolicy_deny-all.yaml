@@ -11,18 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthosconfig_namespace_specific_policy_team_b_role_binding] 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+# [START anthosconfig_namespace_specific_policy_team_b_network_policy] 
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: team-admin-rolebinding
+  name: deny-all
   namespace: team-b
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: team-admin
-subjects:
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: team-b-admin@mydomain.com
-# [END anthosconfig_namespace_specific_policy_team_b_role_binding] 
+spec:
+  ingress:
+  - from:
+    - podSelector: {}
+  podSelector:
+    matchLabels: null
+# [END anthosconfig_namespace_specific_policy_team_b_network_policy] 

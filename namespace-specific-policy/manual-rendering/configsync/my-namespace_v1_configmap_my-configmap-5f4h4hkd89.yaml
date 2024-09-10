@@ -19,4 +19,4 @@ kind: ConfigMap
 metadata:
   name: my-configmap-5f4h4hkd89
   namespace: my-namespace
-# [END anthosconfig_namespace_specific_policy_configmap] 
+# [END anthosconfig_namespace_specific_policy_configmap]

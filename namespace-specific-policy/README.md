@@ -56,35 +56,27 @@ The folder directory of the `namespace-specific-policy` example:
 │   │   └── team-c
 │   │       └── kustomization.yaml
 │   ├── external-team
-│   │   ├── kustomization.yaml
-│   │   ├── namespace.yaml
-│   │   ├── networkpolicy.yaml
-│   │   ├── rolebinding.yaml
-│   │   └── role.yaml
+│   │   └── kustomization.yaml
 │   └── external-data.txt
 ├── manual-rendering
 │   ├── configsync
-│   │   ├── external-team
-│   │   │   ├── external-team_networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── external-team_rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
-│   │   │   ├── external-team_rbac.authorization.k8s.io_v1_role_team-admin.yaml
-│   │   │   └── v1_namespace_external-team.yaml
-│   │   ├── team-a
-│   │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
-│   │   │   └── v1_namespace_team-a.yaml
-│   │   ├── team-b
-│   │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
-│   │   │   └── v1_namespace_team-b.yaml
-│   │   ├── team-c
-│   │   │   ├── networking.k8s.io_v1_networkpolicy_deny-all.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
-│   │   │   ├── rbac.authorization.k8s.io_v1_role_team-admin.yaml
-│   │   │   └── v1_namespace_team-c.yaml
-│   │   └── my-namespace_v1_configmap_my-configmap-5f4h4hkd89.yaml
+│   │   ├── external-team_networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│   │   ├── external-team_rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   ├── external-team_rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   ├── my-namespace_v1_configmap_my-configmap-5f4h4hkd89.yaml
+│   │   ├── team-a_networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│   │   ├── team-a_rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   ├── team-a_rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   ├── team-b_networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│   │   ├── team-b_rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   ├── team-b_rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   ├── team-c_networking.k8s.io_v1_networkpolicy_deny-all.yaml
+│   │   ├── team-c_rbac.authorization.k8s.io_v1_role_team-admin.yaml
+│   │   ├── team-c_rbac.authorization.k8s.io_v1_rolebinding_team-admin-rolebinding.yaml
+│   │   ├── v1_namespace_external-team.yaml
+│   │   ├── v1_namespace_team-a.yaml
+│   │   ├── v1_namespace_team-b.yaml
+│   │   └── v1_namespace_team-c.yaml
 │   ├── README.md
 │   └── scripts
 │       └── render.sh
