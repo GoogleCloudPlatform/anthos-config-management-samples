@@ -13,13 +13,15 @@
 # limitations under the License.
 # deny all ingress traffic to avoid Pods from one namespace
 # accidentally sending traffic to Services in other namespaces.
-# [START anthosconfig_namespace_specific_policy_src_base_role] 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+# [START anthosconfig_namespace_specific_policy_src_example_base_network_policy] 
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata:
-  name: team-admin
-rules:
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["*"]
-# [END anthosconfig_namespace_specific_policy_src_base_role] 
+  name: deny-all
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+# [END anthosconfig_namespace_specific_policy_src_example_base_network_policy] 

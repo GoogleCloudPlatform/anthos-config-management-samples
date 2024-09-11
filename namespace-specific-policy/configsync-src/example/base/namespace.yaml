@@ -11,18 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthosconfig_namespace_specific_policy_team_a_role_binding] 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+# [START anthosconfig_namespace_specific_policy_src_example_base_namespace] 
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: team-admin-rolebinding
-  namespace: team-a
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: team-admin
-subjects:
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: team-a-admin@mydomain.com
-# [END anthosconfig_namespace_specific_policy_team_a_role_binding] 
+  name: default
+# [END anthosconfig_namespace_specific_policy_src_example_base_namespace] 

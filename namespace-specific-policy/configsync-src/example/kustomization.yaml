@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,7 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# [START anthosconfig_namespace_specific_policy_automated_rendering_kustomization]
+# [START anthosconfig_namespace_specific_policy_src_example_kustomization] 
 resources:
-- configsync-src/example
-# [END anthosconfig_namespace_specific_policy_automated_rendering_kustomization]
+- team-a
+- team-b
+- team-c
+- ../external-team # Starting from 1.19.0, Config Sync allows external resources located outside of the Kustomization root directory.
+
+configMapGenerator:
+- name: my-configmap
+  namespace: my-namespace
+  files:
+  - ../external-data.txt # Starting from 1.19.0, Config Sync allows external files located outside of the Kustomization root directory.
+# [END anthosconfig_namespace_specific_policy_src_example_kustomization] 

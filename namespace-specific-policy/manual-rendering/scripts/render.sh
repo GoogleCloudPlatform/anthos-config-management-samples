@@ -20,14 +20,9 @@
 set -o errexit -o nounset -o pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
-cd "${REPO_ROOT}"
 
-cd configsync-src/
-for team in team-*; do
-    if [[ -f ${team}/kustomization.yaml ]]; then
-        echo "Rendering ${team}"
-        kustomize build ${team} -o ../manual-rendering/configsync/${team}/
-    fi
-done
-
+cd "${REPO_ROOT}/configsync-src/example"
+if [[ -f kustomization.yaml ]]; then
+    kustomize build --load-restrictor=LoadRestrictionsNone -o ../../manual-rendering/configsync
+fi
 # [END anthosconfig_scripts_render]
