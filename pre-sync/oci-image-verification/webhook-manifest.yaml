@@ -1,0 +1,96 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-server
+  namespace: oci-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-server
+  template:
+    metadata:
+      labels:
+        app: webhook-server
+    spec:
+      serviceAccountName: webhook-server-sa
+      containers:
+      - name: webhook-server
+        command:
+        - /webhook-server
+        image: gcr.io/<PROJECT_ID>/webhook-server:lateset
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8443
+        volumeMounts:
+        - name: tls-certs
+          mountPath: "/tls"
+        - name: cosign-key
+          mountPath: "/cosign-key"
+      volumes:
+      - name: cosign-key
+        secret:
+          secretName: cosign-key
+      - name: tls-certs
+        secret:
+          secretName: webhook-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-service
+  namespace: oci-webhook
+spec:
+  ports:
+  - port: 8443
+    targetPort: 8443
+  selector:
+    app: webhook-server
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: webhook-server-sa
+  namespace: oci-webhook
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: image-verification-webhook
+webhooks:
+- name: imageverification.webhook.com
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: oci-webhook
+      path: "/validate"
+      port: 8443
+    caBundle: <CA_BUNDLE>
+  rules:
+  - apiGroups:
+    - configsync.gke.io
+    apiVersions:
+    - v1beta1
+    - v1alpha1
+    operations:
+    - UPDATE
+    resources:
+    - 'rootsyncs'
+    - 'reposyncs'
+    scope: '*'
+  admissionReviewVersions: ["v1", "v1beta1"]
+  sideEffects: None
