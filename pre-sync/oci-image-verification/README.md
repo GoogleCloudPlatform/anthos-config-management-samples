@@ -14,7 +14,7 @@ CLI: [OpenSSL], [Cosign], [Gcloud], [Docker], [Kubectl], [Crane]
 
 Environment: GKE cluster, Google Cloud Artifact Registry repo
 
-## Build the webhook server
+## Build the signature verification server
 
 ```bash
 docker build -t <IMAGE_REGISTRY_URL>:latest . && docker push <IMAGE_REGISTRY_URL>:latest
@@ -31,7 +31,7 @@ kubectl create ns oci-webhook
 It is recommended to create the Kubernetes Service Account in advance to facilitate authentication in subsequent steps:
 
 ```bash
-kubectl create sa webhook-server-sa -n oci-webhook
+kubectl create sa signature-verification-sa -n oci-webhook
 ```
 
 ## Authentications
@@ -59,8 +59,8 @@ openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
 -keyout tls.key \
 -out tls.crt \
 -days 356 \
--subj "/CN=webhook-service.oci-webhook.svc"  \
--addext "subjectAltName = DNS:webhook-service,DNS:webhook-service.oci-webhook.svc,DNS:webhook-service.oci-webhook"
+-subj "/CN=signature-verification-service.oci-webhook.svc"  \
+-addext "subjectAltName = DNS:signature-verification-service,DNS:signature-verification-service.oci-webhook.svc,DNS:signature-verification-service.oci-webhook"
 ```
 
 Create on cluster secret:
@@ -69,9 +69,21 @@ Create on cluster secret:
 kubectl create secret tls webhook-tls --cert=tls.crt --key=tls.key -n oci-webhook
 ```
 
-### IAM setup for the Webhook Server
+### Image registry authentication
 
-- Give the Google service account associated with the webhook server permission to read images from Artifact Registry
+In this example, we use a token to authorize Cosign with the Docker registry. The token is retrieved from a Kubernetes secret within the cluster, and the server will fail to start if the token is not present.
+
+```bash
+TOKEN=$(gcloud auth print-access-token)
+
+kubectl create secret generic registry-token \
+  --namespace oci-webhook \
+  --from-literal=token=$TOKEN
+```
+
+### IAM setup for the signature verificiation server
+
+- Give the Google service account permission to read images from Artifact Registry
 ```bash
 gcloud artifacts repositories add-iam-policy-binding <AR_REPO> \
    --location=<LOCATION> \
@@ -83,35 +95,44 @@ gcloud artifacts repositories add-iam-policy-binding <AR_REPO> \
 ```bash
 gcloud iam service-accounts add-iam-policy-binding \
    --role roles/iam.workloadIdentityUser \
-   --member "serviceAccount:<PROJECT_ID>.svc.id.goog[oci-webhook/webhook-server-sa]" \
+   --member "serviceAccount:<PROJECT_ID>.svc.id.goog[oci-webhook/signature-verification-sa]" \
    <GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com \
    --project=<PROJECT_ID>
 ```
 - Annotate the Kubernetes ServiceAccount so that GKE sees the link between the service accounts
 ```bash
-kubectl annotate serviceaccount webhook-server-sa -n oci-webhook \
-iam.gke.io/gcp-service-account=<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com
+kubectl annotate serviceaccount signature-verification-sa -n oci-webhook \
+"iam.gke.io/gcp-service-account=<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com"
 ```
 
 See [Authentication to Google Cloud APIs from GKE workloads] for more details.
 
-## Deploy the webhook server and ValidatingWebhookConfiguration
+## Deploy the signature verification server and ValidatingWebhookConfiguration
 
-Replace the <PROJECT_ID> in webhook-manifest.yaml with the project name where webhook server image is hosted.
+#### In signature-verification-deployment.yaml file
 
-Replace the <CA_BUNDLE> in the same file with the content of tls.crt `cat tls.crt | base64 -w 0`.
+Replace the <PROJECT_ID> with the project name where signature verification server image is hosted.
 
-Apply the manifest to cluster.
+Replace the <SOURCE_OCI_IMAGE_REGISTRY> with the docker registry of the source OCI image.
+
+Replace the <SIGNATURE_VERIFICATION_SERVER_IMAGE_URL> with the URL of the signature verification server image.
+
+#### In signature-verification-validatingwebhookconfiguration.yaml file
+
+Replace the <CA_BUNDLE> with the content of tls.crt `cat tls.crt | base64 -w 0`.
+
+#### Apply the manifests to cluster.
 
 ```bash
-kubectl apply -f webhook-manifeset.yaml
+kubectl apply -f signature-verification-deployment.yaml -n oci-webhook
+kubectl apply -f signature-verification-validatingwebhookconfiguration.yaml
 ```
 
 ## Test the image signature verification
 
 - [Install Config Sync], configure it to [sync from an unsigned OCI image].
 
-- Look for errors in webhook server log `kubectl logs deployment webhook-server -n oci-webhook`:
+- Look for errors in signature verification server log `kubectl logs deployment signature-verification-server -n oci-webhook`:
 
 ```angular2html
 main.go:69: error during command execution: no signatures found
@@ -130,7 +151,7 @@ main.go:69: error during command execution: no signatures found
 cosign sign <IMAGE> --key cosign.key
 ```
 
-- Once the image is correctly signed, the webhook server should successfully verify it. This will result in:
+- Once the image is correctly signed, the signature verification server should successfully verify it. This will result in:
 
   - The Config Sync source error being cleared.
   - The `configsync.gke.io/source-commit` and `configsync.gke.io/source-url` annotations on the RootSync object being updated to reflect the new signed image.
@@ -152,4 +173,4 @@ kubectl get reposync <REPO_SYNC_NAME> -n <REPO_SYNC_NAMESPACE> -oyaml
 [Crane]: https://github.com/google/go-containerregistry/tree/main/cmd/crane
 [Authentication to Google Cloud APIs from GKE workloads]: http://cloud/kubernetes-engine/docs/how-to/workload-identity
 [Install Config Sync]: http://cloud/kubernetes-engine/enterprise/config-sync/docs/how-to/installing-config-sync
-[sync from OCI image]: http://cloud/kubernetes-engine/enterprise/config-sync/docs/how-to/sync-oci-artifacts-from-artifact-registry
+[sync from an unsigned OCI image]: http://cloud/kubernetes-engine/enterprise/config-sync/docs/how-to/sync-oci-artifacts-from-artifact-registry
