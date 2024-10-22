@@ -150,11 +150,13 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	oldAnnotations, err := getAnnotations(admissionReview.Request.OldObject.Raw)
 	if err != nil {
 		klog.Errorf("Failed to extract old annotations: %v", err)
+		http.Error(w, "Failed to extract old annotations", http.StatusBadRequest)
 	}
 
 	newAnnotations, err := getAnnotations(admissionReview.Request.Object.Raw)
 	if err != nil {
 		klog.Errorf("Failed to extract new annotations: %v", err)
+		http.Error(w, "Failed to extract new annotations", http.StatusBadRequest)
 	}
 
 	response := &admissionv1.AdmissionResponse{
@@ -167,20 +169,22 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		klog.Info("Detected annotation changes")
 		if err := authenticateToImageRegistry(); err != nil {
 			klog.Errorf("Failed to authorize Cosign %v", err)
+			response.Allowed = false
+			response.Result = &metav1.Status{
+				Message: fmt.Sprintf("Failed to authorize Cosign: %v", err),
+			}
 		}
 		// Validate image using cosign
 		if err := validateImage(newAnnotations[SourceURL], newAnnotations[SourceCommit]); err != nil {
 			klog.Errorf("Image validation failed: %v", err)
 			response.Allowed = false
 			response.Result = &metav1.Status{
-				Message: fmt.Sprintf("Image validation failed: %v", err),
+				Message: fmt.Sprintf("Failed to validate image: %v", err),
 			}
 		} else {
-			klog.Errorf("Image validation successful for %s", newAnnotations[SourceURL])
+			klog.Infof("Successfully verified image %s, SHA %s", newAnnotations[SourceURL], newAnnotations[SourceCommit])
 			response.Allowed = true
 		}
-	} else {
-		klog.Info("No annotation changes detected")
 	}
 
 	admissionReview.Response = response
