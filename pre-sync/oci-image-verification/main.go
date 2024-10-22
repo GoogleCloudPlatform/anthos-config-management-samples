@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"strings"
 	"sync"
 
 	admissionv1 "k8s.io/api/admission/v1"
@@ -37,14 +38,40 @@ func getAnnotations(raw []byte) (map[string]string, error) {
 	return nil, fmt.Errorf("no annotations found")
 }
 
-func validateImage(image string) error {
-	cmd := exec.Command("cosign", "verify", image, "--key", "/cosign-key/cosign.pub")
-	log.Printf("command %s", cmd.String())
+func validateImage(image, commit string) error {
+	if image == "" || commit == "" {
+		return nil
+	}
+	imageWithDigest, err := replaceTagWithDigest(image, commit)
+	if err != nil {
+		return fmt.Errorf("failed to replace tag with digest: %v", err)
+	}
+	cmd := exec.Command("cosign", "verify", imageWithDigest, "--key", "/cosign-key/cosign.pub")
+	log.Printf("command %s, url: %s, digest: %s", cmd.String(), image, commit)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("cosign verification failed: %s, output: %s", err, string(output))
 	}
 	return nil
+}
+
+// replaceTagWithDigest replaces the tag in an image URL with the given digest SHA.
+func replaceTagWithDigest(imageURL, commitSHA string) (string, error) {
+	if !strings.Contains(imageURL, ":") {
+		return "", fmt.Errorf("invalid image URL format: no tag or digest found")
+	}
+	imageWithoutTag := strings.Split(imageURL, ":")[0]
+
+	// image URL has digeset
+	if strings.Contains(imageURL, "@sha256:") {
+		URLWithSha := fmt.Sprintf("%s:%s", imageWithoutTag, commitSHA)
+		log.Printf("Replaced existing digest with new digest: %s", URLWithSha)
+		return URLWithSha, nil
+	}
+
+	// image URL has tag
+	URLWithSha := fmt.Sprintf("%s@sha256:%s", imageWithoutTag, commitSHA)
+	return URLWithSha, nil
 }
 
 func auth() error {
@@ -118,7 +145,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Detected annotation changes")
 		auth()
 		// Validate image using cosign
-		if err := validateImage(newAnnotations[SourceURL]); err != nil {
+		if err := validateImage(newAnnotations[SourceURL], newAnnotations[SourceCommit]); err != nil {
 			log.Printf("Image validation failed: %v", err)
 			response.Allowed = false
 			response.Result = &metav1.Status{
