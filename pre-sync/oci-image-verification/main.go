@@ -16,11 +16,15 @@ import (
 	"k8s.io/klog/v2"
 )
 
+// Constants for Config Sync annotations. These annotations are added to the
+// RootSync or RepoSync resources for the image URL and digest SHA. They are used to
+// validate the image during admission control.
 const (
 	SourceURL    = "configsync.gke.io/source-url"
 	SourceCommit = "configsync.gke.io/source-commit"
 )
 
+// Global variables for configuration and state
 var (
 	registryToken string
 	registry      string
@@ -29,6 +33,8 @@ var (
 	authMutex     sync.Mutex // Add a mutex for thread safety
 )
 
+// init initializes the application by parsing command-line flags
+// and reading the registry token from a file.
 func init() {
 	flag.StringVar(&registry, "registry", "us.pkg.dev", "URL of the artifact registry")
 	flag.StringVar(&tokenFile, "token-file", "/var/run/secrets/token", "Path to the file containing the registry token")
@@ -46,7 +52,7 @@ func init() {
 	}
 }
 
-// Function to extract annotations from JSON
+// getAnnotations extracts annotations from the raw JSON data in the admission review.
 func getAnnotations(raw []byte) (map[string]string, error) {
 	var metadata map[string]interface{}
 	if err := json.Unmarshal(raw, &metadata); err != nil {
@@ -62,6 +68,8 @@ func getAnnotations(raw []byte) (map[string]string, error) {
 	return nil, fmt.Errorf("no annotations found")
 }
 
+// validateImage verifies the image using Cosign CLI and the public key in the
+// cosign-key secret.
 func validateImage(image, commit string) error {
 	if image == "" || commit == "" {
 		return nil
@@ -97,7 +105,11 @@ func replaceTagWithDigest(imageURL, commitSHA string) (string, error) {
 	return URLWithSha, nil
 }
 
-func auth() error {
+// authenticateToImageRegistry authenticates to the image registry using the
+// provided token. This is done by calling the `cosign login` command. The authentication
+// method just demonstrates one way of solving this issue. User could also use
+// username + password.
+func authenticateToImageRegistry() error {
 	authMutex.Lock()         // Acquire the lock before accessing shared resources
 	defer authMutex.Unlock() // Release the lock when the function exits
 
@@ -108,13 +120,17 @@ func auth() error {
 	cmd := exec.Command("cosign", "login", registry, "-u", "oauth2accesstoken", "-p", registryToken)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("gcloud auth ar failed: %s, output: %s", err, string(output))
+		return fmt.Errorf("gcloud authenticateToImageRegistry ar failed: %s, output: %s", err, string(output))
 	}
 	klog.Infof("result: %s, authorization done", string(output))
 	authorized = true
 	return nil
 }
 
+// handleWebhook is the main function that handles the admission control webhook requests.
+// It reads the request body, extracts the old and new annotations, and compares them to
+// determine if the image URL or digest SHA has changed. If a change is detected, it
+// validates the new image with given url and digest SHA.
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -130,7 +146,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract old and new annotations
+	// Extract old and new annotations from the admission review
 	oldAnnotations, err := getAnnotations(admissionReview.Request.OldObject.Raw)
 	if err != nil {
 		klog.Errorf("Failed to extract old annotations: %v", err)
@@ -141,16 +157,15 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		klog.Errorf("Failed to extract new annotations: %v", err)
 	}
 
-	// Send the admission response
 	response := &admissionv1.AdmissionResponse{
 		UID: admissionReview.Request.UID,
 	}
 
-	// Compare the annotations and check for changes
+	// Compare the source annotations and check for changes
 	if newAnnotations[SourceURL] != oldAnnotations[SourceURL] ||
 		newAnnotations[SourceCommit] != oldAnnotations[SourceCommit] {
 		klog.Info("Detected annotation changes")
-		if err := auth(); err != nil {
+		if err := authenticateToImageRegistry(); err != nil {
 			klog.Errorf("Failed to authorize Cosign %v", err)
 		}
 		// Validate image using cosign

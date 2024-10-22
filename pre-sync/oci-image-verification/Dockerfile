@@ -34,8 +34,6 @@ RUN wget -O cosign https://github.com/sigstore/cosign/releases/latest/download/c
     chmod +x cosign && \
     mv cosign /usr/local/bin/cosign
 
-RUN chmod +x /app/webhook-server
-
 # Final stage
 FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:449.0.0-slim
 WORKDIR /

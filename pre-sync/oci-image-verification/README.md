@@ -1,5 +1,13 @@
 # Sample OCI Image Signature Verification with Config Sync
 
+This sample demonstrates how to verify the image signature of the OCI image that Config Sync is syncing.
+
+For one way of authenticating the image registry, this sample uses the `cosign login` command with a token stored in a Kubernetes secret. Token can be expired, user could also build a custom authentication mechanism.
+
+This sample is implemented in a generic way so that it could be hooked into different types of image verification tools. It is implemented as a Kubernetes admission webhook server, which watches the RootSync or RepoSync resources and validates the image URL and digest SHA in the annotation metadata.
+
+For another example tailored for Cosign integration, please see the example in the Config Sync repository.
+
 ## Prerequisites
 
 CLI: [OpenSSL], [Cosign], [Gcloud], [Docker], [Kubectl], [Crane]
@@ -12,21 +20,25 @@ Environment: GKE cluster, Google Cloud Artifact Registry repo
 docker build -t <IMAGE_REGISTRY_URL>:latest . && docker push <IMAGE_REGISTRY_URL>:latest
 ```
 
-## Create a namespace
+## Create a Namespace and Kubernetes Service Account
+
+This is intended to group everything under the same namespace. In this example, `oci-webhook` is used as a reference:
 
 ```bash
 kubectl create ns oci-webhook
 ```
 
+It is recommended to create the Kubernetes Service Account in advance to facilitate authentication in subsequent steps:
+
 ```bash
-kubectl apply -f webhook-deployment.yaml
+kubectl create sa webhook-server-sa -n oci-webhook
 ```
 
 ## Authentications
 
 ### Cosign keys
 
-Generate cosign.key and cosign.pub
+Generate cosign.key and cosign.pub pairs:
 
 ```bash
 cosign generate-key-pair
