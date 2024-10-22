@@ -11,7 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+apiVersion: v1
+kind: Secret
+metadata:
+  name: registry-token
+  namespace: oci-webhook
+type: Opaque
+stringData:
+  token: <REGISTRY_TOKEN>
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,15 +40,21 @@ spec:
       - name: webhook-server
         command:
         - /webhook-server
-        image: gcr.io/<PROJECT_ID>/webhook-server:lateset
+        args:
+        - --registry=<OCI_IMAGE_REGISTRY>
+        - --token-file=/var/run/secrets/token
+        image: <WEBHOOK_IMAGE_URL>
         imagePullPolicy: Always
         ports:
-        - containerPort: 8443
+        - containerPort: 10250
         volumeMounts:
         - name: tls-certs
           mountPath: "/tls"
         - name: cosign-key
           mountPath: "/cosign-key"
+        - name: token
+          mountPath: /var/run/secrets
+          readOnly: true
       volumes:
       - name: cosign-key
         secret:
@@ -48,6 +62,12 @@ spec:
       - name: tls-certs
         secret:
           secretName: webhook-tls
+      - name: token
+        secret:
+          secretName: registry-token
+          items:
+          - key: token
+            path: token
 ---
 apiVersion: v1
 kind: Service
@@ -56,8 +76,8 @@ metadata:
   namespace: oci-webhook
 spec:
   ports:
-  - port: 8443
-    targetPort: 8443
+  - port: 10250
+    targetPort: 10250
   selector:
     app: webhook-server
 ---
@@ -78,7 +98,7 @@ webhooks:
       name: webhook-service
       namespace: oci-webhook
       path: "/validate"
-      port: 8443
+      port: 10250
     caBundle: <CA_BUNDLE>
   rules:
   - apiGroups:

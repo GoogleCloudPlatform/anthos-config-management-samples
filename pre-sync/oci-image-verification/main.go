@@ -2,16 +2,18 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
-	"io/ioutil"
-	"log"
+	"io"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
 
 	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -19,8 +21,30 @@ const (
 	SourceCommit = "configsync.gke.io/source-commit"
 )
 
-var authorized bool
-var authMutex sync.Mutex // Add a mutex for thread safety
+var (
+	registryToken string
+	registry      string
+	tokenFile     string
+	authorized    bool
+	authMutex     sync.Mutex // Add a mutex for thread safety
+)
+
+func init() {
+	flag.StringVar(&registry, "registry", "us.pkg.dev", "URL of the artifact registry")
+	flag.StringVar(&tokenFile, "token-file", "/var/run/secrets/token", "Path to the file containing the registry token")
+	flag.Parse()
+
+	// Read the token from the mounted secret file
+	content, err := os.ReadFile(tokenFile)
+	if err != nil {
+		klog.Errorf("Error reading token file: %v", err)
+	}
+	registryToken = strings.TrimSpace(string(content))
+
+	if registryToken == "" {
+		klog.Errorf("Registry token is required. Ensure the token file is properly mounted and contains the token.")
+	}
+}
 
 // Function to extract annotations from JSON
 func getAnnotations(raw []byte) (map[string]string, error) {
@@ -47,10 +71,9 @@ func validateImage(image, commit string) error {
 		return fmt.Errorf("failed to replace tag with digest: %v", err)
 	}
 	cmd := exec.Command("cosign", "verify", imageWithDigest, "--key", "/cosign-key/cosign.pub")
-	log.Printf("command %s, url: %s, digest: %s", cmd.String(), image, commit)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("cosign verification failed: %s, output: %s", err, string(output))
+		return fmt.Errorf("cosign verification failed for image %s: %s, output: %s", imageWithDigest, err, string(output))
 	}
 	return nil
 }
@@ -62,10 +85,10 @@ func replaceTagWithDigest(imageURL, commitSHA string) (string, error) {
 	}
 	imageWithoutTag := strings.Split(imageURL, ":")[0]
 
-	// image URL has digeset
+	// image URL has digest
 	if strings.Contains(imageURL, "@sha256:") {
 		URLWithSha := fmt.Sprintf("%s:%s", imageWithoutTag, commitSHA)
-		log.Printf("Replaced existing digest with new digest: %s", URLWithSha)
+		klog.Infof("Replaced existing digest with new digest: %s", URLWithSha)
 		return URLWithSha, nil
 	}
 
@@ -79,42 +102,30 @@ func auth() error {
 	defer authMutex.Unlock() // Release the lock when the function exits
 
 	if authorized {
-		log.Printf("skip authorizing docker")
 		return nil
 	}
-	gcloudCmd := exec.Command("gcloud", "auth", "print-access-token")
-	accessTokenBytes, err := gcloudCmd.Output()
-	if err != nil {
-		return fmt.Errorf("Error fetching access token: %v\n", err)
-	}
-	// Convert the output to a string and trim any trailing newline
-	accessToken := string(accessTokenBytes)
-	accessToken = accessToken[:len(accessToken)-1] // Remove the trailing newline
 
-	cmd := exec.Command("cosign", "login", "us-central1-docker.pkg.dev", "-u", "oauth2accesstoken", "-p", accessToken)
-	log.Printf("command %s", cmd.String())
+	cmd := exec.Command("cosign", "login", registry, "-u", "oauth2accesstoken", "-p", registryToken)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("gcloud auth ar failed: %s, output: %s", err, string(output))
 	}
-	log.Printf("result: %s, authorization done", string(output))
+	klog.Infof("result: %s, authorization done", string(output))
 	authorized = true
 	return nil
 }
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
-
-	// Read the body
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("Failed to read request body: %v", err)
+		klog.Errorf("Failed to read request body: %v", err)
 		http.Error(w, "Failed to read request body", http.StatusBadRequest)
 		return
 	}
 
 	var admissionReview admissionv1.AdmissionReview
 	if err := json.Unmarshal(body, &admissionReview); err != nil {
-		log.Printf("Failed to unmarshal admission review: %v", err)
+		klog.Errorf("Failed to unmarshal admission review: %v", err)
 		http.Error(w, "Failed to unmarshal admission review", http.StatusBadRequest)
 		return
 	}
@@ -122,17 +133,13 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	// Extract old and new annotations
 	oldAnnotations, err := getAnnotations(admissionReview.Request.OldObject.Raw)
 	if err != nil {
-		log.Printf("Failed to extract old annotations: %v", err)
+		klog.Errorf("Failed to extract old annotations: %v", err)
 	}
 
 	newAnnotations, err := getAnnotations(admissionReview.Request.Object.Raw)
 	if err != nil {
-		log.Printf("Failed to extract new annotations: %v", err)
+		klog.Errorf("Failed to extract new annotations: %v", err)
 	}
-
-	// Log old and new annotations for comparison
-	log.Printf("Old Annotations: %v", oldAnnotations)
-	log.Printf("New Annotations: %v", newAnnotations)
 
 	// Send the admission response
 	response := &admissionv1.AdmissionResponse{
@@ -142,31 +149,33 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	// Compare the annotations and check for changes
 	if newAnnotations[SourceURL] != oldAnnotations[SourceURL] ||
 		newAnnotations[SourceCommit] != oldAnnotations[SourceCommit] {
-		log.Printf("Detected annotation changes")
-		auth()
+		klog.Info("Detected annotation changes")
+		if err := auth(); err != nil {
+			klog.Errorf("Failed to authorize Cosign %v", err)
+		}
 		// Validate image using cosign
 		if err := validateImage(newAnnotations[SourceURL], newAnnotations[SourceCommit]); err != nil {
-			log.Printf("Image validation failed: %v", err)
+			klog.Errorf("Image validation failed: %v", err)
 			response.Allowed = false
 			response.Result = &metav1.Status{
 				Message: fmt.Sprintf("Image validation failed: %v", err),
 			}
 		} else {
-			log.Printf("Image validation successful for %s", newAnnotations[SourceURL])
+			klog.Errorf("Image validation successful for %s", newAnnotations[SourceURL])
 			response.Allowed = true
 		}
 	} else {
-		log.Printf("No annotation changes detected")
+		klog.Info("No annotation changes detected")
 	}
 
 	admissionReview.Response = response
 	if err := json.NewEncoder(w).Encode(admissionReview); err != nil {
-		log.Printf("Failed to encode admission response: %v", err)
+		klog.Errorf("Failed to encode admission response: %v", err)
 	}
 }
 
 func main() {
 	http.HandleFunc("/validate", handleWebhook)
-	log.Println("Starting webhook server on port 8443...")
-	log.Fatal(http.ListenAndServeTLS(":8443", "/tls/tls.crt", "/tls/tls.key", nil))
+	klog.Info("Starting webhook server on port 10250...")
+	klog.Error(http.ListenAndServeTLS(":10250", "/tls/tls.crt", "/tls/tls.key", nil))
 }

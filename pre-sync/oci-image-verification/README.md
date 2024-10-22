@@ -8,17 +8,17 @@ Environment: GKE cluster, Google Cloud Artifact Registry repo
 
 ## Build the webhook server
 
-```angular2html
-docker build -t gcr.io/<PROJECT_ID>/webhook-server:latest . && docker push gcr.io/<PROJECT_ID>/webhook-server:latest
+```bash
+docker build -t <IMAGE_REGISTRY_URL>:latest . && docker push <IMAGE_REGISTRY_URL>:latest
 ```
 
 ## Create a namespace
 
-```angular2html
+```bash
 kubectl create ns oci-webhook
 ```
 
-```angular2html
+```bash
 kubectl apply -f webhook-deployment.yaml
 ```
 
@@ -28,13 +28,13 @@ kubectl apply -f webhook-deployment.yaml
 
 Generate cosign.key and cosign.pub
 
-```angular2html
+```bash
 cosign generate-key-pair
 ```
 
 Create on cluster secret:
 
-```angular2html
+```bash
 kubectl create secret generic cosign-key --from-file=cosign.pub -n oci-webhook
 ```
 
@@ -42,7 +42,7 @@ kubectl create secret generic cosign-key --from-file=cosign.pub -n oci-webhook
 
 Generate tls.crt and tls.key:
 
-```angular2html
+```bash
 openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
 -keyout tls.key \
 -out tls.crt \
@@ -53,14 +53,14 @@ openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
 
 Create on cluster secret:
 
-```angular2html
+```bash
 kubectl create secret tls webhook-tls --cert=tls.crt --key=tls.key -n oci-webhook
 ```
 
 ### IAM setup for the Webhook Server
 
 - Give the Google service account associated with the webhook server permission to read images from Artifact Registry
-```angular2html
+```bash
 gcloud artifacts repositories add-iam-policy-binding <AR_REPO> \
    --location=<LOCATION> \
    --member=serviceAccount:<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com \
@@ -68,7 +68,7 @@ gcloud artifacts repositories add-iam-policy-binding <AR_REPO> \
    --project=<PROJECT_ID>
 ```
 - Create an IAM policy binding between the Kubernetes service account and Google service account
-```angular2html
+```bash
 gcloud iam service-accounts add-iam-policy-binding \
    --role roles/iam.workloadIdentityUser \
    --member "serviceAccount:<PROJECT_ID>.svc.id.goog[oci-webhook/webhook-server-sa]" \
@@ -76,7 +76,7 @@ gcloud iam service-accounts add-iam-policy-binding \
    --project=<PROJECT_ID>
 ```
 - Annotate the Kubernetes ServiceAccount so that GKE sees the link between the service accounts
-```angular2html
+```bash
 kubectl annotate serviceaccount webhook-server-sa -n oci-webhook \
 iam.gke.io/gcp-service-account=<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com
 ```
@@ -91,7 +91,7 @@ Replace the <CA_BUNDLE> in the same file with the content of tls.crt `cat tls.cr
 
 Apply the manifest to cluster.
 
-```angular2html
+```bash
 kubectl apply -f webhook-manifeset.yaml
 ```
 
@@ -114,18 +114,22 @@ main.go:69: error during command execution: no signatures found
 
 - Sign the same source image using Cosign
 
-```angular2html
+```bash
 cosign sign <IMAGE> --key cosign.key
 ```
 
 - Once the image is correctly signed, the webhook server should successfully verify it. This will result in:
 
   - The Config Sync source error being cleared.
-  - The configsync.gke.io/source-commit and configsync.gke.io/source-url annotations on the RootSync object being updated to reflect the new signed image.
+  - The `configsync.gke.io/source-commit` and `configsync.gke.io/source-url` annotations on the RootSync object being updated to reflect the new signed image.
 
 - You can verify this by inspecting the RootSync object
-```angular2html
+```bash
 kubectl get rootsync <ROOT_SYNC_NAME> -n config-management-system -oyaml
+```
+Or the RepoSync object
+```bash
+kubectl get reposync <REPO_SYNC_NAME> -n <REPO_SYNC_NAMESPACE> -oyaml
 ```
 
 [OpenSSL]: https://github.com/openssl/openssl
