@@ -16,12 +16,12 @@ import (
 	"k8s.io/klog/v2"
 )
 
-// Constants for Config Sync annotations. These annotations are added to the
-// RootSync or RepoSync resources for the image URL and digest SHA. They are used to
-// validate the image during admission control.
+// Constants for Config Sync annotation names. This annotation is added to
+// RootSync or RepoSync resources to hold the URL of the image to sync. By
+// comparing the old and new values in the admission review request, we can
+// detect if a new image has been introduced, triggering an image verification.
 const (
-	SourceURL    = "configsync.gke.io/source-url"
-	SourceCommit = "configsync.gke.io/source-commit"
+	imageToSyncAnnotation = "configsync.gke.io/image-to-sync"
 )
 
 // Global variables for configuration and state
@@ -52,57 +52,18 @@ func init() {
 	}
 }
 
-// getAnnotations extracts annotations from the raw JSON data in the admission review.
-func getAnnotations(raw []byte) (map[string]string, error) {
-	var metadata map[string]interface{}
-	if err := json.Unmarshal(raw, &metadata); err != nil {
-		return nil, err
-	}
-	if annotations, ok := metadata["metadata"].(map[string]interface{})["annotations"].(map[string]interface{}); ok {
-		annotationsMap := make(map[string]string)
-		for k, v := range annotations {
-			annotationsMap[k] = fmt.Sprintf("%v", v)
-		}
-		return annotationsMap, nil
-	}
-	return nil, fmt.Errorf("no annotations found")
-}
-
 // validateImage verifies the image using Cosign CLI and the public key in the
 // cosign-key secret.
-func validateImage(image, commit string) error {
-	if image == "" || commit == "" {
+func verifyImageSignature(image string) error {
+	if image == "" {
 		return nil
 	}
-	imageWithDigest, err := replaceTagWithDigest(image, commit)
-	if err != nil {
-		return fmt.Errorf("failed to replace tag with digest: %v", err)
-	}
-	cmd := exec.Command("cosign", "verify", imageWithDigest, "--key", "/cosign-key/cosign.pub")
+	cmd := exec.Command("cosign", "verify", image, "--key", "/cosign-key/cosign.pub")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("cosign verification failed for image %s: %s, output: %s", imageWithDigest, err, string(output))
+		return fmt.Errorf("cosign verification failed for image %s: %s, output: %s", image, err, string(output))
 	}
 	return nil
-}
-
-// replaceTagWithDigest replaces the tag in an image URL with the given digest SHA.
-func replaceTagWithDigest(imageURL, commitSHA string) (string, error) {
-	if !strings.Contains(imageURL, ":") {
-		return "", fmt.Errorf("invalid image URL format: no tag or digest found")
-	}
-	imageWithoutTag := strings.Split(imageURL, ":")[0]
-
-	// image URL has digest
-	if strings.Contains(imageURL, "@sha256:") {
-		URLWithSha := fmt.Sprintf("%s:%s", imageWithoutTag, commitSHA)
-		klog.Infof("Replaced existing digest with new digest: %s", URLWithSha)
-		return URLWithSha, nil
-	}
-
-	// image URL has tag
-	URLWithSha := fmt.Sprintf("%s@sha256:%s", imageWithoutTag, commitSHA)
-	return URLWithSha, nil
 }
 
 // authenticateToImageRegistry authenticates to the image registry using the
@@ -120,17 +81,37 @@ func authenticateToImageRegistry() error {
 	cmd := exec.Command("cosign", "login", registry, "-u", "oauth2accesstoken", "-p", registryToken)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("gcloud authenticateToImageRegistry ar failed: %s, output: %s", err, string(output))
+		return fmt.Errorf("gcloud authenticate to image registry %s failed: %s, output: %s", registry, err, string(output))
 	}
 	klog.Infof("result: %s, authorization done", string(output))
 	authorized = true
 	return nil
 }
 
+// getAnnotationByKey extracts a specific annotation by key from the raw JSON data.
+func getAnnotationByKey(raw []byte, key string) (string, error) {
+	var metadata map[string]interface{}
+	if err := json.Unmarshal(raw, &metadata); err != nil {
+		return "", err
+	}
+
+	annotations, ok := metadata["metadata"].(map[string]interface{})["annotations"].(map[string]interface{})
+	if !ok {
+		klog.Infof("No annotations found in the object")
+		return "", nil
+	}
+
+	if value, found := annotations[key]; found {
+		return fmt.Sprintf("%v", value), nil
+	}
+
+	return "", nil
+}
+
 // handleWebhook is the main function that handles the admission control webhook requests.
 // It reads the request body, extracts the old and new annotations, and compares them to
-// determine if the image URL or digest SHA has changed. If a change is detected, it
-// validates the new image with given url and digest SHA.
+// determine if the image URL has changed. If a change is detected, it
+// validates the new image with given url.
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -146,45 +127,49 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract old and new annotations from the admission review
-	oldAnnotations, err := getAnnotations(admissionReview.Request.OldObject.Raw)
-	if err != nil {
-		klog.Errorf("Failed to extract old annotations: %v", err)
-		http.Error(w, "Failed to extract old annotations", http.StatusBadRequest)
-	}
-
-	newAnnotations, err := getAnnotations(admissionReview.Request.Object.Raw)
-	if err != nil {
-		klog.Errorf("Failed to extract new annotations: %v", err)
-		http.Error(w, "Failed to extract new annotations", http.StatusBadRequest)
+	if err := authenticateToImageRegistry(); err != nil {
+		klog.Errorf("Failed to authenticate Cosign to the source image registry: %v", err)
+		http.Error(w, "Failed to authenticate Cosign to the source image registry: %v", http.StatusInternalServerError)
 	}
 
 	response := &admissionv1.AdmissionResponse{
 		UID: admissionReview.Request.UID,
 	}
 
-	// Compare the source annotations and check for changes
-	if newAnnotations[SourceURL] != oldAnnotations[SourceURL] ||
-		newAnnotations[SourceCommit] != oldAnnotations[SourceCommit] {
-		klog.Info("Detected annotation changes")
-		if err := authenticateToImageRegistry(); err != nil {
-			klog.Errorf("Failed to authorize Cosign %v", err)
-			response.Allowed = false
-			response.Result = &metav1.Status{
-				Message: fmt.Sprintf("Failed to authorize Cosign: %v", err),
-			}
+	oldImage, err := getAnnotationByKey(admissionReview.Request.OldObject.Raw, imageToSyncAnnotation)
+	if err != nil {
+		klog.Errorf("Failed to extract old annotations: %v", err)
+		response.Result = &metav1.Status{
+			Message: fmt.Sprintf("Failed to extract old annotations: %v", err),
 		}
-		// Validate image using cosign
-		if err := validateImage(newAnnotations[SourceURL], newAnnotations[SourceCommit]); err != nil {
-			klog.Errorf("Image validation failed: %v", err)
+		response.Allowed = false
+		return
+	}
+
+	newImage, err := getAnnotationByKey(admissionReview.Request.Object.Raw, imageToSyncAnnotation)
+	if err != nil {
+		klog.Errorf("Failed to extract new annotations: %v", err)
+		response.Result = &metav1.Status{
+			Message: fmt.Sprintf("Failed to extract new annotations: %v", err),
+		}
+		response.Allowed = false
+		return
+	}
+
+	if newImage != oldImage {
+		klog.Infof("Annotation %s changed from %s to %s", imageToSyncAnnotation, oldImage, newImage)
+		if err := verifyImageSignature(newImage); err != nil {
+			klog.Errorf("Image verification failed: %v", err)
 			response.Allowed = false
 			response.Result = &metav1.Status{
-				Message: fmt.Sprintf("Failed to validate image: %v", err),
+				Message: fmt.Sprintf("Image verification failed: %v", err),
 			}
 		} else {
-			klog.Infof("Successfully verified image %s, SHA %s", newAnnotations[SourceURL], newAnnotations[SourceCommit])
+			klog.Infof("Image verification successful for %s", newImage)
 			response.Allowed = true
 		}
+	} else {
+		response.Allowed = true
 	}
 
 	admissionReview.Response = response

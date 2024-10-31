@@ -15,46 +15,26 @@
 # Build stage
 FROM golang:1.23 as builder
 
-WORKDIR /app
+WORKDIR /
 COPY . .
 
-RUN go mod init presync-webhook-server || true && go mod tidy
-
-# Set GOPATH since it is not already set.
+# Set GOPATH
 ENV GOPATH=/go
-
-# Update PATH with go specific locations.
-ENV PATH "/go/bin:/usr/local/go/bin:$PATH"
 
 # Build the webhook server binary for Linux
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o webhook-server main.go
 
-# Install Cosign
-RUN wget -O cosign https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 && \
-    chmod +x cosign && \
-    mv cosign /usr/local/bin/cosign
+RUN CGO_ENABLED=0 go install github.com/sigstore/cosign/v2/cmd/cosign@v2.4.1
+
+RUN chmod +x /go/bin/cosign
 
 # Final stage
-FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:449.0.0-slim
+FROM gcr.io/distroless/static:nonroot
+
 WORKDIR /
 
-RUN apt-get update && apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+# Copy the built binary from the builder stage
+COPY --from=builder /webhook-server /webhook-server
+COPY --from=builder /go/bin/cosign /usr/local/bin/cosign
 
-# Set GOPATH since it is not already set.
-ENV GOPATH=/go
-
-# Update PATH with go specific locations.
-ENV PATH "/go/bin:/usr/local/go/bin:$PATH"
-
-# Copy the built webhook server binary
-COPY --from=builder /app/webhook-server /webhook-server
-
-# Copy the cosign and crane binaries
-COPY --from=builder /usr/local/bin/cosign /usr/local/bin/cosign
-
-# Ensure that the binaries have executable permissions
-RUN chmod +x /webhook-server
-RUN chmod +x /usr/local/bin/cosign
-
-# Command to run the webhook server
 CMD ["/webhook-server"]

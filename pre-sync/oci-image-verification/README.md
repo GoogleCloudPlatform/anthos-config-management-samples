@@ -1,12 +1,18 @@
 # Sample OCI Image Signature Verification with Config Sync
 
-This sample demonstrates how to verify the image signature of the OCI image that Config Sync is syncing.
+This sample demonstrates how to verify the signature of an OCI image that Config
+Sync is managing. The webhook monitors the configsync.gke.io/image-to-sync
+annotation on specified RootSync or RepoSync resources, which contains the full
+URL of the image to sync. By comparing the previous and updated values in the
+admission review request, the webhook can detect if a new image has been
+introduced, triggering an image verification process.
 
-For one way of authenticating the image registry, this sample uses the `cosign login` command with a token stored in a Kubernetes secret. Token can be expired, user could also build a custom authentication mechanism.
+For one way of authenticating Cosign client to the source image registry, this
+sample uses the `cosign login` command with a token stored in a Kubernetes
+secret. Token can be expired, user could also build a custom authentication mechanism.
 
-This sample is implemented in a generic way so that it could be hooked into different types of image verification tools. It is implemented as a Kubernetes admission webhook server, which watches the RootSync or RepoSync resources and validates the image URL and digest SHA in the annotation metadata.
-
-For another example tailored for Cosign integration, please see the example in the Config Sync repository.
+For another example tailored for Cosign library integration, please see the
+[example] in the Config Sync repository.
 
 ## Prerequisites
 
@@ -16,96 +22,101 @@ Environment: GKE cluster, Google Cloud Artifact Registry repo
 
 ## Build the signature verification server
 
-```bash
+```shell
 docker build -t <IMAGE_REGISTRY_URL>:latest . && docker push <IMAGE_REGISTRY_URL>:latest
 ```
 
 ## Create a Namespace and Kubernetes Service Account
 
-This is intended to group everything under the same namespace. In this example, `oci-webhook` is used as a reference:
+This is intended to group everything under the same namespace. In this example, `signature-verification` is used as a reference:
 
-```bash
-kubectl create ns oci-webhook
+```shell
+kubectl create ns signature-verification
 ```
 
 It is recommended to create the Kubernetes Service Account in advance to facilitate authentication in subsequent steps:
 
-```bash
-kubectl create sa signature-verification-sa -n oci-webhook
+```shell
+kubectl create sa signature-verification-sa -n signature-verification
 ```
 
 ## Authentications
 
-### Cosign keys
-
-Generate cosign.key and cosign.pub pairs:
-
-```bash
-cosign generate-key-pair
-```
-
-Create on cluster secret:
-
-```bash
-kubectl create secret generic cosign-key --from-file=cosign.pub -n oci-webhook
-```
-
-### OpenSSL keys
-
-Generate tls.crt and tls.key:
-
-```bash
-openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
--keyout tls.key \
--out tls.crt \
--days 356 \
--subj "/CN=signature-verification-service.oci-webhook.svc"  \
--addext "subjectAltName = DNS:signature-verification-service,DNS:signature-verification-service.oci-webhook.svc,DNS:signature-verification-service.oci-webhook"
-```
-
-Create on cluster secret:
-
-```bash
-kubectl create secret tls webhook-tls --cert=tls.crt --key=tls.key -n oci-webhook
-```
-
 ### Image registry authentication
 
-In this example, we use a token to authorize Cosign with the Docker registry. The token is retrieved from a Kubernetes secret within the cluster, and the server will fail to start if the token is not present.
+In this example, a token is used to authorize Cosign with the Docker registry.
+The token is stored in a Kubernetes secret within the cluster, and the server
+will not start if the token is missing. Note that the token has an expiration
+time, so for production environments, a more robust authentication method for
+the image verification client is recommended. For an example using the Cosign
+library with built-in authentication, see this [example].
 
-```bash
+```shell
 TOKEN=$(gcloud auth print-access-token)
 
 kubectl create secret generic registry-token \
-  --namespace oci-webhook \
+  --namespace signature-verification \
   --from-literal=token=$TOKEN
 ```
 
 ### IAM setup for the signature verificiation server
 
 - Give the Google service account permission to read images from Artifact Registry
-```bash
-gcloud artifacts repositories add-iam-policy-binding <AR_REPO> \
+```shell
+gcloud artifacts repositories add-iam-policy-binding <SOURCE_IMAGE_AR_REPO> \
    --location=<LOCATION> \
    --member=serviceAccount:<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com \
    --role=roles/artifactregistry.reader \
    --project=<PROJECT_ID>
 ```
 - Create an IAM policy binding between the Kubernetes service account and Google service account
-```bash
+```shell
 gcloud iam service-accounts add-iam-policy-binding \
    --role roles/iam.workloadIdentityUser \
-   --member "serviceAccount:<PROJECT_ID>.svc.id.goog[oci-webhook/signature-verification-sa]" \
+   --member "serviceAccount:<PROJECT_ID>.svc.id.goog[signature-verification/signature-verification-sa]" \
    <GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com \
    --project=<PROJECT_ID>
 ```
 - Annotate the Kubernetes ServiceAccount so that GKE sees the link between the service accounts
-```bash
-kubectl annotate serviceaccount signature-verification-sa -n oci-webhook \
+```shell
+kubectl annotate serviceaccount signature-verification-sa -n signature-verification \
 "iam.gke.io/gcp-service-account=<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com"
 ```
 
 See [Authentication to Google Cloud APIs from GKE workloads] for more details.
+
+### Cosign keys
+
+Generate cosign.key and cosign.pub pairs:
+
+```shell
+cosign generate-key-pair
+```
+
+Create on cluster secret:
+
+```shell
+kubectl create secret generic cosign-key --from-file=cosign.pub -n signature-verification
+```
+
+### Signature Verification Server Authentication
+
+Generate tls.crt and tls.key:
+
+```shell
+openssl req -nodes -x509 -sha256 -newkey rsa:4096 \
+-keyout tls.key \
+-out tls.crt \
+-days 356 \
+-subj "/CN=signature-verification-service.signature-verification.svc"  \
+-addext "subjectAltName = DNS:signature-verification-service,DNS:signature-verification-service.signature-verification.svc,DNS:signature-verification-service.signature-verification"
+```
+
+Create on cluster secret:
+
+```shell
+kubectl create secret tls webhook-tls --cert=tls.crt --key=tls.key -n signature-verification
+```
 
 ## Deploy the signature verification server and ValidatingWebhookConfiguration
 
@@ -113,18 +124,18 @@ See [Authentication to Google Cloud APIs from GKE workloads] for more details.
 
 Replace the <PROJECT_ID> with the project name where signature verification server image is hosted.
 
-Replace the <SOURCE_OCI_IMAGE_REGISTRY> with the docker registry of the source OCI image.
+Replace the <SOURCE_OCI_IMAGE_REGISTRY> with the registry name of the source OCI image.
 
 Replace the <SIGNATURE_VERIFICATION_SERVER_IMAGE_URL> with the URL of the signature verification server image.
 
 #### In signature-verification-validatingwebhookconfiguration.yaml file
 
-Replace the <CA_BUNDLE> with the content of tls.crt `cat tls.crt | base64 -w 0`.
+Replace <CA_BUNDLE> with the base64-encoded content of tls.crt: `cat tls.crt | base64 -w 0`.
 
 #### Apply the manifests to cluster.
 
-```bash
-kubectl apply -f signature-verification-deployment.yaml -n oci-webhook
+```shell
+kubectl apply -f signature-verification-deployment.yaml -n signature-verification
 kubectl apply -f signature-verification-validatingwebhookconfiguration.yaml
 ```
 
@@ -132,7 +143,7 @@ kubectl apply -f signature-verification-validatingwebhookconfiguration.yaml
 
 - [Install Config Sync], configure it to [sync from an unsigned OCI image].
 
-- Look for errors in signature verification server log `kubectl logs deployment signature-verification-server -n oci-webhook`:
+- Look for errors in signature verification server log `kubectl logs deployment signature-verification-server -n signature-verification`:
 
 ```angular2html
 main.go:69: error during command execution: no signatures found
@@ -147,24 +158,25 @@ main.go:69: error during command execution: no signatures found
 
 - Sign the same source image using Cosign
 
-```bash
+```shell
 cosign sign <IMAGE> --key cosign.key
 ```
 
 - Once the image is correctly signed, the signature verification server should successfully verify it. This will result in:
 
   - The Config Sync source error being cleared.
-  - The `configsync.gke.io/source-commit` and `configsync.gke.io/source-url` annotations on the RootSync object being updated to reflect the new signed image.
+  - The `configsync.gke.io/image-to-sync` annotation on the RootSync object being updated to reflect the new signed image.
 
 - You can verify this by inspecting the RootSync object
-```bash
+```shell
 kubectl get rootsync <ROOT_SYNC_NAME> -n config-management-system -oyaml
 ```
 Or the RepoSync object
-```bash
+```shell
 kubectl get reposync <REPO_SYNC_NAME> -n <REPO_SYNC_NAMESPACE> -oyaml
 ```
 
+[example]: https://github.com/GoogleContainerTools/kpt-config-sync/tree/main/test/docker/presync-webhook-server
 [OpenSSL]: https://github.com/openssl/openssl
 [Cosign]: https://github.com/sigstore/cosign
 [Gcloud]: http://cloud/sdk/docs/install
