@@ -1,7 +1,7 @@
 # Sample OCI Image Signature Verification with Config Sync
 
 This sample demonstrates how to verify the signature of an OCI image that Config
-Sync is managing. The webhook monitors the configsync.gke.io/image-to-sync
+Sync is managing. The webhook monitors the `configsync.gke.io/image-to-sync`
 annotation on specified RootSync or RepoSync resources, which contains the full
 URL of the image to sync. By comparing the previous and updated values in the
 admission review request, the webhook can detect if a new image has been
@@ -44,27 +44,14 @@ verification client and registry.
 
 ### IAM setup for the signature verification server
 
-- Give the Google service account permission to read images from Artifact Registry
+- Give the KSA permission to read images from source Artifact Registry
 ```shell
 gcloud artifacts repositories add-iam-policy-binding <SOURCE_IMAGE_AR_REPO> \
-   --location=<LOCATION> \
-   --member=serviceAccount:<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com \
-   --role=roles/artifactregistry.reader \
-   --project=<PROJECT_ID>
-```
-- Create an IAM policy binding between the Kubernetes service account and Google service account
-```shell
-gcloud iam service-accounts add-iam-policy-binding \
-   --role roles/iam.workloadIdentityUser \
-   --member "serviceAccount:<PROJECT_ID>.svc.id.goog[signature-verification/signature-verification-sa]" \
-   <GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com \
-   --project=<PROJECT_ID>
-```
-- Annotate the Kubernetes ServiceAccount so that GKE sees the link between the service accounts
-```shell
-kubectl annotate serviceaccount signature-verification-sa -n signature-verification \
-"iam.gke.io/gcp-service-account=<GSA_NAME>@<PROJECT_ID>.iam.gserviceaccount.com"
-```
+  --location=<LOCATION> \
+  --member="serviceAccount:<PROJECT_ID>.svc.id.goog[signature-verification/signature-verification-sa]" \
+  --role=roles/artifactregistry.reader \
+  --project=peip-monitor
+````
 
 See [Authentication to Google Cloud APIs from GKE workloads] for more details.
 
@@ -126,15 +113,15 @@ kubectl apply -f signature-verification-validatingwebhookconfiguration.yaml
 
 - Look for errors in signature verification server log `kubectl logs deployment signature-verification-server -n signature-verification`:
 
-```angular2html
+```text
 main.go:69: error during command execution: no signatures found
 ```
 
-- Config Sync will also be reporting source error when running `nomos status`.
+- Config Sync will additionally report an `APIServerError` when `nomos status` is run.
 
-```angular2html
-Error:   KNV2002: admission webhook "imageverification.webhook.com" denied the request: Image validation failed: cosign verification failed: exit status 10, output: Error: no signatures found
-main.go:69: error during command execution: no signatures found
+```text
+Error:   KNV2002: failed to patch RootSync annotations: admission webhook "imageverification.webhook.com" denied the request: Image verification failed: image verification failed for <SOURCE_IMAGE_URL>@<DIGEST>: no signatures found
+Patch content: {"metadata":{"annotations":{"configsync.gke.io/image-to-sync":"<SOURCE_IMAGE_URL>"}}}
 ```
 
 - Sign the same source image using Cosign
