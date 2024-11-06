@@ -30,9 +30,6 @@ spec:
       - name: signature-verification-server
         command:
         - /signature-verification-server
-        args:
-        - --registry=<SOURCE_OCI_IMAGE_REGISTRY>
-        - --token-file=/var/run/secrets/token
         image: <SIGNATURE_VERIFICATION_SERVER_IMAGE_URL>
         imagePullPolicy: Always
         ports:
@@ -42,9 +39,6 @@ spec:
           mountPath: "/tls"
         - name: cosign-key
           mountPath: "/cosign-key"
-        - name: token
-          mountPath: "/var/run/secrets"
-          readOnly: true
       volumes:
       - name: cosign-key
         secret:
@@ -52,12 +46,6 @@ spec:
       - name: tls-certs
         secret:
           secretName: webhook-tls
-      - name: token
-        secret:
-          secretName: registry-token
-          items:
-          - key: token
-            path: token
 ---
 apiVersion: v1
 kind: Service

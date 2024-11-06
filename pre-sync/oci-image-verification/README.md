@@ -7,18 +7,11 @@ URL of the image to sync. By comparing the previous and updated values in the
 admission review request, the webhook can detect if a new image has been
 introduced, triggering an image verification process.
 
-For one way of authenticating Cosign client to the source image registry, this
-sample uses the `cosign login` command with a token stored in a Kubernetes
-secret. Token can be expired, user could also build a custom authentication mechanism.
-
-For another example tailored for Cosign library integration, please see the
-[example] in the Config Sync repository.
-
 ## Prerequisites
 
-CLI: [OpenSSL], [Cosign], [Gcloud], [Docker], [Kubectl], [Crane]
+CLI: [OpenSSL], [Cosign], [Docker], [Kubectl], [Crane]
 
-Environment: GKE cluster, Google Cloud Artifact Registry repo
+Environment: GKE cluster, Google Cloud Artifact Registry.
 
 ## Build the signature verification server
 
@@ -44,22 +37,12 @@ kubectl create sa signature-verification-sa -n signature-verification
 
 ### Image registry authentication
 
-In this example, a token is used to authorize Cosign with the Docker registry.
-The token is stored in a Kubernetes secret within the cluster, and the server
-will not start if the token is missing. Note that the token has an expiration
-time, so for production environments, a more robust authentication method for
-the image verification client is recommended. For an example using the Cosign
-library with built-in authentication, see this [example].
+This example demonstrates how to authenticate the Cosign client within the
+admission webhook using built-in Google authentication to access the source
+image repository. You can adapt this authentication method to suit your specific
+verification client and registry.
 
-```shell
-TOKEN=$(gcloud auth print-access-token)
-
-kubectl create secret generic registry-token \
-  --namespace signature-verification \
-  --from-literal=token=$TOKEN
-```
-
-### IAM setup for the signature verificiation server
+### IAM setup for the signature verification server
 
 - Give the Google service account permission to read images from Artifact Registry
 ```shell
@@ -124,8 +107,6 @@ kubectl create secret tls webhook-tls --cert=tls.crt --key=tls.key -n signature-
 
 Replace the <PROJECT_ID> with the project name where signature verification server image is hosted.
 
-Replace the <SOURCE_OCI_IMAGE_REGISTRY> with the registry name of the source OCI image.
-
 Replace the <SIGNATURE_VERIFICATION_SERVER_IMAGE_URL> with the URL of the signature verification server image.
 
 #### In signature-verification-validatingwebhookconfiguration.yaml file
@@ -152,7 +133,7 @@ main.go:69: error during command execution: no signatures found
 - Config Sync will also be reporting source error when running `nomos status`.
 
 ```angular2html
-Error:   KNV2004: admission webhook "imageverification.webhook.com" denied the request: Image validation failed: cosign verification failed: exit status 10, output: Error: no signatures found
+Error:   KNV2002: admission webhook "imageverification.webhook.com" denied the request: Image validation failed: cosign verification failed: exit status 10, output: Error: no signatures found
 main.go:69: error during command execution: no signatures found
 ```
 

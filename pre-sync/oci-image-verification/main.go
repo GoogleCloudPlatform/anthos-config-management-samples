@@ -1,92 +1,27 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"os/exec"
-	"strings"
-	"sync"
 
+	"github.com/google/go-containerregistry/pkg/name"
+	"github.com/google/go-containerregistry/pkg/v1/google"
+	"github.com/google/go-containerregistry/pkg/v1/remote"
+	"github.com/sigstore/cosign/v2/pkg/cosign"
+	ociremote "github.com/sigstore/cosign/v2/pkg/oci/remote"
+	"github.com/sigstore/cosign/v2/pkg/signature"
 	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog/v2"
+	"k8s.io/klog"
 )
 
-// Constants for Config Sync annotation names. This annotation is added to
-// RootSync or RepoSync resources to hold the URL of the image to sync. By
-// comparing the old and new values in the admission review request, we can
-// detect if a new image has been introduced, triggering an image verification.
 const (
-	imageToSyncAnnotation = "configsync.gke.io/image-to-sync"
+	imageToSync   = "configsync.gke.io/image-to-sync"
+	publicKeyPath = "/cosign-key/cosign.pub"
 )
-
-// Global variables for configuration and state
-var (
-	registryToken string
-	registry      string
-	tokenFile     string
-	authorized    bool
-	authMutex     sync.Mutex // Add a mutex for thread safety
-)
-
-// init initializes the application by parsing command-line flags
-// and reading the registry token from a file.
-func init() {
-	flag.StringVar(&registry, "registry", "us.pkg.dev", "URL of the artifact registry")
-	flag.StringVar(&tokenFile, "token-file", "/var/run/secrets/token", "Path to the file containing the registry token")
-	flag.Parse()
-
-	// Read the token from the mounted secret file
-	content, err := os.ReadFile(tokenFile)
-	if err != nil {
-		klog.Errorf("Error reading token file: %v", err)
-	}
-	registryToken = strings.TrimSpace(string(content))
-
-	if registryToken == "" {
-		klog.Errorf("Registry token is required. Ensure the token file is properly mounted and contains the token.")
-	}
-}
-
-// validateImage verifies the image using Cosign CLI and the public key in the
-// cosign-key secret.
-func verifyImageSignature(image string) error {
-	if image == "" {
-		return nil
-	}
-	cmd := exec.Command("cosign", "verify", image, "--key", "/cosign-key/cosign.pub")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("cosign verification failed for image %s: %s, output: %s", image, err, string(output))
-	}
-	return nil
-}
-
-// authenticateToImageRegistry authenticates to the image registry using the
-// provided token. This is done by calling the `cosign login` command. The authentication
-// method just demonstrates one way of solving this issue. User could also use
-// username + password.
-func authenticateToImageRegistry() error {
-	authMutex.Lock()         // Acquire the lock before accessing shared resources
-	defer authMutex.Unlock() // Release the lock when the function exits
-
-	if authorized {
-		return nil
-	}
-
-	cmd := exec.Command("cosign", "login", registry, "-u", "oauth2accesstoken", "-p", registryToken)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("gcloud authenticate to image registry %s failed: %s, output: %s", registry, err, string(output))
-	}
-	klog.Infof("result: %s, authorization done", string(output))
-	authorized = true
-	return nil
-}
 
 // getAnnotationByKey extracts a specific annotation by key from the raw JSON data.
 func getAnnotationByKey(raw []byte, key string) (string, error) {
@@ -105,13 +40,44 @@ func getAnnotationByKey(raw []byte, key string) (string, error) {
 		return fmt.Sprintf("%v", value), nil
 	}
 
+	klog.Infof("Annotation %s not found in the object", key)
 	return "", nil
 }
 
-// handleWebhook is the main function that handles the admission control webhook requests.
-// It reads the request body, extracts the old and new annotations, and compares them to
-// determine if the image URL has changed. If a change is detected, it
-// validates the new image with given url.
+func verifyImageSignature(ctx context.Context, image string) error {
+	if image == "" {
+		return nil
+	}
+
+	pubKey, err := signature.LoadPublicKey(ctx, publicKeyPath)
+	if err != nil {
+		return fmt.Errorf("error loading public key: %v", err)
+	}
+
+	googleAuth, err := google.NewEnvAuthenticator(ctx)
+	if err != nil {
+		return err
+	}
+
+	opts := &cosign.CheckOpts{
+		RegistryClientOpts: []ociremote.Option{ociremote.WithRemoteOptions(remote.WithAuth(googleAuth))},
+		SigVerifier:        pubKey,
+		IgnoreTlog:         true,
+	}
+
+	ref, err := name.ParseReference(image)
+	if err != nil {
+		return fmt.Errorf("failed to parse image reference: %v", err)
+	}
+	_, _, err = cosign.VerifyImageSignatures(ctx, ref, opts)
+	if err != nil {
+		return fmt.Errorf("image verification failed for %s: %v", image, err)
+	}
+
+	klog.Infof("Image %s verified successfully", image)
+	return nil
+}
+
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -127,16 +93,11 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := authenticateToImageRegistry(); err != nil {
-		klog.Errorf("Failed to authenticate Cosign to the source image registry: %v", err)
-		http.Error(w, "Failed to authenticate Cosign to the source image registry: %v", http.StatusInternalServerError)
-	}
-
 	response := &admissionv1.AdmissionResponse{
 		UID: admissionReview.Request.UID,
 	}
 
-	oldImage, err := getAnnotationByKey(admissionReview.Request.OldObject.Raw, imageToSyncAnnotation)
+	oldImage, err := getAnnotationByKey(admissionReview.Request.OldObject.Raw, imageToSync)
 	if err != nil {
 		klog.Errorf("Failed to extract old annotations: %v", err)
 		response.Result = &metav1.Status{
@@ -146,7 +107,7 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newImage, err := getAnnotationByKey(admissionReview.Request.Object.Raw, imageToSyncAnnotation)
+	newImage, err := getAnnotationByKey(admissionReview.Request.Object.Raw, imageToSync)
 	if err != nil {
 		klog.Errorf("Failed to extract new annotations: %v", err)
 		response.Result = &metav1.Status{
@@ -157,8 +118,8 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if newImage != oldImage {
-		klog.Infof("Annotation %s changed from %s to %s", imageToSyncAnnotation, oldImage, newImage)
-		if err := verifyImageSignature(newImage); err != nil {
+		klog.Infof("Annotation %s changed from %s to %s", imageToSync, oldImage, newImage)
+		if err := verifyImageSignature(r.Context(), newImage); err != nil {
 			klog.Errorf("Image verification failed: %v", err)
 			response.Allowed = false
 			response.Result = &metav1.Status{
