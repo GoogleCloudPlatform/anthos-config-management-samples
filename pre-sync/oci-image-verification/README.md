@@ -1,11 +1,12 @@
 # Sample OCI Image Signature Verification with Config Sync
 
 This sample demonstrates how to verify the signature of an OCI image that Config
-Sync is managing. The webhook monitors the `configsync.gke.io/image-to-sync`
-annotation on specified RootSync or RepoSync resources, which contains the full
-URL of the image to sync. By comparing the previous and updated values in the
-admission review request, the webhook can detect if a new image has been
-introduced, triggering an image verification process.
+Sync is managing using [Cosign]. It leverages a ValidatingWebhookConfiguration
+object, along with a validating webhook server to intercept update requests for
+RootSync and RepoSync objects. Config Sync updates the `configsync.gke.io/image-to-sync`
+annotation of RootSync and RepoSync objects after it fetches a new image digest
+successfully. The validating webhook server compares the values between the old
+annotation and the new annotation, and runs the validation when a change is detected.
 
 ## Prerequisites
 
@@ -50,7 +51,7 @@ gcloud artifacts repositories add-iam-policy-binding <SOURCE_IMAGE_AR_REPO> \
   --location=<LOCATION> \
   --member="serviceAccount:<PROJECT_ID>.svc.id.goog[signature-verification/signature-verification-sa]" \
   --role=roles/artifactregistry.reader \
-  --project=peip-monitor
+  --project=<PROJECT_ID>
 ````
 
 See [Authentication to Google Cloud APIs from GKE workloads] for more details.
@@ -120,14 +121,14 @@ main.go:69: error during command execution: no signatures found
 - Config Sync will additionally report an `APIServerError` when `nomos status` is run.
 
 ```text
-Error:   KNV2002: failed to patch RootSync annotations: admission webhook "imageverification.webhook.com" denied the request: Image verification failed: image verification failed for <SOURCE_IMAGE_URL>@<DIGEST>: no signatures found
+Error:   KNV2002: failed to patch RootSync annotations: admission webhook "imageverification.webhook.com" denied the request: Image verification failed: image verification failed for <SOURCE_IMAGE_URL>: no signatures found
 Patch content: {"metadata":{"annotations":{"configsync.gke.io/image-to-sync":"<SOURCE_IMAGE_URL>"}}}
 ```
 
 - Sign the same source image using Cosign
 
 ```shell
-cosign sign <IMAGE> --key cosign.key
+cosign sign <SOURCE_IMAGE_URL> --key cosign.key
 ```
 
 - Once the image is correctly signed, the signature verification server should successfully verify it. This will result in:
@@ -144,6 +145,7 @@ Or the RepoSync object
 kubectl get reposync <REPO_SYNC_NAME> -n <REPO_SYNC_NAMESPACE> -oyaml
 ```
 
+[Cosign]: https://github.com/sigstore/cosign
 [example]: https://github.com/GoogleContainerTools/kpt-config-sync/tree/main/test/docker/presync-webhook-server
 [OpenSSL]: https://github.com/openssl/openssl
 [Cosign]: https://github.com/sigstore/cosign

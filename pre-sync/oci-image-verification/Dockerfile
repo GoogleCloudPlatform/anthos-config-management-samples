@@ -24,10 +24,6 @@ ENV GOPATH=/go
 # Build the webhook server binary for Linux
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o webhook-server main.go
 
-RUN CGO_ENABLED=0 go install github.com/sigstore/cosign/v2/cmd/cosign@v2.4.1
-
-RUN chmod +x /go/bin/cosign
-
 # Final stage
 FROM gcr.io/distroless/static:nonroot
 
@@ -35,6 +31,5 @@ WORKDIR /
 
 # Copy the built binary from the builder stage
 COPY --from=builder /webhook-server /webhook-server
-COPY --from=builder /go/bin/cosign /usr/local/bin/cosign
 
 CMD ["/webhook-server"]
