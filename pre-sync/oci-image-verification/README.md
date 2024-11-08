@@ -91,13 +91,11 @@ kubectl create secret tls webhook-tls --cert=tls.crt --key=tls.key -n signature-
 
 ## Deploy the signature verification server and ValidatingWebhookConfiguration
 
-#### In signature-verification-deployment.yaml file
-
-Replace the <PROJECT_ID> with the project name where signature verification server image is hosted.
+#### In [signature-verification-deployment.yaml] file
 
 Replace the <SIGNATURE_VERIFICATION_SERVER_IMAGE_URL> with the URL of the signature verification server image.
 
-#### In signature-verification-validatingwebhookconfiguration.yaml file
+#### In [signature-verification-validatingwebhookconfiguration.yaml] file
 
 Replace <CA_BUNDLE> with the base64-encoded content of tls.crt: `cat tls.crt | base64 -w 0`.
 
@@ -136,12 +134,9 @@ cosign sign <SOURCE_IMAGE_URL> --key cosign.key
   - The Config Sync source error being cleared.
   - The `configsync.gke.io/image-to-sync` annotation on the RootSync object being updated to reflect the new signed image.
 
-- You can verify this by inspecting the RootSync object
+- You can verify this by inspecting the RootSync object or the RepoSync object
 ```shell
 kubectl get rootsync <ROOT_SYNC_NAME> -n config-management-system -oyaml
-```
-Or the RepoSync object
-```shell
 kubectl get reposync <REPO_SYNC_NAME> -n <REPO_SYNC_NAMESPACE> -oyaml
 ```
 
@@ -154,5 +149,7 @@ kubectl get reposync <REPO_SYNC_NAME> -n <REPO_SYNC_NAMESPACE> -oyaml
 [Kubectl]: https://kubernetes.io/docs/tasks/tools/
 [Crane]: https://github.com/google/go-containerregistry/tree/main/cmd/crane
 [Authentication to Google Cloud APIs from GKE workloads]: http://cloud/kubernetes-engine/docs/how-to/workload-identity
+[signature-verification-deployment.yaml]: ./signature-verification-deployment.yaml
+[signature-verification-validatingwebhookconfiguration.yaml]: ./signature-verification-validatingwebhookconfiguration.yaml
 [Install Config Sync]: http://cloud/kubernetes-engine/enterprise/config-sync/docs/how-to/installing-config-sync
 [sync from an unsigned OCI image]: http://cloud/kubernetes-engine/enterprise/config-sync/docs/how-to/sync-oci-artifacts-from-artifact-registry
