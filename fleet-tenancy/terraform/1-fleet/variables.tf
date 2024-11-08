@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
+# [START anthosconfig_fleet_variables]
 variable "project" {
   type = string
-  description = "Name of GCP project"
+  description = "GCP project ID"
 }
-
-variable "gcp_sa_id" {
-  type = string
-  description = "The account id of the GCP service account"
-}
-
-variable "gcp_sa_display_name" {
-  type = string
-  description = "The display name of the GCP service account"
-}
-
-variable "gcp_sa_description" {
-  type = string
-  description = "The description of the GCP service account"
-}
+# [END anthosconfig_fleet_variables]

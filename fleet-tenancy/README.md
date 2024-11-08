@@ -28,49 +28,59 @@ example: [fleet-tenancy/config](config).
    configure resources.
 2. The source of truth is created. If not, use the public [example](config)
    as a quickstart.
-3. A fleet host project already exists.
-4. Use ACM version 1.17.0 or later.
+3. Create or select a Google Cloud project.
+4. Required roles are:
+   * Managing fleet resources: Fleet Admin (formerly GKE Hub Admin)
+     (`roles/gkehub.admin`)
+   * Creating GKE clusters: Kubernetes Engine Cluster Admin
+     (`roles/container.clusterAdmin`)
+   * Enabling GKE Enterprise: Service Usage Admin
+     (`roles/serviceusage.serviceUsageAdmin`)
+5. To run the Terraform commands in this guide in your local environment, run
+   the following command to acquire new user credentials:
+   ```shell
+   gcloud auth application-default login
+   ```
 
 ## 1. [Set up your fleet]
 
 This step includes the following operations:
 - Create a Fleet in a project
 - Enable API services
-- Create a service account and grant the service account a list of IAM roles.
 
 Terraform configs: [link](terraform/1-fleet).
 
 Apply the resources via Terraform: [README.md](terraform/1-fleet/README.md).
 
-Notes:
-- You may need to run this command multiple times to get all resources created
-  successfully due to internal dependencies.
-- After the step, you need to create and download the service account’s private
-  key JSON file.
-
 ## 2. Configure fleet-level defaults for Config Sync
 
 This step configures fleet-level defaults to install Config Sync on entire
-fleet, which syncs [fleet tenancy configs](config) to all clusters in the fleet.
+fleet, which syncs Kubernetes manifests from the [source repository](config)
+to all clusters in the fleet.
 
-Fleet tenancy configs include the following:
-- Two NamespaceSelector objects with the [dynamic mode], one for the `frontend`
-  team scope, and the other one for the `backend` team scope. In the dynamic
-  mode, NamespaceSelector selects both statically-declared Namespaces and those
+The source repository includes the following:
+- Three `NamespaceSelector` objects with the [dynamic mode], one for the `frontend`
+  team scope, and the other two for the `backend` team scope. In the dynamic
+  mode, `NamespaceSelector` selects both statically-declared Namespaces and those
   dynamically present on the clusters with matching labels. For more details,
   see [Limit which namespaces a config affects].
 - One `ResourceQuota` object that is synced to all [fleet namespaces] of the
   team scope `frontend`.
 - One `NetworkPolicy` object that is synced to all fleet namespaces of the team
   scope `backend`.
+- One [`RepoSync`](https://cloud.google.com/anthos-config-management/docs/reference/rootsync-reposync-fields)
+  and `RoleBinding` objects that are synced to the `bookstore` fleet namespace of
+  the team scope `backend`. `RepoSync` is used to delegate resource management
+  within a specific namespace. This `RepoSync` syncs Kubernetes manifests from
+  the [backend team's source repository](teams/backend/bookstore).
 
 Terraform configs: [link](terraform/2-fleet-default-config).
 
 Apply the resources via Terraform: [README.md](terraform/2-fleet-default-config/README.md).
 
-Notes:
-- The fleet-level defaults must be created before clusters are registered to the
-  fleet. The default config won’t apply to previously registered clusters.
+Note: You should create the fleet-level default configuration before creating any
+additional clusters. These settings are only automatically applied to new
+clusters created in the fleet, not existing clusters.
 
 ## 3. Create and register clusters
 
@@ -118,11 +128,10 @@ Fleet resources are dynamically synced to fleet Namespaces in team scopes.
 - Delete Fleet Scopes and Namespaces
 - Unregister and delete clusters
 - Delete Fleet default member config
-- Delete the service account and disable services
+- Disable services
 
 To clean up, you can iterate through each terraform config directory in the
-reverse order and run the `terraform destroy` command with your GCP project and
-service account key file.
+reverse order and run the `terraform destroy` command with your GCP project.
 
 [Fleet team management]: https://cloud.google.com/anthos/fleet-management/docs/team-management
 [Config Sync]: https://cloud.google.com/anthos-config-management/docs/config-sync-overview

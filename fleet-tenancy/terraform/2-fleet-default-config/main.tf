@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
+# [START anthosconfig_fleet_default_config_example]
 terraform {
   required_providers {
-    google-beta = {
-      source = "hashicorp/google-beta"
-      version = "5.16.0"
+    google = {
+      source = "hashicorp/google"
+      version = ">= 5.16.0"
     }
   }
 }
 
-provider "google-beta" {
-  credentials = var.sa_key_file
+provider "google" {
   project = var.project
 }
 
 resource "google_gke_hub_feature" "feature" {
   name = "configmanagement"
   location = "global"
-  provider = google-beta
+  provider = google
   fleet_default_member_config {
     configmanagement {
-      # version = "1.17.0" # Use the default latest version instead of 1.17.0 because the version field is mislocated: b/314995011
+      # version = "1.17.0" # Use the default latest version; if specifying a version, it must be at or after 1.17.0
       config_sync {
         source_format = "unstructured"
         git {
@@ -47,3 +47,4 @@ resource "google_gke_hub_feature" "feature" {
     }
   }
 }
+# [END anthosconfig_fleet_default_config_example] 

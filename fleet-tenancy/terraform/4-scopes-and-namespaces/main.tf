@@ -16,31 +16,31 @@
 
 terraform {
   required_providers {
-    google-beta = {
-      source = "hashicorp/google-beta"
-      version = "5.16.0"
+    google = {
+      source = "hashicorp/google"
+      version = ">= 5.16.0"
     }
   }
 }
 
-provider "google-beta" {
-  credentials = var.sa_key_file
+provider "google" {
   project = var.project
 }
 
-# Fleet Scopes
+# [START anthosconfig_fleet_scopes]
 resource "google_gke_hub_scope" "scope" {
-  provider = google-beta
+  provider = google
   for_each = toset([
     "backend",
     "frontend",
   ])
   scope_id = each.value
 }
+# [END anthosconfig_fleet_scopes]
 
-# Fleet Membership Bindings
+# [START anthosconfig_fleet_membership_bindings]
 resource "google_gke_hub_membership_binding" "membership-binding" {
-  provider = google-beta
+  provider = google
   for_each = {
     us-east-backend = {
       membership_binding_id = "us-east-backend"
@@ -81,10 +81,11 @@ resource "google_gke_hub_membership_binding" "membership-binding" {
 
   depends_on = [google_gke_hub_scope.scope]
 }
+# [END anthosconfig_fleet_membership_bindings]
 
-# Fleet Namespaces
+# [START anthosconfig_fleet_namespaces]
 resource "google_gke_hub_namespace" "fleet_namespace" {
-  provider = google-beta
+  provider = google
 
   for_each = {
     bookstore = {
@@ -115,3 +116,4 @@ resource "google_gke_hub_namespace" "fleet_namespace" {
 
   depends_on = [google_gke_hub_scope.scope]
 }
+# [END anthosconfig_fleet_namespaces]

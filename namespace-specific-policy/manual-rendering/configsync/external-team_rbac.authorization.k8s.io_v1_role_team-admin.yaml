@@ -11,18 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# [START anthosconfig_config_example]
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+# [START anthosconfig_namespace_specific_policy_external_team_role] 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
-  name: be-deny-all
-  annotations:
-    configmanagement.gke.io/namespace-selector: backend-scope # Actuate this resource in the namespaces with labels matched by the namespace selector
-spec:
-  ingress:
-  - from:
-    - podSelector: {}
-  podSelector:
-    matchLabels: null
-# [END anthosconfig_config_example]
+  name: team-admin
+  namespace: external-team
+rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - '*'
+# [END anthosconfig_namespace_specific_policy_external_team_role]

@@ -11,18 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# [START anthosconfig_config_example]
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+# [START anthosconfig_namespace_specific_policy_configmap] 
+apiVersion: v1
+data:
+  external-data.txt: FOO=Bar
+kind: ConfigMap
 metadata:
-  name: be-deny-all
-  annotations:
-    configmanagement.gke.io/namespace-selector: backend-scope # Actuate this resource in the namespaces with labels matched by the namespace selector
-spec:
-  ingress:
-  - from:
-    - podSelector: {}
-  podSelector:
-    matchLabels: null
-# [END anthosconfig_config_example]
+  name: my-configmap-5f4h4hkd89
+  namespace: my-namespace
+# [END anthosconfig_namespace_specific_policy_configmap]

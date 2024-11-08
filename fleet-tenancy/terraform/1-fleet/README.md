@@ -9,10 +9,7 @@ These can be provided as [command line variables] at runtime.
 
 For example:
 ```shell
-export TF_VAR_project=your-gcp-project
-export TF_VAR_gcp_sa_id=fleet-team-admin
-export TF_VAR_gcp_sa_display_name=fleet-team-admin
-export TF_VAR_gcp_sa_description="A GCP service account that Terraform can use to access the Google Cloud APIs"
+export TF_VAR_project=<Your GCP project ID where a Fleet will be created>
 terraform init
 terraform plan
 terraform apply

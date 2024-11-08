@@ -1,4 +1,4 @@
-# Copyright 2024 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# [START anthosconfig_config_example]
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: be-deny-all
-  annotations:
-    configmanagement.gke.io/namespace-selector: backend-scope # Actuate this resource in the namespaces with labels matched by the namespace selector
-spec:
-  ingress:
-  - from:
-    - podSelector: {}
-  podSelector:
-    matchLabels: null
-# [END anthosconfig_config_example]
+# [START anthosconfig_namespace_specific_policy_src_example_base_kustomization] 
+resources:
+- namespace.yaml
+- rolebinding.yaml
+- role.yaml
+- networkpolicy.yaml
+# [END anthosconfig_namespace_specific_policy_src_example_base_kustomization] 
