@@ -5,8 +5,8 @@ go 1.23
 require (
 	github.com/google/go-containerregistry v0.20.2
 	github.com/sigstore/cosign/v2 v2.4.1
-	k8s.io/api v0.28.3
-	k8s.io/apimachinery v0.28.3
+	k8s.io/api v0.31.2
+	k8s.io/apimachinery v0.31.2
 	k8s.io/klog v1.0.0
 )
 
