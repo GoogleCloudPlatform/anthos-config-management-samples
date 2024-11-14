@@ -20,8 +20,8 @@ webhooks:
 - name: imageverification.webhook.com
   clientConfig:
     service:
-      name: webhook-service
-      namespace: oci-webhook
+      name: signature-verification-service
+      namespace: signature-verification
       path: "/validate"
       port: 10250
     caBundle: CA_BUNDLE
