@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# [START anthosconfig_signature_verification_deployment]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,7 +31,7 @@ spec:
       - name: signature-verification-server
         command:
         - /signature-verification-server
-        image: <SIGNATURE_VERIFICATION_SERVER_IMAGE_URL>
+        image: SIGNATURE_VERIFICATION_SERVER_IMAGE_URL
         imagePullPolicy: Always
         ports:
         - containerPort: 10250
@@ -57,4 +58,4 @@ spec:
     targetPort: 10250
   selector:
     app: signature-verification-server
-
+# [END anthosconfig_signature_verification_deployment]
