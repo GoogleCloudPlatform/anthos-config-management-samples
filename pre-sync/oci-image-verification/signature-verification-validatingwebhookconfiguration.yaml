@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# [START anthosconfig_signature_verification_admissionwebhook]
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
@@ -23,7 +24,7 @@ webhooks:
       namespace: oci-webhook
       path: "/validate"
       port: 10250
-    caBundle: <CA_BUNDLE>
+    caBundle: CA_BUNDLE
   rules:
   - apiGroups:
     - configsync.gke.io
@@ -38,3 +39,4 @@ webhooks:
     scope: '*'
   admissionReviewVersions: ["v1", "v1beta1"]
   sideEffects: None
+# [END anthosconfig_signature_verification_admissionwebhook]
