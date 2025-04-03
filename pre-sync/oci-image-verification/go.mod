@@ -2,6 +2,8 @@ module admission-webhook
 
 go 1.23.4
 
+toolchain go1.24.1
+
 require (
 	github.com/google/go-containerregistry v0.20.3
 	github.com/sigstore/cosign/v2 v2.4.2
@@ -30,7 +32,7 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible // indirect
-	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/analysis v0.23.0 // indirect
