@@ -3,7 +3,7 @@ module admission-webhook
 go 1.24
 
 require (
-	github.com/google/go-containerregistry v0.20.3
+	github.com/google/go-containerregistry v0.20.6
 	github.com/sigstore/cosign/v2 v2.4.2
 	k8s.io/api v0.32.3
 	k8s.io/apimachinery v0.32.3
@@ -114,7 +114,7 @@ require (
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/oauth2 v0.27.0 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.30.0 // indirect
