@@ -8,8 +8,8 @@ require (
 	github.com/google/go-containerregistry v0.20.6
 	github.com/sigstore/cosign/v2 v2.6.1
 	github.com/sigstore/cosign/v3 v3.0.2
-	k8s.io/api v0.34.1
-	k8s.io/apimachinery v0.34.1
+	k8s.io/api v0.34.2
+	k8s.io/apimachinery v0.34.2
 	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.130.1
 )
