@@ -2,7 +2,7 @@ module admission-webhook
 
 go 1.24.6
 
-toolchain go1.25.3
+toolchain go1.25.4
 
 require (
 	github.com/google/go-containerregistry v0.20.6
@@ -10,7 +10,7 @@ require (
 	github.com/sigstore/cosign/v3 v3.0.2
 	k8s.io/api v0.34.1
 	k8s.io/apimachinery v0.34.1
-	k8s.io/klog/v2 v2.130.1
+	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.130.1
 )
 
