@@ -2,7 +2,7 @@ module admission-webhook
 
 go 1.25.0
 
-toolchain go1.25.7
+toolchain go1.26.0
 
 require (
 	github.com/google/go-containerregistry v0.20.7
