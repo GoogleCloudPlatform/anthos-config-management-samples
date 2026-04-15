@@ -5,7 +5,7 @@ go 1.25.0
 toolchain go1.26.1
 
 require (
-	github.com/google/go-containerregistry v0.21.2
+	github.com/google/go-containerregistry v0.21.5
 	github.com/sigstore/cosign/v2 v2.6.2
 	k8s.io/api v0.35.2
 	k8s.io/apimachinery v0.35.2
